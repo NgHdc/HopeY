@@ -1,10 +1,10 @@
-/* Phố Giấy — luật & giao diện. Chơi chung một máy, 2–6 người. */
+/* Phố Giấy — luật, giao diện và chơi online (PeerJS/WebRTC). 2–6 người, mỗi người một máy.
+   Máy chủ phòng giữ trạng thái và luật; máy khách chỉ gửi thao tác và vẽ lại trạng thái nhận được. */
 (function () {
   'use strict';
 
   // ---------- hằng số ----------
   const START_MONEY = 1500, SALARY = 200, JAIL = 10, BAIL = 50, STEP_MS = 120;
-  const SAVE_KEY = 'phogiay-save-v1';
   const CUR = '₫g';
 
   const DISTRICTS = {
@@ -119,7 +119,7 @@
 
   function newGame(names) {
     S = {
-      players: names.map((n, i) => ({ name: n, money: START_MONEY, pos: 0, jail: 0, cards: 0, out: false, piece: i, creditor: null })),
+      players: names.map((n, i) => ({ name: n, money: START_MONEY, pos: 0, jail: 0, cards: 0, out: false, piece: i, creditor: null, online: true })),
       owner: {}, houses: {}, mort: {},
       turn: 0, phase: 'roll', doubles: 0, dice: [1, 1], round: 1,
       log: [], decks: { q: shuffle([...QC.keys()]), h: shuffle([...HC.keys()]) },
@@ -132,9 +132,9 @@
 
   function log(s) { S.log.unshift(s); S.log.length = Math.min(S.log.length, 80); }
   function say(s) { S.msg = s; log(s); }
-  function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify({ ...S, busy: false })); } catch (e) { /* bỏ qua */ } }
-  function load() { try { return JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) { return null; } }
-  function done() { save(); render(); }
+  // done = lưu + vẽ + gửi cho mọi máy; sync = chỉ vẽ + gửi (dùng khi quân cờ đang đi)
+  function done() { saveHost(); sync(); }
+  function sync() { render(); broadcastState(); }
 
   // ---------- tiền ----------
   function gain(p, amt) { p.money += amt; say(`${p.name} nhận ${amt} ${CUR}.`); }
@@ -158,7 +158,7 @@
     for (let s = 0; s < Math.abs(steps); s++) {
       p.pos = (p.pos + dir + 40) % 40;
       if (p.pos === 0 && dir > 0) { p.money += SALARY; log(`${p.name} đi qua Nhà, nhận ${SALARY} ${CUR}.`); }
-      render();
+      sync();
       await sleep(STEP_MS);
     }
     await land(p);
@@ -193,7 +193,7 @@
     S.view = { kind: 'card', deck, id };
     S.msg = `${c.k} ${c.t}`;
     log(`${p.name} rút thẻ ${deck === 'q' ? 'Câu hỏi' : 'Hàng xóm'}: ${c.t}`);
-    render();
+    sync();
     await sleep(700);
     await c.run(p);
     if (S.view.kind === 'tile' && S.view.i === p.pos && T[p.pos].type === 'card') S.view = { kind: 'card', deck, id };
@@ -245,13 +245,13 @@
     afterLand(); done();
   }
   function skip() {
-    if (S.phase !== 'buy') return;
+    if (S.phase !== 'buy' || S.busy) return;
     say(`${cur().name} để ${T[cur().pos].name} cho người sau.`);
     afterLand(); done();
   }
   function bail(useCard) {
     const p = cur();
-    if (S.phase !== 'roll' || !p.jail) return;
+    if (S.busy || S.phase !== 'roll' || !p.jail) return;
     if (useCard && p.cards) { p.cards--; say(`${p.name} dùng vé, rời Trạm Nghỉ.`); }
     else if (!useCard) pay(p, null, BAIL, 'rời Trạm Nghỉ');
     else return;
@@ -270,10 +270,10 @@
     S.msg = p.jail ? `${p.name} đang ở Trạm Nghỉ: lăn đôi, trả ${BAIL} ${CUR} hoặc dùng vé.` : `Đến lượt ${p.name}.`;
     if (p.money < 0) S.msg += ` Còn nợ ${-p.money} ${CUR}.`;
   }
-  function bankrupt() {
+  function bankrupt(force) {
     const p = cur();
-    if (p.money >= 0) return;
-    const to = p.creditor;
+    if (S.busy || (p.money >= 0 && !force)) return;
+    const to = force ? null : p.creditor;
     Object.keys(S.owner).forEach(i => {
       if (S.owner[i] !== S.turn) return;
       delete S.houses[i];
@@ -333,7 +333,7 @@
   };
 
   function renderBoard() {
-    const sel = S.view.kind === 'tile' ? S.view.i : -1;
+    const v = view(), sel = v.kind === 'tile' ? v.i : -1;
     let html = '';
     T.forEach((t, i) => {
       const [r, c] = cell(i);
@@ -387,7 +387,7 @@
         <p class="msg">${esc(S.msg)}</p>
         ${SCENE}
       </div>
-      <div class="c-right">${S.view.kind === 'card' ? eventCard(S.view) : deed(S.view.i)}</div>
+      <div class="c-right">${view().kind === 'card' ? eventCard(view()) : deed(view().i)}</div>
     </div>`;
   }
 
@@ -436,16 +436,21 @@
 
   function renderSide() {
     const p = cur(), alive = S.players.filter(x => !x.out).length;
+    const me = NET.me, mine = me === S.turn && S.winner == null, host = NET.role === 'host';
     const human = S.winner != null ? 'Phố vẫn còn đó, và những người đã sống ở đây.'
+      : !mine ? (me < 0 ? 'Bạn đang xem ván này.' : `Pha ấm trà, chờ ${esc(p.name)} lăn xúc xắc.`)
       : p.jail ? 'Ngồi ghế đá, ngắm người qua lại.'
       : { roll: 'Xúc xắc đang chờ trong lòng bàn tay.', buy: 'Một mảnh phố đang chờ người đến ở.', end: 'Uống ngụm trà rồi chuyền xúc xắc.' }[S.phase];
-    const title = S.winner != null ? `${esc(S.players[S.winner].name)} giữ được phố.` : `Lượt của ${esc(p.name)}.`;
+    const title = S.winner != null ? `${esc(S.players[S.winner].name)} giữ được phố.` : mine ? 'Lượt của bạn.' : `Lượt của ${esc(p.name)}.`;
     const B = (act, label, primary, enabled = true, arg = '') =>
       `<button class="btn ${primary ? 'primary' : ''}" data-act="${act}" data-arg="${arg}" ${enabled && !S.busy ? '' : 'disabled'}>${label}</button>`;
 
     let actions = '';
-    if (S.winner != null) actions = B('new', 'Ván mới', true);
-    else if (S.phase === 'roll') {
+    if (S.winner != null) actions = host ? B('new', 'Ván mới', true) : '<span class="label">chờ chủ phòng mở ván mới</span>';
+    else if (!mine) {
+      actions = `<span class="label">${p.online === false ? esc(p.name) + ' đang mất kết nối…' : 'đang chờ ' + esc(p.name) + '…'}</span>`;
+      if (host && p.online === false) actions += B('kick', `Cho ${esc(p.name)} rời ván`, false);
+    } else if (S.phase === 'roll') {
       actions = B('roll', p.jail ? 'Lăn tìm đôi' : 'Lăn xúc xắc', true);
       if (p.jail) actions += B('bail', `Trả ${BAIL} ${CUR}`, false, p.money >= BAIL) + (p.cards ? B('card', 'Dùng vé', false) : '');
     } else if (S.phase === 'buy') {
@@ -456,91 +461,305 @@
     }
 
     let manage = '';
-    if (S.view.kind === 'tile' && S.owner[S.view.i] === S.turn && S.winner == null) {
-      const i = S.view.i, t = T[i];
+    const v = view();
+    if (mine && v.kind === 'tile' && S.owner[v.i] === S.turn) {
+      const i = v.i, t = T[i];
       manage = `<div><div class="label">quản lý ${esc(t.name)}</div><div class="manage">
         ${t.type === 'prop' ? `<button class="btn sm" data-act="build" data-arg="${i}" ${can('build', i) ? '' : 'disabled'}>Xây nhà (${DISTRICTS[t.d].house})</button>
         <button class="btn sm" data-act="sell" data-arg="${i}" ${can('sell', i) ? '' : 'disabled'}>Bán nhà (+${DISTRICTS[t.d].house / 2})</button>` : ''}
         ${S.mort[i] ? `<button class="btn sm" data-act="unmort" data-arg="${i}" ${can('unmort', i) ? '' : 'disabled'}>Chuộc (${unmortCost(t)})</button>`
           : `<button class="btn sm" data-act="mort" data-arg="${i}" ${can('mort', i) ? '' : 'disabled'}>Thế chấp (+${t.price / 2})</button>`}
       </div></div>`;
-    } else if (S.winner == null) {
+    } else if (mine) {
       manage = `<div class="label">bấm vào ô đất của mình trên bàn cờ để xây nhà hoặc thế chấp</div>`;
     }
 
     $('#side').innerHTML = `
       <div>
-        <div class="strip"><span>Phố Giấy / Vòng ${S.round}</span><span>${pad(S.turn)} / ${String(S.players.length).padStart(2, '0')}</span></div>
+        <div class="strip"><span>Phố Giấy / Phòng ${esc(NET.room)}</span><span>Vòng ${S.round}</span></div>
         <div class="kicker">${S.winner != null ? 'Ai giữ được phố?' : 'Đến lượt ai?'}</div>
         <h2>${title}</h2>
         <p class="human">${human}</p>
       </div>
       <div class="players">${S.players.map((x, k) => `
         <div class="pl ${k === S.turn && S.winner == null ? 'cur' : ''} ${x.out ? 'out' : ''}">
-          ${pieceSvg(x.piece, 18)}<span class="nm">${esc(x.name)}</span>
-          <span class="tag">${[x.jail ? 'trạm nghỉ' : '', x.cards ? 'vé ×' + x.cards : '', Object.values(S.owner).filter(o => o === k).length + ' ô'].filter(Boolean).join(' · ')}</span>
+          ${pieceSvg(x.piece, 18)}<span class="nm">${esc(x.name)}${k === me ? ' <span class="label">(bạn)</span>' : ''}</span>
+          <span class="tag">${[x.online === false && !x.out ? 'mất kết nối' : '', x.jail ? 'trạm nghỉ' : '', x.cards ? 'vé ×' + x.cards : '', Object.values(S.owner).filter(o => o === k).length + ' ô'].filter(Boolean).join(' · ')}</span>
           <span class="money ${x.money < 0 ? 'neg' : ''}">${x.money}</span>
         </div>`).join('')}</div>
       <div class="actions">${actions}</div>
       ${manage}
       <ul class="log">${S.log.map(l => `<li>${esc(l)}</li>`).join('')}</ul>
-      <div class="sources">Phố Giấy · bản thử nghiệm · ${alive} người còn chơi · <a href="#" data-act="new" style="color:inherit">ván mới</a></div>`;
+      <div class="sources">Phố Giấy · phòng ${esc(NET.room)} · ${alive} người còn chơi${NET.status ? ' · ' + esc(NET.status) : ''} · <a href="#" data-act="leave" style="color:inherit">rời phòng</a></div>`;
   }
 
   function render() { if (!S) return; renderBoard(); renderSide(); }
 
+  // Ô đang xem: mỗi máy tự bấm xem ô riêng; khi trạng thái chung đổi ô (quân vừa dừng) thì theo trạng thái chung.
+  let viewOverride = null, lastView = '';
+  function view() {
+    const sv = JSON.stringify(S.view);
+    if (sv !== lastView) { lastView = sv; viewOverride = null; }
+    return viewOverride || S.view;
+  }
+
+  // ---------- luật: máy chủ nhận thao tác của từng ghế ----------
+  function dispatch(seat, act, arg) {
+    if (!S) return;
+    if (act === 'new') { if (seat === 0 && S.winner != null) startGame(); return; }
+    if (act === 'kick') { if (seat === 0 && cur().online === false && S.winner == null) bankrupt(true); return; }
+    if (seat !== S.turn || S.winner != null) return;
+    if (act === 'roll') roll();
+    else if (act === 'buy') buy();
+    else if (act === 'skip') skip();
+    else if (act === 'end') endTurn();
+    else if (act === 'bail') bail(false);
+    else if (act === 'card') bail(true);
+    else if (act === 'bankrupt') bankrupt();
+    else if (['build', 'sell', 'mort', 'unmort'].includes(act) && Number.isInteger(arg) && arg >= 0 && arg < 40) manage(act, arg);
+  }
+  function act(a, arg) {
+    if (NET.role === 'host') dispatch(0, a, arg);
+    else if (NET.hostConn && NET.hostConn.open) NET.hostConn.send({ t: 'act', act: a, arg });
+  }
+
+  // ---------- mạng (PeerJS) ----------
+  const PREFIX = 'phogiay-v1-';
+  const SESSION_KEY = 'phogiay-session';
+  const PEER_OPTS = { config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' }] } };
+  const NET = { role: null, room: '', peer: null, conns: new Map(), seats: [], hostConn: null, me: -1, lobby: [], started: false, status: '', token: '', name: '' };
+  const newToken = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
+  const makeCode = () => { const A = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; return Array.from({ length: 5 }, () => A[Math.floor(Math.random() * A.length)]).join(''); };
+  const readSession = () => { try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch (e) { return null; } };
+  const roomUrl = code => location.href.split(/[?#]/)[0] + '?room=' + code;
+  function setStatus(s) { NET.status = s; renderAll(); }
+  function setUrl(code) { try { history.replaceState(null, '', code ? '?room=' + code : location.pathname); } catch (e) { /* file:// */ } }
+
+  // máy chủ phòng
+  function saveHost() {
+    if (NET.role !== 'host' || !S) return;
+    try { localStorage.setItem('phogiay-room-' + NET.room, JSON.stringify({ S: { ...S, busy: false }, seats: NET.seats.map(x => ({ name: x.name, token: x.token })) })); } catch (e) { /* bỏ qua */ }
+  }
+  function hostRoom(name, code) {
+    NET.role = 'host'; NET.room = code; NET.me = 0; NET.name = name;
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ role: 'host', room: code, name }));
+    setUrl(code);
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem('phogiay-room-' + code)); } catch (e) { /* bỏ qua */ }
+    if (saved && saved.S && saved.seats) {
+      S = saved.S; S.busy = false;
+      NET.seats = saved.seats.map((x, i) => ({ ...x, peerId: null, online: i === 0 }));
+      S.players.forEach((x, i) => { x.online = i === 0; });
+      NET.started = true;
+    } else {
+      S = null; NET.started = false;
+      NET.seats = [{ name, token: newToken(), peerId: null, online: true }];
+    }
+    openHostPeer(0);
+  }
+  function openHostPeer(attempt) {
+    setStatus('đang mở phòng…');
+    const peer = new Peer(PREFIX + NET.room, PEER_OPTS);
+    NET.peer = peer;
+    peer.on('open', () => setStatus('phòng đã mở'));
+    peer.on('connection', conn => {
+      conn.on('data', d => onHostData(conn, d));
+      conn.on('close', () => onHostClose(conn));
+      conn.on('error', () => onHostClose(conn));
+    });
+    peer.on('disconnected', () => { if (!peer.destroyed) try { peer.reconnect(); } catch (e) { /* bỏ qua */ } });
+    peer.on('error', err => {
+      if (err.type === 'unavailable-id' && attempt < 15) { setStatus('mã phòng còn bận, thử lại…'); peer.destroy(); setTimeout(() => openHostPeer(attempt + 1), 3000); }
+      else if (err.type !== 'peer-unavailable') setStatus('lỗi kết nối: ' + err.type);
+    });
+  }
+  const seatOf = conn => NET.seats.findIndex(x => x.peerId === conn.peer);
+  function onHostData(conn, d) {
+    if (!d || typeof d !== 'object') return;
+    if (d.t === 'hello') {
+      const name = String(d.name || '').trim().slice(0, 14) || 'Khách';
+      const tok = String(d.token || '');
+      let seat = tok ? NET.seats.findIndex(x => x.token === tok) : -1;
+      if (seat < 0 && !NET.started) {
+        if (NET.seats.length >= 6) { conn.send({ t: 'error', msg: 'Phòng đã đủ 6 người.' }); return; }
+        NET.seats.push({ name, token: tok || newToken(), peerId: conn.peer, online: true });
+        seat = NET.seats.length - 1;
+      }
+      NET.conns.set(conn.peer, conn);
+      if (seat >= 0) {
+        const x = NET.seats[seat];
+        x.peerId = conn.peer; x.online = true;
+        if (!NET.started) x.name = name;
+        if (S && S.players[seat]) { S.players[seat].online = true; log(`${S.players[seat].name} đã vào lại phòng.`); }
+      }
+      broadcastLobby();
+      if (S) done(); else renderAll();
+    } else if (d.t === 'act') {
+      const seat = seatOf(conn);
+      if (seat > 0) dispatch(seat, String(d.act), Number(d.arg));
+    }
+  }
+  function onHostClose(conn) {
+    if (!NET.conns.has(conn.peer)) return;
+    NET.conns.delete(conn.peer);
+    const seat = seatOf(conn);
+    if (seat < 0) return;
+    if (!NET.started) NET.seats.splice(seat, 1);
+    else {
+      NET.seats[seat].online = false;
+      if (S && S.players[seat]) { S.players[seat].online = false; log(`${S.players[seat].name} mất kết nối.`); }
+    }
+    broadcastLobby();
+    if (S) done(); else renderAll();
+  }
+  function broadcastLobby() {
+    const seats = NET.seats.map(x => ({ name: x.name, online: x.online }));
+    NET.conns.forEach(c => { if (c.open) c.send({ t: 'lobby', seats, you: seatOf(c), started: NET.started }); });
+  }
+  function broadcastState() {
+    if (NET.role !== 'host' || !S) return;
+    NET.conns.forEach(c => { if (c.open) c.send({ t: 'state', S, you: seatOf(c) }); });
+  }
+  function startGame() {
+    if (NET.role !== 'host' || NET.seats.length < 2) return;
+    NET.started = true;
+    newGame(NET.seats.map(x => x.name));
+    S.players.forEach((x, i) => { x.online = NET.seats[i].online; });
+    broadcastLobby(); done();
+  }
+
+  // máy khách
+  function joinRoom(name, code) {
+    const ses = readSession();
+    NET.role = 'guest'; NET.room = code; NET.name = name;
+    NET.token = (ses && ses.role === 'guest' && ses.room === code && ses.token) || newToken();
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ role: 'guest', room: code, name, token: NET.token }));
+    setUrl(code);
+    const peer = new Peer(PEER_OPTS);
+    NET.peer = peer;
+    setStatus('đang kết nối…');
+    peer.on('open', connectHost);
+    peer.on('disconnected', () => { if (!peer.destroyed) try { peer.reconnect(); } catch (e) { /* bỏ qua */ } });
+    peer.on('error', err => {
+      if (err.type === 'peer-unavailable') { setStatus(`chưa thấy phòng ${code} — chủ phòng còn mở trang không? đang thử lại…`); retry(); }
+      else setStatus('lỗi kết nối: ' + err.type);
+    });
+  }
+  let retryTimer = null;
+  function retry() { if (retryTimer) return; retryTimer = setTimeout(() => { retryTimer = null; if (NET.peer && !NET.peer.destroyed && NET.peer.open) connectHost(); }, 3000); }
+  function connectHost() {
+    if (NET.hostConn && NET.hostConn.open) return;
+    const conn = NET.peer.connect(PREFIX + NET.room, { reliable: true });
+    NET.hostConn = conn;
+    conn.on('open', () => { conn.send({ t: 'hello', name: NET.name, token: NET.token }); setStatus('đã vào phòng'); });
+    conn.on('data', onGuestData);
+    conn.on('close', () => { if (NET.hostConn === conn) { NET.hostConn = null; setStatus('mất kết nối với chủ phòng, đang thử lại…'); retry(); } });
+  }
+  function onGuestData(d) {
+    if (!d || typeof d !== 'object') return;
+    if (d.t === 'lobby') { NET.lobby = d.seats; NET.me = d.you; NET.started = d.started; renderAll(); }
+    else if (d.t === 'state') { S = d.S; NET.me = d.you; NET.started = true; renderAll(); }
+    else if (d.t === 'error') setStatus(d.msg);
+  }
+
+  function leaveRoom() {
+    if (!confirm(NET.role === 'host' ? 'Rời phòng? Phòng sẽ đóng với mọi người cho tới khi bạn mở lại mã này.' : 'Rời phòng?')) return;
+    sessionStorage.removeItem(SESSION_KEY);
+    if (NET.peer) NET.peer.destroy();
+    setUrl('');
+    location.reload();
+  }
+
   // ---------- sự kiện ----------
   document.addEventListener('click', e => {
     const tile = e.target.closest('[data-tile]');
-    if (tile && S && !S.busy) { S.view = { kind: 'tile', i: +tile.dataset.tile }; render(); return; }
+    if (tile && S) { view(); viewOverride = { kind: 'tile', i: +tile.dataset.tile }; render(); return; }
     const b = e.target.closest('[data-act]');
-    if (!b || !S) return;
+    if (!b) return;
     e.preventDefault();
     const a = b.dataset.act, arg = +b.dataset.arg;
-    if (a === 'roll') roll();
-    else if (a === 'buy') buy();
-    else if (a === 'skip') skip();
-    else if (a === 'end') endTurn();
-    else if (a === 'bail') bail(false);
-    else if (a === 'card') bail(true);
-    else if (a === 'bankrupt') { if (confirm(`${cur().name} phá sản và rời ván?`)) bankrupt(); }
-    else if (a === 'new') { if (S.winner != null || confirm('Bỏ ván đang chơi và bắt đầu ván mới?')) showSetup(S.winner == null); }
-    else manage(a, arg);
+    if (a === 'leave') return leaveRoom();
+    if (!S) return;
+    if (a === 'bankrupt' && !confirm('Phá sản và rời ván?')) return;
+    if (a === 'kick' && !confirm(`${cur().name} đang mất kết nối. Cho người này phá sản, đất trả về phố?`)) return;
+    act(a, arg);
   });
   document.addEventListener('keydown', e => {
-    if (!S || !$('#setup').hidden || e.target.tagName === 'INPUT') return;
-    if (e.code === 'Space') { e.preventDefault(); roll(); }
-    else if (e.key === 'b' || e.key === 'B') buy();
-    else if (e.key === 'e' || e.key === 'E') endTurn();
+    if (!S || !$('#setup').hidden || e.target.tagName === 'INPUT' || NET.me !== S.turn) return;
+    if (e.code === 'Space') { e.preventDefault(); act('roll'); }
+    else if (e.key === 'b' || e.key === 'B') act('buy');
+    else if (e.key === 'e' || e.key === 'E') act('end');
   });
 
-  // ---------- màn hình bắt đầu ----------
-  const DEFAULT_NAMES = ['Lan', 'Minh', 'Hoa', 'Tuấn', 'Mai', 'Nam'];
-  let count = 3;
-  function showSetup(allowResume) {
+  // ---------- sảnh: tạo / vào phòng ----------
+  const savedName = () => localStorage.getItem('phogiay-name') || '';
+  function renderAll() {
+    const inGame = S && NET.started;
+    $('#setup').hidden = !!inGame;
+    if (inGame) render(); else renderLobby();
+  }
+  function renderLobby() {
+    const sheet = $('#setup .sheet');
+    if (!NET.role) {
+      const code = (new URLSearchParams(location.search).get('room') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5);
+      sheet.innerHTML = `
+        <div class="strip"><span>Phố Giấy / Chơi online</span><span>2–6 người</span></div>
+        <div class="kicker">Ai sẽ sống ở phố này?</div>
+        <h1>Mỗi người một máy, chung một con phố.</h1>
+        <p class="human">Một người tạo phòng rồi gửi mã cho bạn bè; mỗi người mở trên máy của mình.</p>
+        <label class="field"><span class="label">tên của bạn</span><input id="nm" maxlength="14" value="${esc(savedName())}" placeholder="ví dụ: Lan"></label>
+        ${code ? `
+          <div class="row"><button class="btn primary" id="join">Vào phòng ${code}</button></div>
+          <p class="small">hoặc <a href="#" id="create" style="color:inherit">tạo phòng mới</a></p>` : `
+          <div class="row"><button class="btn primary" id="create">Tạo phòng mới</button></div>
+          <div class="or label">— hoặc vào phòng của bạn bè —</div>
+          <div class="row"><input id="code" class="code-in" maxlength="5" placeholder="MÃ PHÒNG"><button class="btn" id="join">Vào phòng</button></div>`}
+        <p class="small" id="err"></p>`;
+      const getName = () => { const n = $('#nm').value.trim().slice(0, 14); if (!n) { $('#err').textContent = 'nhập tên trước đã'; $('#nm').focus(); return null; } localStorage.setItem('phogiay-name', n); return n; };
+      $('#create').onclick = e => { e.preventDefault(); const n = getName(); if (n) hostRoom(n, makeCode()); };
+      $('#join').onclick = () => {
+        const n = getName(); if (!n) return;
+        const c = code || $('#code').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        if (c.length !== 5) { $('#err').textContent = 'mã phòng có 5 ký tự'; return; }
+        joinRoom(n, c);
+      };
+      return;
+    }
+    const seats = NET.role === 'host' ? NET.seats : NET.lobby;
+    const url = roomUrl(NET.room);
+    sheet.innerHTML = `
+      <div class="strip"><span>Phố Giấy / Phòng ${esc(NET.room)}</span><span>${seats.length} / 6</span></div>
+      <div class="kicker">Ai đã đến?</div>
+      <h1>Phòng <span class="room-code">${esc(NET.room)}</span></h1>
+      <p class="human">Gửi mã hoặc đường link cho bạn bè. Ai mở link trên máy mình là vào được phòng.</p>
+      <div class="row"><input class="link" readonly value="${esc(url)}"><button class="btn" id="copy">Sao chép link</button></div>
+      <div class="players lobby">${seats.map((x, k) => `
+        <div class="pl">${pieceSvg(k, 18)}<span class="nm">${esc(x.name)}${k === NET.me ? ' <span class="label">(bạn)</span>' : ''}</span>
+          <span class="tag">${k === 0 ? 'chủ phòng' : x.online === false ? 'mất kết nối' : 'đã vào'}</span></div>`).join('') || '<div class="label" style="padding:8px 0">đang chờ…</div>'}</div>
+      <div class="row">${NET.role === 'host'
+        ? `<button class="btn primary" id="go" ${seats.length >= 2 && NET.peer && NET.peer.open ? '' : 'disabled'}>Bắt đầu ván</button>`
+        : '<span class="label" style="align-self:center">chờ chủ phòng bắt đầu ván…</span>'}
+        <button class="btn" data-act="leave">Rời phòng</button></div>
+      <p class="small">${esc(NET.status)}${NET.role === 'host' && seats.length < 2 ? ' · cần ít nhất 2 người' : ''}</p>`;
+    $('#copy').onclick = () => {
+      const inp = sheet.querySelector('.link'); inp.select();
+      (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).catch(() => document.execCommand('copy'));
+      $('#copy').textContent = 'Đã chép';
+    };
+    const go = $('#go'); if (go) go.onclick = startGame;
+  }
+
+  // ---------- khởi động ----------
+  if (typeof Peer === 'undefined') {
     $('#setup').hidden = false;
-    $('#resume').hidden = !allowResume;
-    $('#count').innerHTML = '<span class="label" style="align-self:center;margin-right:6px">số người</span>' +
-      [2, 3, 4, 5, 6].map(n => `<button class="btn sm ${n === count ? 'on' : ''}" data-n="${n}">${n}</button>`).join('');
-    const old = [...document.querySelectorAll('#names input')].map(x => x.value);
-    $('#names').innerHTML = Array.from({ length: count }, (_, k) =>
-      `<label>${pieceSvg(k, 18)}<input maxlength="14" value="${esc(old[k] || DEFAULT_NAMES[k])}" aria-label="Tên người chơi ${k + 1}"></label>`).join('');
+    $('#setup .sheet').innerHTML = '<div class="kicker">Không tải được thư viện kết nối</div><h1>Cần có mạng để chơi online.</h1><p class="human">Kiểm tra kết nối internet rồi tải lại trang.</p>';
+    return;
   }
-  $('#count').addEventListener('click', e => { const n = e.target.dataset.n; if (n) { count = +n; showSetup(!$('#resume').hidden); } });
-  $('#start').addEventListener('click', () => {
-    const names = [...document.querySelectorAll('#names input')].map((x, k) => x.value.trim() || DEFAULT_NAMES[k]);
-    $('#setup').hidden = true;
-    newGame(names);
-  });
-  $('#resume').addEventListener('click', () => { $('#setup').hidden = true; render(); });
+  const ses = readSession();
+  if (ses && ses.role === 'host' && ses.room) hostRoom(ses.name, ses.room);
+  else if (ses && ses.role === 'guest' && ses.room) joinRoom(ses.name, ses.room);
+  else renderAll();
 
-  const saved = load();
-  if (saved && saved.players) {
-    S = saved;
-    if (S.phase === 'roll' || S.phase === 'buy' || S.phase === 'end') render();
-    showSetup(true);
-  } else {
-    S = null;
-    showSetup(false);
-  }
+  // dùng khi kiểm thử
+  window.__phogiay = { get S() { return S; }, NET, act, hostRoom, joinRoom, startGame };
 })();
