@@ -37,10 +37,18 @@ assets/illustrations/   hình SVG trừu tượng
 src/                    bản chơi trên web (index.html · style.css · game.js)
 ```
 
-## Việc tiếp theo
+## Kế hoạch & lịch sử
 
-- [ ] Trao đổi đất giữa người chơi, đấu giá khi không ai mua
-- [x] Chơi online nhiều máy, có phòng riêng
-- [ ] `docs/GAME_DESIGN.md`: cân bằng giá, thêm thẻ "Câu hỏi" & "Hàng xóm"
+- [`docs/ROADMAP.md`](docs/ROADMAP.md): các phiên bản từ 0.3.0 tới 1.0.0
+- [`CHANGELOG.md`](CHANGELOG.md): thay đổi của từng phiên bản
+- [`docs/RELEASE.md`](docs/RELEASE.md): chạy bản dev, phát hành, **rollback**
+- [`docs/DECISIONS.md`](docs/DECISIONS.md): các quyết định lớn và lý do
+
+## Chạy trên máy
+
+```bash
+python -m http.server 5173 --bind 127.0.0.1
+```
+Mở http://127.0.0.1:5173/src/ (thử online một mình: mở 2 tab).
 
 Phong cách gốc: `../Slide_Style_Guide_Swiss_Paper.md`.
