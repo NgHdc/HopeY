@@ -5,6 +5,9 @@ Quy trình phát hành và rollback: [`docs/RELEASE.md`](docs/RELEASE.md).
 
 ## [Chưa phát hành]
 
+### Thêm
+- Bản nháp thiết kế 0.4 ("Giấy mới"): hệ thống thiết kế v2 và mockup 9 màn hình, đang chờ duyệt
+
 ## [0.3.0] — 2026-11-26 · Nền móng
 
 ### Thêm

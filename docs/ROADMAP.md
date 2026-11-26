@@ -75,10 +75,10 @@ Thứ tự này có chủ đích: **làm nền móng (0.3) trước khi thiết 
 **Mục tiêu:** mọi màn hình và hình vẽ đạt chuẩn `STYLE_GUIDE.md`, được thiết kế trước rồi mới code.
 
 ### Giai đoạn A — Thiết kế (chưa code)
-- [ ] **Kiểm kê UI hiện tại**: chụp mọi màn hình và trạng thái, ghi những chỗ chưa ổn.
+- [x] **Kiểm kê UI hiện tại**: chụp mọi màn hình và trạng thái, ghi những chỗ chưa ổn.
 - [ ] **Moodboard**: Swiss poster, bản đồ giấy, tem, vé tàu cũ, giấy kẻ ô; ảnh phố Việt cho 8 quận.
-- [ ] **Style guide v2**: lưới 8 px, thang chữ, thang khoảng cách, nét (0.5 / 1 / 1.5), trạng thái (hover / đang chọn / vô hiệu / lỗi), độ tương phản.
-- [ ] **Mockup độ trung thực cao** cho từng màn hình:
+- [x] **Style guide v2** (bản nháp trên canvas, khung 01): lưới 8 px, thang chữ, nét 0.5 / 1 / 1.5, thành phần. Đề xuất font Inter + IBM Plex Mono + Noto Serif, chờ duyệt.
+- [x] **Mockup độ trung thực cao** cho từng màn hình (canvas *Phố Giấy 0.4 — Mockup giao diện*, 10 khung):
   1. Trang chủ: tạo phòng / vào phòng
   2. Sảnh chờ: mã phòng, danh sách người, chọn quân cờ, chọn màu
   3. Bàn cờ: desktop 1440, laptop 1280, tablet 1024, điện thoại 390
@@ -87,7 +87,7 @@ Thứ tự này có chủ đích: **làm nền móng (0.3) trước khi thiết 
   6. Hộp thoại: mua, đấu giá, trao đổi, phá sản, xác nhận
   7. Màn hình kết thúc ván: người thắng, thống kê
   8. Trạng thái lỗi: mất kết nối, phòng không tồn tại, khác phiên bản
-- [ ] **Duyệt mockup** với bạn trước khi code.
+- [ ] **Duyệt mockup** với bạn trước khi code. ⏳ đang chờ góp ý
 
 ### Giai đoạn B — Đồ họa
 - [ ] Hình minh họa SVG cho **22 ô đất** (mỗi ô: 1 cảnh hình học + người que), **4 ga**, **2 tiện ích**, **4 ô góc**.
