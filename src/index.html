@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phố Giấy</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;1,400&display=swap">
+<link rel="stylesheet" href="../design/tokens.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="app">
+  <section class="board-wrap">
+    <div class="board" id="board" aria-label="Bàn cờ"></div>
+  </section>
+  <aside class="side" id="side"></aside>
+</main>
+
+<div class="overlay" id="setup" hidden>
+  <div class="sheet">
+    <div class="strip"><span>PHỐ GIẤY / VÁN MỚI</span><span>2–6 NGƯỜI</span></div>
+    <div class="kicker">AI SẼ SỐNG Ở PHỐ NÀY?</div>
+    <h1>Mỗi người một quân, một túi đồng giấy.</h1>
+    <p class="human">Ngồi quanh một màn hình, chuyền nhau lượt như chuyền chén trà.</p>
+    <div class="count" id="count"></div>
+    <div class="names" id="names"></div>
+    <div class="row">
+      <button class="btn primary" id="start">Bắt đầu</button>
+      <button class="btn" id="resume" hidden>Chơi tiếp ván cũ</button>
+    </div>
+    <p class="small">phím tắt: space lăn · b mua · e kết thúc lượt</p>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>

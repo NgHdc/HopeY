@@ -1,0 +1,49 @@
+/* Phố Giấy — design tokens (Swiss Paper). Nguồn: docs/STYLE_GUIDE.md */
+:root {
+  /* Nền & mực — CỐ ĐỊNH */
+  --paper: #F1ECE2;
+  --panel: #E7E0D1;
+  --ink: #22262B;
+  --ink-2: #5E6266;
+
+  /* Nhấn */
+  --accent: #B0472F;     /* rust — ≤ 2 chỗ / thành phần */
+  --accent-2: #D49A2A;   /* ochre */
+  --cool-1: #6F90AE;
+  --cool-1-l: #A9C1D6;
+  --cool-2: #2E6B6B;
+  --cool-2-l: #DCE8E4;
+  --neutral: #D9C8A6;    /* sand — lưới, số lớn mờ */
+  --grey: #9A978F;       /* concrete — thế chấp, vô hiệu */
+
+  /* 8 quận — luôn đi kèm hoa văn */
+  --d1: #8A6A4F;  /* Ngõ Đất   — hatch 45° */
+  --d2: #A9C1D6;  /* Bến Sông  — lưới chấm */
+  --d3: #C98A7A;  /* Chợ Hoa   — vạch dọc */
+  --d4: #C9773A;  /* Phố Nghề  — vạch ngang */
+  --d5: #9E3B32;  /* Phố Cổ    — hatch chéo kép */
+  --d6: #D49A2A;  /* Đồi Nắng  — chấm tròn đặc */
+  --d7: #4C6E52;  /* Vườn Xanh — sóng mảnh */
+  --d8: #34506E;  /* Cảng Biển — đặc */
+
+  /* Chữ */
+  --font-sans: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  /* Georgia trên Windows thiếu glyph ồ/ề/ổ… → dùng font đủ dấu tiếng Việt */
+  --font-serif: "Noto Serif", Cambria, Georgia, serif;
+  --font-mono: "Courier New", Courier, monospace;
+
+  --fs-header: 11px;   /* IN HOA, letter-spacing .1em */
+  --fs-kicker: 12px;   /* IN HOA, letter-spacing .15em, accent */
+  --fs-title: 18px;
+  --fs-human: 13px;    /* Georgia italic */
+  --fs-price: 20px;
+  --fs-body: 14px;
+  --fs-label: 12px;    /* Courier, chữ thường */
+  --fs-numeral: 64px;  /* neutral */
+  --fs-min: 10px;
+
+  /* Nét & hình */
+  --hairline: 1px;
+  --radius: 0;
+  --step-ms: 120ms;    /* quân cờ đi mỗi ô */
+}
