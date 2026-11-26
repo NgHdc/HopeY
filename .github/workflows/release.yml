@@ -1,0 +1,34 @@
+# Khi đẩy tag vX.Y.Z: tạo GitHub Release từ CHANGELOG.md, rồi chạy Deploy (thêm /v/X.Y.Z/).
+# Khi đẩy nhánh dev: chạy Deploy để cập nhật /next/.
+# (Deploy chỉ chạy trên main vì môi trường github-pages chỉ cho phép nhánh mặc định.)
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+    branches: [dev]
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Tạo GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          node scripts/changelog.mjs "$TAG" > notes.md
+          gh release create "$TAG" --title "$TAG" --notes-file notes.md --verify-tag || gh release edit "$TAG" --notes-file notes.md
+      - name: Chạy Deploy
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref main

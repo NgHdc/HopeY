@@ -33,3 +33,17 @@
 ### #6 — Nền móng trước, thiết kế lại sau · 2026-11-26
 **Quyết định:** 0.3.0 làm test, phiên bản, deploy có lưu trữ và rollback; 0.4.0 mới thiết kế lại UI.
 **Vì sao:** thiết kế lại là đập đi làm lại nhiều thứ. Có test và có đường lui thì làm mạnh tay mà không sợ hỏng bản đang chạy.
+
+### #7 — "Ván thử trên máy" thay cho trang dev nhiều khung · 2026-11-26 · v0.3.0
+**Bối cảnh:** muốn sửa luật hay UI thì phải tạo phòng và chờ người vào; vào game rồi lại không có lối thoát rõ ràng.
+**Quyết định:** thêm chế độ `local`: một máy điều khiển mọi ghế, cùng bộ luật với online, có công cụ dev. Luôn có nút Thoát / Rời phòng.
+**Vì sao:** vào bàn cờ bằng một cú nhấp, không cần mạng. Luật dùng chung nên thử ở local cũng là thử luật online.
+
+### #8 — Luật thuần + sự kiện, hiệu ứng chạy riêng · 2026-11-26 · v0.3.0
+**Quyết định:** `applyAction(state, seat, action)` trả về trạng thái mới + danh sách sự kiện (đi, nhảy, rút thẻ, trả tiền). Chủ phòng gửi cả hai; mỗi máy tự chạy hiệu ứng.
+**Vì sao:** test được bằng Node không cần trình duyệt; số ngẫu nhiên có seed nên lặp lại được lỗi; không còn trạng thái "đang chạy dở" bị gửi qua mạng.
+
+### #9 — Deploy từ tag, rollback bằng `deploy/current.txt` · 2026-11-26 · v0.3.0
+**Quyết định:** GitHub Actions dựng trang từ mọi tag (`/v/X.Y.Z/`), bản chính theo `deploy/current.txt` (`latest` hoặc một tag).
+**Vì sao:** rollback chỉ là sửa một dòng trên web GitHub, không cần biết git; mọi bản cũ vẫn chơi được nên dễ so sánh khi thiết kế lại.
+**Đánh đổi:** môi trường `github-pages` chỉ cho deploy từ `main`, nên tag và nhánh `dev` gọi Deploy gián tiếp qua workflow Release.

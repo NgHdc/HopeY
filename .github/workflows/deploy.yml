@@ -1,0 +1,55 @@
+# Deploy GitHub Pages từ các tag: / = bản chính, /v/X.Y.Z/ = mọi bản cũ, /next/ = nhánh dev.
+# ROLLBACK (docs/RELEASE.md mục 5):
+#   lâu dài  → sửa deploy/current.txt trên main thành tag cũ (vd v0.2.0), commit → tự deploy
+#   tạm thời → Actions → Deploy → Run workflow → nhập tag vào ô "current"
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      current:
+        description: "Tag làm bản chính lần deploy này (vd v0.2.0). Để trống = theo deploy/current.txt"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Lấy mọi tag và nhánh
+        run: git fetch --force --tags origin '+refs/heads/*:refs/remotes/origin/*'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Dựng trang
+        env:
+          CURRENT: ${{ inputs.current }}
+        run: bash scripts/build-site.sh _site "$CURRENT"
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

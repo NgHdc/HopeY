@@ -11,9 +11,9 @@
 | Phiên bản | Tên | Trọng tâm | Trạng thái |
 |---|---|---|---|
 | 0.1.x | Bản giấy nháp | Luật chơi cơ bản, chơi chung một máy | ✅ đã phát hành |
-| 0.2.x | Mở cửa phòng | Chơi online, phòng riêng (PeerJS) | ✅ **đang chạy** |
-| 0.3.0 | Nền móng | Tách code, test tự động, version, deploy có lưu trữ + rollback | ⏭ tiếp theo |
-| 0.4.0 | Giấy mới | Thiết kế lại toàn bộ UI và đồ họa | |
+| 0.2.x | Mở cửa phòng | Chơi online, phòng riêng (PeerJS) | ✅ đã phát hành |
+| 0.3.0 | Nền móng | Tách code, test, version, deploy có lưu trữ + rollback, chơi thử trên máy | ✅ **đang chạy** |
+| 0.4.0 | Giấy mới | Thiết kế lại toàn bộ UI và đồ họa | ⏭ tiếp theo |
 | 0.5.0 | Luật đầy đủ | Trao đổi, đấu giá, bộ thẻ đầy đủ, tùy chỉnh luật | |
 | 0.6.0 | Phòng bền | Kết nối ổn định, chuyển chủ phòng, chat, khán giả | |
 | 0.7.0 | Mọi màn hình | Điện thoại, máy tính bảng, bàn phím, trợ năng | |
@@ -30,39 +30,41 @@ Thứ tự này có chủ đích: **làm nền móng (0.3) trước khi thiết 
 **Mục tiêu:** code dễ sửa, mỗi phiên bản được lưu lại và chơi lại được, lỗi thì quay về bản cũ trong 2 phút.
 
 ### Cấu trúc code
-- [ ] Tách `src/game.js` (≈ 700 dòng) thành module ES:
+- [x] Tách `src/game.js` (≈ 700 dòng) thành module ES:
   - `src/core/rules.js`: luật thuần (không DOM, không mạng): `applyAction(state, seat, action) → state + events`
   - `src/core/board.js`: dữ liệu 40 ô, quận, giá, bảng thuê
   - `src/core/cards.js`: bộ thẻ Câu hỏi / Hàng xóm
   - `src/net/peer.js`: phòng, kết nối, nối lại
   - `src/ui/*.js`: bàn cờ, thẻ, cột người chơi, sảnh
-- [ ] Bỏ `Math.random()` rải rác → một hàm `rng` có seed, để lặp lại được một ván khi tìm lỗi.
-- [ ] Trạng thái ván có `schemaVersion`; viết hàm `migrate(state)` khi đổi cấu trúc.
+- [x] Bỏ `Math.random()` rải rác → một hàm `rng` có seed, để lặp lại được một ván khi tìm lỗi.
+- [x] Trạng thái ván có `schemaVersion`; viết hàm `migrate(state)` khi đổi cấu trúc.
 
 ### Phiên bản & tương thích
-- [ ] Hằng `APP_VERSION` (ví dụ `0.3.0`) hiển thị ở chân trang và trong sảnh.
-- [ ] `PROTOCOL_VERSION`: khách khác phiên bản giao thức với chủ phòng → báo *"Phòng này dùng bản X, hãy tải lại trang"* thay vì lỗi ngầm.
-- [ ] Mã phòng peer có tiền tố theo giao thức (`phogiay-p2-…`), để bản cũ và bản mới không vào nhầm phòng của nhau.
+- [x] Hằng `APP_VERSION` (ví dụ `0.3.0`) hiển thị ở chân trang và trong sảnh.
+- [x] `PROTOCOL_VERSION`: khách khác phiên bản giao thức với chủ phòng → báo *"Phòng này dùng bản X, hãy tải lại trang"* thay vì lỗi ngầm.
+- [x] Mã phòng peer có tiền tố theo giao thức (`phogiay-p2-…`), để bản cũ và bản mới không vào nhầm phòng của nhau.
 
 ### Môi trường dev
-- [ ] Script chạy server dev: `npm run dev` (hoặc `python -m http.server`), cổng cố định `5173`.
-- [ ] Trang `src/dev.html`: mở 2–4 người chơi trong cùng một tab (khung iframe) để thử online mà không cần nhiều máy.
-- [ ] Nút debug (chỉ ở dev): đặt xúc xắc, cộng tiền, nhảy tới ô.
+- [x] Script chạy server dev: `npm run dev` (hoặc `python -m http.server`), cổng cố định `5173`.
+- [x] ~~Trang `src/dev.html`~~ → thay bằng **ván thử trên máy** (`src/?local=3`): một người điều khiển mọi ghế, không cần mạng. Thử online thật: 2 tab.
+- [x] Nút debug (chỉ ở dev): đặt xúc xắc, cộng tiền, nhảy tới ô.
 
 ### Test tự động
-- [ ] Test luật bằng `node --test`: mua, thuê, cả quận ×2, xây đều, thế chấp, Trạm Nghỉ 3 lượt, 3 lần đôi, phá sản trả cho chủ nợ, thẻ di chuyển qua Nhà.
-- [ ] Test giả lập: bot chơi 1 000 ván ngẫu nhiên → không ván nào treo, tổng tiền luôn hợp lệ.
-- [ ] Test online (đưa script kiểm thử 2 trình duyệt hiện có vào `tests/e2e/`): tạo phòng → vào phòng → chơi 5 vòng → hai máy có trạng thái giống nhau.
-- [ ] GitHub Actions chạy test ở mọi push / pull request.
+- [x] Test luật bằng `node --test`: mua, thuê, cả quận ×2, xây đều, thế chấp, Trạm Nghỉ 3 lượt, 3 lần đôi, phá sản trả cho chủ nợ, thẻ di chuyển qua Nhà.
+- [x] Test giả lập: bot chơi 300 ván (đặt `SIM_GAMES=1000` để chạy nhiều hơn) → không ván nào kẹt, trạng thái luôn hợp lệ.
+- [x] Test online (đưa script kiểm thử 2 trình duyệt hiện có vào `tests/e2e/`): tạo phòng → vào phòng → chơi 5 vòng → hai máy có trạng thái giống nhau.
+- [x] GitHub Actions chạy test ở mọi push / pull request.
 
 ### Deploy có lưu trữ & rollback (chi tiết ở `RELEASE.md`)
-- [ ] Workflow `deploy.yml`: dựng trang từ **các tag**, không từ nhánh:
+- [x] Workflow `deploy.yml`: dựng trang từ **các tag**, không từ nhánh:
   - `/` = phiên bản đang chọn làm bản chính (mặc định: tag mới nhất)
   - `/v/0.2.0/`, `/v/0.3.0/`, … = mọi phiên bản cũ vẫn chơi được
   - `/next/` = bản thử từ nhánh `dev`
-- [ ] Workflow chạy tay với ô nhập `current` để rollback bản chính về một tag cũ.
-- [ ] Trang `/versions/`: danh sách phiên bản, ngày, tóm tắt thay đổi (đọc từ CHANGELOG).
-- [ ] Mỗi tag tạo một GitHub Release kèm ghi chú.
+- [x] Rollback: `deploy/current.txt` (lâu dài) hoặc chạy tay workflow với ô `current` (tạm thời).
+- [x] Trang `/versions/`: danh sách phiên bản, ngày, tóm tắt thay đổi (đọc từ CHANGELOG).
+- [x] Mỗi tag tạo một GitHub Release kèm ghi chú.
+
+**Còn phải thử trên GitHub** (sau khi đổi Pages sang GitHub Actions): rollback 0.3.0 → 0.2.0 → 0.3.0.
 
 **Xong khi:** test chạy xanh trên GitHub; rollback thử từ 0.3.0 về 0.2.0 và quay lại mất dưới 3 phút; `/v/0.2.0/` vẫn chơi được.
 
