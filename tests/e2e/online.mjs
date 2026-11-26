@@ -1,0 +1,101 @@
+// Kiểm thử trên trình duyệt thật (Edge/Chrome headless, qua DevTools Protocol).
+//   1. Ván thử trên máy: vào thẳng bàn cờ, công cụ dev, thoát về trang đầu
+//   2. Online: 2 browser context riêng (như 2 máy) → tạo phòng → vào phòng → chơi → so trạng thái
+// Cần: server dev đang chạy (npm run dev) và có internet (PeerJS).
+// Chạy: npm run e2e   ·   biến môi trường: BASE_URL, BROWSER, SHOTS (thư mục lưu ảnh chụp)
+import { spawn } from 'node:child_process';
+import { writeFileSync, mkdtempSync, existsSync, mkdirSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+const BASE = process.env.BASE_URL || 'http://127.0.0.1:5173/src/';
+const SHOTS = process.env.SHOTS || '';
+const BROWSER = process.env.BROWSER || [
+  'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
+  'C:/Program Files/Google/Chrome/Application/chrome.exe',
+  '/usr/bin/google-chrome', '/usr/bin/chromium',
+  '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+].find(existsSync);
+if (!BROWSER) { console.error('Không tìm thấy Chrome/Edge. Đặt biến BROWSER.'); process.exit(2); }
+if (SHOTS) mkdirSync(SHOTS, { recursive: true });
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const port = 9300 + Math.floor(Math.random() * 500);
+const br = spawn(BROWSER, ['--headless=new', '--disable-gpu', `--remote-debugging-port=${port}`, `--user-data-dir=${mkdtempSync(join(tmpdir(), 'pg-'))}`, 'about:blank'], { stdio: 'ignore' });
+
+let ver;
+for (let i = 0; i < 50 && !ver; i++) { try { ver = await (await fetch(`http://127.0.0.1:${port}/json/version`)).json(); } catch { await sleep(200); } }
+const ws = new WebSocket(ver.webSocketDebuggerUrl);
+await new Promise(r => (ws.onopen = r));
+let id = 0; const pending = new Map();
+ws.onmessage = e => { const m = JSON.parse(e.data); if (m.id && pending.has(m.id)) { pending.get(m.id)(m); pending.delete(m.id); } };
+const send = (method, params = {}, sessionId) => new Promise(r => { const i = ++id; pending.set(i, r); ws.send(JSON.stringify({ id: i, method, params, sessionId })); });
+
+async function openPage(url) {
+  const { result: { browserContextId } } = await send('Target.createBrowserContext');
+  const { result: { targetId } } = await send('Target.createTarget', { url, browserContextId });
+  const { result: { sessionId } } = await send('Target.attachToTarget', { targetId, flatten: true });
+  await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false }, sessionId);
+  await send('Page.enable', {}, sessionId);
+  const ev = async expr => {
+    const r = await send('Runtime.evaluate', { expression: expr, returnByValue: true, awaitPromise: true }, sessionId);
+    if (r.result.exceptionDetails) throw new Error(r.result.exceptionDetails.exception?.description || JSON.stringify(r.result.exceptionDetails));
+    return r.result.result.value;
+  };
+  const shot = async name => { if (!SHOTS) return; const r = await send('Page.captureScreenshot', { format: 'png' }, sessionId); writeFileSync(join(SHOTS, name), Buffer.from(r.result.data, 'base64')); };
+  const ready = async () => { for (let i = 0; i < 50; i++) { try { if (await ev('!!window.__phogiay')) return; } catch { /* đang tải */ } await sleep(200); } throw new Error('trang không tải được: ' + url); };
+  await ready();
+  return { ev, shot };
+}
+async function until(f, ms = 25000) { const t = Date.now(); while (Date.now() - t < ms) { try { if (await f()) return true; } catch { /* thử lại */ } await sleep(300); } return false; }
+
+let failed = 0;
+const check = (ok, msg) => { console.log(`${ok ? '✓' : '✗'} ${msg}`); if (!ok) failed++; };
+
+try {
+  // ---------- 1. ván thử trên máy ----------
+  const L = await openPage(BASE + '?local=3&dev');
+  check(await until(() => L.ev(`__phogiay.app.screen === 'game'`), 5000), 'ván thử: vào thẳng bàn cờ không cần phòng');
+  check(await L.ev(`!!document.querySelector('.dev')`), 'ván thử: có công cụ dev');
+  await L.ev(`document.getElementById('dv1').value='1'; document.getElementById('dv2').value='2'; document.querySelector('[data-act=dev-roll]').click()`);
+  await until(() => L.ev(`!__phogiay.app.animating && __phogiay.app.truth.phase === 'buy'`), 5000);
+  check(await L.ev(`__phogiay.app.truth.players[0].pos === 3`), 'ván thử: đặt xúc xắc 1+2 → ô 3');
+  await L.shot('local-game.png');
+  check(await L.ev(`!!document.querySelector('[data-act=exit]')`), 'ván thử: có nút thoát');
+  await L.ev(`document.querySelector('[data-act=exit]').click()`);
+  check(await until(() => L.ev(`__phogiay.app.screen === 'home' && !!document.getElementById('resume-local')`), 3000), 'ván thử: thoát về trang đầu, có nút tiếp tục');
+
+  // ---------- 2. online hai máy ----------
+  const A = await openPage(BASE), B = await openPage(BASE);
+  const online = await A.ev('typeof Peer === "function"');
+  if (!online) { check(false, 'online: không tải được PeerJS (cần internet)'); throw new Error('bỏ qua phần online'); }
+  const code = 'T' + Math.random().toString(36).slice(2, 6).toUpperCase().replace(/[^A-Z0-9]/g, 'X');
+  await A.ev(`__phogiay.startHost('Lan', '${code}')`);
+  check(await until(() => A.ev('__phogiay.app.net.isOpen()')), `online: mở phòng ${code}`);
+  await B.ev(`__phogiay.startGuest('Minh', '${code}')`);
+  check(await until(() => A.ev('__phogiay.app.seats.length === 2')), 'online: khách vào phòng');
+  await sleep(400); await B.shot('online-lobby-guest.png');
+  await A.ev('__phogiay.startOnlineGame()');
+  check(await until(() => B.ev(`__phogiay.app.screen === 'game' && __phogiay.app.me === 1`)), 'online: khách nhận bàn cờ');
+  await B.ev(`__phogiay.act({ type: 'roll' })`); await sleep(800);
+  check(await A.ev(`__phogiay.app.truth.turn === 0 && __phogiay.app.truth.phase === 'roll'`), 'online: khách lăn trái lượt bị chặn');
+  for (let k = 0; k < 24; k++) {
+    const st = await A.ev('({ turn: __phogiay.app.truth.turn, phase: __phogiay.app.truth.phase })');
+    const W = st.turn === 0 ? A : B, type = st.phase === 'roll' ? 'roll' : st.phase === 'buy' ? 'buy' : 'end';
+    await until(() => W.ev('!__phogiay.app.animating'), 8000);
+    await W.ev(`__phogiay.act({ type: '${type}' })`);
+    await sleep(type === 'roll' ? 600 : 250);
+  }
+  await until(() => B.ev('!__phogiay.app.animating'), 8000); await sleep(500);
+  const pick = 'JSON.stringify({ m: __phogiay.app.truth.players.map(p => p.money), o: __phogiay.app.truth.owner, r: __phogiay.app.truth.round })';
+  const sa = await A.ev(pick), sb = await B.ev(pick);
+  check(sa === sb, `online: hai máy cùng trạng thái ${sa}`);
+  await B.shot('online-game-guest.png');
+  await B.ev(`window.confirm = () => true; document.querySelector('[data-act=exit]').click()`);
+  check(await until(() => A.ev(`__phogiay.app.truth.players[1].online === false`), 8000), 'online: khách rời phòng → chủ phòng thấy mất kết nối');
+} catch (e) {
+  if (e.message !== 'bỏ qua phần online') { console.log('✗ lỗi:', e.message); failed++; }
+}
+ws.close(); br.kill();
+console.log(failed ? `\n${failed} kiểm tra thất bại` : '\nTất cả kiểm tra đều qua');
+process.exit(failed ? 1 : 0);

@@ -1,6 +1,8 @@
 # RELEASE — Phiên bản, deploy, lịch sử và rollback
 
-> Quy trình này áp dụng từ v0.3.0. Những phần ghi **(từ 0.3.0)** chưa có, sẽ được làm trong phiên bản "Nền móng" (`ROADMAP.md`).
+> Áp dụng từ v0.3.0.
+>
+> ⚠️ **Làm một lần:** GitHub → repo → **Settings → Pages → Build and deployment → Source: GitHub Actions**. Chưa đổi thì Pages vẫn đọc thẳng nhánh `main` (không có `/v/`, `/next/`, `/versions/`), và workflow Deploy báo lỗi.
 
 ---
 
@@ -44,20 +46,32 @@ hotfix/…                       (từ tag) ─→ PR thẳng vào main khi có 
 | Môi trường | Địa chỉ | Nguồn | Ai dùng |
 |---|---|---|---|
 | Dev (máy bạn) | http://127.0.0.1:5173/src/ | thư mục làm việc | bạn, khi đang code |
-| Next (thử) **(từ 0.3.0)** | https://nghdc.github.io/HopeY/next/ | nhánh `dev` | thử trước khi phát hành |
+| Lịch sử | https://nghdc.github.io/HopeY/versions/ | tag + CHANGELOG | xem mọi phiên bản |
+| Next (thử) | https://nghdc.github.io/HopeY/next/ | nhánh `dev` | thử trước khi phát hành |
 | Bản chính | https://nghdc.github.io/HopeY/ | tag được chọn làm bản chính | người chơi |
-| Lưu trữ **(từ 0.3.0)** | https://nghdc.github.io/HopeY/v/0.2.0/ … | mỗi tag | xem / chơi lại bản cũ |
+| Lưu trữ | https://nghdc.github.io/HopeY/v/0.2.0/ … | mỗi tag | xem / chơi lại bản cũ |
 
 ### Chạy bản dev trên máy
 
 ```bash
 cd "C:/Users/Admin/Documents/How to live/Monopoly"
-python -m http.server 5173 --bind 127.0.0.1
+npm run dev          # = python -m http.server 5173 --bind 127.0.0.1
 ```
 
-Mở http://127.0.0.1:5173/src/. Để thử chơi online một mình: mở **hai tab** (hoặc một tab thường + một tab ẩn danh), tab 1 tạo phòng, tab 2 dán link vào. Các tab có phiên riêng nên được tính là hai người chơi khác nhau.
+| Muốn | Mở |
+|---|---|
+| Sửa luật / UI nhanh, không cần phòng | http://127.0.0.1:5173/src/?local=3 (3 người, có công cụ dev) |
+| Trang đầu | http://127.0.0.1:5173/src/ |
+| Thử online một mình | 2 tab: tab 1 tạo phòng, tab 2 dán link (mỗi tab là một người) |
 
-> Server dev chỉ nghe ở `127.0.0.1`, máy khác trong mạng không vào được. PeerJS vẫn cần internet để các tab tìm thấy nhau.
+Sửa file xong chỉ cần tải lại trang (Ctrl + R). Ván thử được lưu, tải lại vẫn tiếp tục.
+
+### Test
+
+```bash
+npm test             # luật + giả lập 300 ván bot (không cần trình duyệt)
+npm run e2e          # trình duyệt thật: ván thử + online 2 máy (cần npm run dev và internet)
+```
 
 ---
 
@@ -65,10 +79,10 @@ Mở http://127.0.0.1:5173/src/. Để thử chơi online một mình: mở **ha
 
 Checklist (chép vào mô tả Pull Request `dev → main`):
 
-- [ ] Test chạy xanh (`node --test`, e2e online) **(từ 0.3.0)**
+- [ ] Test chạy xanh (`node --test`, e2e online)
 - [ ] Đã chơi thử trên `/next/` với ít nhất 2 máy
 - [ ] `CHANGELOG.md`: chuyển mục **Chưa phát hành** thành `## [X.Y.Z] — YYYY-MM-DD`
-- [ ] Cập nhật `APP_VERSION` (và `PROTOCOL_VERSION` / `schemaVersion` nếu đổi)
+- [ ] Cập nhật `APP_VERSION` trong `src/core/version.js` và `version` trong `package.json` (và `PROTOCOL_VERSION` / `SCHEMA_VERSION` nếu đổi)
 - [ ] Merge PR vào `main`
 - [ ] Gắn tag và đẩy lên:
   ```bash
@@ -76,7 +90,7 @@ Checklist (chép vào mô tả Pull Request `dev → main`):
   git tag -a v0.3.0 -m "v0.3.0 — Nền móng"
   git push origin v0.3.0
   ```
-- [ ] Workflow deploy tự chạy **(từ 0.3.0)**: cập nhật `/`, thêm `/v/0.3.0/`, tạo GitHub Release từ CHANGELOG
+- [ ] Workflow **Release** tự chạy: tạo GitHub Release từ CHANGELOG, rồi gọi **Deploy**: cập nhật `/`, thêm `/v/0.3.0/`, cập nhật `/versions/`
 - [ ] Mở bản chính, tạo một phòng thử, xem chân trang đúng số phiên bản
 
 ---
@@ -85,14 +99,20 @@ Checklist (chép vào mô tả Pull Request `dev → main`):
 
 Chọn mức nhẹ nhất giải quyết được vấn đề.
 
-### Mức 1 — Đưa bản chính về phiên bản cũ (không sửa code) **(từ 0.3.0)**
+### Mức 1 — Đưa bản chính về phiên bản cũ (không sửa code)
 Dùng khi bản vừa phát hành hỏng và cần người chơi dùng được ngay.
 
-1. GitHub → **Actions** → **Deploy** → **Run workflow**
-2. Ô `current`: nhập tag tốt gần nhất, ví dụ `v0.2.0` → **Run**
-3. Khoảng 1–2 phút sau, `https://nghdc.github.io/HopeY/` chạy bản `v0.2.0`. Các bản `/v/*` khác giữ nguyên.
+**Cách A, lâu dài (khuyên dùng):**
+1. GitHub → mở file `deploy/current.txt` trên nhánh `main` → bấm ✏️
+2. Đổi `latest` thành tag tốt gần nhất, ví dụ `v0.2.0` → **Commit changes**
+3. Workflow Deploy tự chạy; khoảng 1–2 phút sau bản chính là `v0.2.0`
+4. Sửa lỗi xong, phát hành bản mới thì đổi lại thành `latest`
 
-Trong lúc chờ, người chơi có thể mở thẳng `/v/0.2.0/`.
+> Khi file đang ghi một tag cụ thể, phát hành tag mới **không** đổi bản chính. Đây là cố ý: tránh vô tình đưa bản lỗi trở lại.
+
+**Cách B, tạm thời:** GitHub → **Actions** → **Deploy** → **Run workflow** → ô `current` nhập `v0.2.0`. Lần deploy sau (push lên `main`) sẽ quay về theo `deploy/current.txt`.
+
+Trong lúc chờ, người chơi có thể mở thẳng `/v/0.2.0/src/`. Trang `/versions/` ghi rõ bản nào đang là bản chính.
 
 ### Mức 2 — Sửa bằng commit đảo ngược (revert)
 Dùng khi đã biết commit gây lỗi.
@@ -123,10 +143,7 @@ git switch dev                 # quay lại làm việc
 
 ### Ván đang chơi khi rollback
 - Ván được lưu ở trình duyệt của **chủ phòng**, theo mã phòng.
-- Rollback về bản có `schemaVersion` thấp hơn sẽ **không** mở được ván tạo bởi bản mới. Bản cũ sẽ tự bắt đầu ván mới thay vì báo lỗi **(từ 0.3.0)**.
-
-### Hiện tại (0.2.x, chưa có workflow)
-GitHub Pages đang đọc thẳng nhánh `main`. Cách rollback tạm thời: dùng **Mức 2** (`git revert` rồi `git push`), trang tự cập nhật sau 1–2 phút.
+- Rollback về bản có `schemaVersion` thấp hơn sẽ **không** mở được ván tạo bởi bản mới. Bản cũ sẽ tự bắt đầu ván mới thay vì báo lỗi.
 
 ---
 
@@ -136,7 +153,7 @@ GitHub Pages đang đọc thẳng nhánh `main`. Cách rollback tạm thời: d�
 |---|---|
 | `CHANGELOG.md` | mỗi phiên bản: thêm / đổi / sửa / bỏ, ngày phát hành, viết cho người đọc |
 | git tag `vX.Y.Z` | đúng mã nguồn của từng phiên bản, không bao giờ xóa |
-| GitHub Releases | ghi chú phát hành, ảnh chụp màn hình **(từ 0.3.0)** |
+| GitHub Releases | ghi chú phát hành, ảnh chụp màn hình |
 | `docs/DECISIONS.md` | các quyết định lớn và **lý do**: tại sao chọn PeerJS, tại sao đổi font… |
-| `/v/X.Y.Z/` | bản chạy được của mọi phiên bản **(từ 0.3.0)** |
+| `/v/X.Y.Z/` | bản chạy được của mọi phiên bản |
 | Commit message | tiếng Việt, câu đầu tóm tắt ≤ 72 ký tự, phần sau giải thích vì sao |

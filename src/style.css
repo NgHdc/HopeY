@@ -152,6 +152,19 @@ button { font: inherit; color: inherit; }
 .row { display: flex; gap: 8px; }
 .small { font: var(--fs-label) var(--font-mono); color: var(--ink-2); margin: 14px 0 0; }
 
+/* thanh trên cùng cột phải: luôn có nút thoát */
+.side-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding-bottom: 8px; border-bottom: .5px solid var(--neutral); }
+
+/* công cụ dev (chỉ ván thử) */
+.dev { border: 1px dashed var(--ink-2); padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; }
+.dev select { font: 12px var(--font-mono); border: 1px solid var(--ink); background: var(--paper); padding: 3px 4px; border-radius: 0; }
+
+/* ván thử trên máy (trang đầu) */
+.local-box { margin-top: 20px; padding-top: 14px; border-top: .5px solid var(--ink); }
+.local-box .count { margin: 10px 0 8px; }
+.check { display: flex; align-items: center; gap: 6px; font: var(--fs-label) var(--font-mono); color: var(--ink-2); margin-bottom: 12px; }
+.small a { color: inherit; }
+
 /* sảnh online */
 .field { display: flex; flex-direction: column; gap: 2px; border-bottom: .5px solid var(--ink); padding: 6px 0; margin: 14px 0 16px; }
 .field input { border: 0; background: transparent; font: 700 18px var(--font-sans); color: var(--ink); outline: none; padding: 2px 0; }

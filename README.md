@@ -34,7 +34,10 @@ docs/STYLE_GUIDE.md     hệ thiết kế: màu, chữ, bàn cờ, thẻ, tiền
 design/tokens.css       token màu / chữ dùng trong code
 assets/photos/          ảnh thật (có credit)
 assets/illustrations/   hình SVG trừu tượng
-src/                    bản chơi trên web (index.html · style.css · game.js)
+src/                    game web: core/ (luật) · net/ (online) · ui/ (vẽ) · main.js
+tests/                  test luật, giả lập, e2e trình duyệt
+scripts/                dựng trang deploy, trang phiên bản
+deploy/current.txt      bản chính đang chạy (latest hoặc một tag) → rollback
 ```
 
 ## Kế hoạch & lịch sử
@@ -42,13 +45,17 @@ src/                    bản chơi trên web (index.html · style.css · game.j
 - [`docs/ROADMAP.md`](docs/ROADMAP.md): các phiên bản từ 0.3.0 tới 1.0.0
 - [`CHANGELOG.md`](CHANGELOG.md): thay đổi của từng phiên bản
 - [`docs/RELEASE.md`](docs/RELEASE.md): chạy bản dev, phát hành, **rollback**
+- Mọi phiên bản (chơi được): https://nghdc.github.io/HopeY/versions/
 - [`docs/DECISIONS.md`](docs/DECISIONS.md): các quyết định lớn và lý do
 
-## Chạy trên máy
+## Chạy trên máy (bản dev)
 
 ```bash
-python -m http.server 5173 --bind 127.0.0.1
+npm run dev       # hoặc: python -m http.server 5173 --bind 127.0.0.1
 ```
-Mở http://127.0.0.1:5173/src/ (thử online một mình: mở 2 tab).
+
+- **Thử nhanh không cần phòng:** http://127.0.0.1:5173/src/?local=3 (bạn điều khiển cả 3 người, có công cụ dev)
+- Trang đầu: http://127.0.0.1:5173/src/
+- Test: `npm test` · kiểm thử trình duyệt: `npm run e2e`
 
 Phong cách gốc: `../Slide_Style_Guide_Swiss_Paper.md`.
