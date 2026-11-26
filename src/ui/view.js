@@ -1,25 +1,27 @@
 // Hàm vẽ thuần: nhận trạng thái + ngữ cảnh, trả về chuỗi HTML. Không đọc/ghi DOM.
-// ctx = { me, mine, mode: 'local'|'host'|'guest', room, status, dev, version, viewOverride, pos }
-import { TILES, DISTRICTS, CUR, BAIL, buyable, unmortCost } from '../core/board.js';
+// Bố cục theo mockup 0.4 "Giấy mới". Màu/font: design/tokens.css (qua class trong style.css).
+import { TILES, DISTRICTS, CUR, BAIL, SALARY, START_MONEY, buyable, group, unmortCost } from '../core/board.js';
 import { CARDS } from '../core/cards.js';
-import { ownsGroup, ownedOfType, canManage } from '../core/rules.js';
+import { ownsGroup, ownedOfType, canManage, rentFor, netWorth } from '../core/rules.js';
 
 export const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export const pad = n => String(n + 1).padStart(2, '0');
+const money = n => (n < 0 ? '−' : '') + Math.abs(n).toLocaleString('vi-VN').replace(/\./g, ' ');
 
 // ---------- quân cờ ----------
 export const PIECES = [
-  { n: 'tròn', c: 'var(--accent)', s: '<circle cx="8" cy="8" r="6"/>' },
-  { n: 'tam giác', c: 'var(--accent-2)', s: '<path d="M8 2 L14.5 14 H1.5Z"/>' },
-  { n: 'vuông', c: 'var(--cool-1)', s: '<rect x="2.5" y="2.5" width="11" height="11"/>' },
-  { n: 'lục giác', c: 'var(--cool-2)', s: '<path d="M8 1.5 L13.6 4.75 V11.25 L8 14.5 L2.4 11.25 V4.75Z"/>' },
-  { n: 'ngôi nhà', c: 'var(--ink)', s: '<path d="M2 8 L8 2.5 L14 8 V14 H2Z"/>' },
-  { n: 'chiếc lá', c: 'var(--d7)', s: '<path d="M2 14 C2 6 6 2 14 2 C14 10 10 14 2 14Z"/>' },
+  { n: 'tròn', s: '<circle cx="8" cy="8" r="6.5"/><circle cx="8" cy="8" r="2.4" fill="none" stroke="var(--paper)" stroke-width=".8"/>' },
+  { n: 'tam giác', s: '<path d="M8 1.5 L15 14.5 H1Z"/><line x1="8" y1="6" x2="8" y2="12" stroke="var(--ink)" stroke-width=".6"/>' },
+  { n: 'vuông', s: '<rect x="2" y="2" width="12" height="12"/><path d="M2 8 H14 M8 2 V14" stroke="var(--paper)" stroke-width=".6"/>' },
+  { n: 'lục giác', s: '<path d="M8 1 L14.1 4.5 V11.5 L8 15 L1.9 11.5 V4.5Z"/><circle cx="8" cy="8" r="1.6" fill="var(--paper)"/>' },
+  { n: 'ngôi nhà', s: '<path d="M1.5 7.5 L8 2 L14.5 7.5 V14.5 H1.5Z"/><rect x="6.5" y="9.5" width="3" height="5" fill="var(--accent-2)"/>' },
+  { n: 'chiếc lá', s: '<path d="M1.5 14.5 C1.5 6 6 1.5 14.5 1.5 C14.5 10 10 14.5 1.5 14.5Z"/><path d="M2.5 13.5 L11 5" stroke="var(--paper)" stroke-width=".7"/>' },
 ];
-export const pieceSvg = (k, sz) =>
-  `<svg class="piece" width="${sz}" height="${sz}" viewBox="0 0 16 16" style="fill:${PIECES[k].c};stroke:var(--paper);stroke-width:1.2" aria-label="${PIECES[k].n}">${PIECES[k].s}</svg>`;
+export const pieceColor = k => `var(--piece-${k})`;
+export const pieceSvg = (k, sz, label = true) =>
+  `<svg class="piece" width="${sz}" height="${sz}" viewBox="0 0 16 16" style="fill:${pieceColor(k)}" ${label ? `role="img" aria-label="quân ${PIECES[k].n}"` : 'aria-hidden="true"'}>${PIECES[k].s}</svg>`;
 
-// ---------- bàn cờ ----------
+// ---------- ô ----------
 function cell(i) {
   if (i === 0) return [11, 11];
   if (i < 10) return [11, 11 - i];
@@ -30,74 +32,197 @@ function cell(i) {
   if (i === 30) return [1, 11];
   return [1 + (i - 30), 11];
 }
-const swClass = t => t.type === 'prop' ? 'd' + t.d : t.type === 'station' ? 'st' : t.type === 'util' ? 'ut' : t.type === 'tax' ? 'tx' : t.type === 'card' ? (t.deck === 'q' ? 'cq' : 'ch') : '';
+export const swClass = t => t.type === 'prop' ? 'd' + t.d : t.type === 'station' ? 'st' : t.type === 'util' ? 'ut' : t.type === 'tax' ? 'tx' : t.type === 'card' ? (t.deck === 'q' ? 'cq' : 'ch') : '';
+const CORNER_NOTE = { home: `Đi qua nhận ${SALARY} ${CUR}`, jail: 'Ghé chơi hoặc bị giữ', park: 'Ngồi xuống, thở chậm', lost: 'Về Trạm Nghỉ' };
 
-const ICONS = {
-  home: '<svg class="icon" viewBox="0 0 60 44"><circle cx="46" cy="12" r="7" fill="var(--accent-2)"/><path d="M8 24 L22 12 L36 24 V40 H8Z" fill="none" stroke="var(--ink)" stroke-width="1"/><rect x="18" y="30" width="8" height="10" fill="var(--ink)"/><line x1="0" y1="40" x2="60" y2="40" stroke="var(--ink)" stroke-width=".6"/></svg>',
-  jail: '<svg class="icon" viewBox="0 0 60 44"><line x1="6" y1="30" x2="54" y2="30" stroke="var(--ink)" stroke-width="2"/><line x1="12" y1="30" x2="12" y2="40" stroke="var(--ink)"/><line x1="48" y1="30" x2="48" y2="40" stroke="var(--ink)"/><circle cx="22" cy="12" r="3.2" fill="var(--ink)"/><path d="M22 15 V28 M17 20 H27" stroke="var(--ink)"/><circle cx="38" cy="12" r="3.2" fill="var(--ink)"/><path d="M38 15 V28 M33 20 H43" stroke="var(--ink)"/><rect x="34" y="6" width="8" height="2" fill="var(--accent-2)"/></svg>',
-  park: '<svg class="icon" viewBox="0 0 60 44"><defs><pattern id="h45" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="4" stroke="var(--neutral)" stroke-width="1.4"/></pattern></defs><rect x="0" y="34" width="60" height="10" fill="url(#h45)"/><circle cx="22" cy="16" r="12" fill="var(--cool-2)"/><line x1="22" y1="26" x2="22" y2="38" stroke="var(--ink)" stroke-width="1.4"/><circle cx="44" cy="22" r="3" fill="var(--ink)"/><path d="M44 25 V36 M40 29 H48" stroke="var(--ink)"/></svg>',
-  lost: '<svg class="icon" viewBox="0 0 60 44"><path d="M6 36 C14 6 26 40 32 18 S48 4 52 22" fill="none" stroke="var(--ink)" stroke-width="1" stroke-dasharray="2 3"/><path d="M52 22 L47 20 L52 29 L56 20Z" fill="var(--accent)"/><circle cx="6" cy="36" r="3" fill="var(--ink)"/></svg>',
-};
+export const currentView = (S, ctx) => ctx.viewOverride || S.view;
+const btn = (act, label, cls = '', { arg = '', disabled = false, id = '' } = {}) =>
+  `<button type="button" class="btn ${cls}" data-act="${act}"${arg !== '' ? ` data-arg="${arg}"` : ''}${id ? ` id="${id}"` : ''}${disabled ? ' disabled' : ''}>${label}</button>`;
 
-export function currentView(S, ctx) { return ctx.viewOverride || S.view; }
+// ============ TRANG ĐẦU ============
+const CITY = `<svg viewBox="0 0 640 560" aria-hidden="true">
+  <defs>
+    <pattern id="h1" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="var(--d1)"/><line x1="0" y1="0" x2="0" y2="7" stroke="var(--paper)" stroke-width="1.4" opacity=".55"/></pattern>
+    <pattern id="h2" width="7" height="7" patternUnits="userSpaceOnUse"><rect width="7" height="7" fill="var(--d2)"/><circle cx="3.5" cy="3.5" r="1.1" fill="var(--ink)" opacity=".55"/></pattern>
+    <pattern id="h3" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="var(--d3)"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--ink)" stroke-width="1.2" opacity=".4"/></pattern>
+    <pattern id="h4" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="var(--d4)"/><line x1="0" y1="0" x2="6" y2="0" stroke="var(--paper)" stroke-width="1.2" opacity=".55"/></pattern>
+    <pattern id="h5" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="var(--d5)"/><path d="M0 0 L8 8 M8 0 L0 8" stroke="var(--paper)" stroke-width="1" opacity=".45"/></pattern>
+    <pattern id="h6" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="var(--d6)"/><circle cx="5" cy="5" r="2" fill="var(--ink)" opacity=".5"/></pattern>
+    <pattern id="h7" width="10" height="6" patternUnits="userSpaceOnUse"><rect width="10" height="6" fill="var(--d7)"/><path d="M0 4 Q2.5 1 5 4 T10 4" fill="none" stroke="var(--paper)" stroke-width="1" opacity=".55"/></pattern>
+    <pattern id="sand" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="var(--neutral)" stroke-width="1.4"/></pattern>
+  </defs>
+  <g stroke="var(--ink)" stroke-width=".5" opacity=".35"><line x1="0" y1="80" x2="640" y2="80"/><line x1="0" y1="200" x2="640" y2="200"/><line x1="0" y1="440" x2="640" y2="440"/><line x1="120" y1="0" x2="120" y2="560"/><line x1="320" y1="0" x2="320" y2="560"/><line x1="520" y1="0" x2="520" y2="560"/></g>
+  <path d="M0 360 C120 330 200 400 330 372 S540 330 640 352 L640 408 C540 386 450 430 330 420 S110 384 0 410Z" fill="var(--cool-2-l)"/>
+  <path d="M0 384 C120 356 200 420 330 396 S540 356 640 378" fill="none" stroke="var(--cool-2)" stroke-width="1"/>
+  <path d="M20 396 q10 -4 20 0 t20 0 t20 0 M380 404 q10 -4 20 0 t20 0 t20 0 M520 386 q10 -4 20 0 t20 0" fill="none" stroke="var(--cool-2)" stroke-width=".7"/>
+  <rect x="40" y="220" width="120" height="100" fill="url(#h1)" stroke="var(--ink)" stroke-width=".6"/>
+  <rect x="180" y="250" width="90" height="70" fill="url(#h3)" stroke="var(--ink)" stroke-width=".6"/>
+  <rect x="290" y="150" width="70" height="170" fill="url(#h5)" stroke="var(--ink)" stroke-width=".6"/>
+  <circle cx="325" cy="122" r="18" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+  <rect x="380" y="230" width="110" height="90" fill="url(#h4)" stroke="var(--ink)" stroke-width=".6"/>
+  <path d="M500 320 L560 240 L620 320Z" fill="url(#h6)" stroke="var(--ink)" stroke-width=".6"/>
+  <circle cx="590" cy="110" r="30" fill="var(--accent-2)"/>
+  <rect x="60" y="450" width="160" height="70" fill="url(#h7)" stroke="var(--ink)" stroke-width=".6"/>
+  <circle cx="270" cy="470" r="32" fill="var(--d7)"/><line x1="270" y1="500" x2="270" y2="525" stroke="var(--ink)" stroke-width="1.2"/>
+  <rect x="340" y="440" width="120" height="80" fill="url(#h2)" stroke="var(--ink)" stroke-width=".6"/>
+  <rect x="490" y="455" width="130" height="65" fill="var(--d8)"/><path d="M555 455 V425 M545 425 H565" stroke="var(--ink)" stroke-width="1.2"/>
+  <rect x="0" y="525" width="640" height="35" fill="url(#sand)"/>
+  <line x1="0" y1="525" x2="640" y2="525" stroke="var(--ink)" stroke-width=".8"/><line x1="0" y1="320" x2="640" y2="320" stroke="var(--ink)" stroke-width=".8"/>
+  <g fill="none" stroke="var(--ink)" stroke-width="1.2">
+    <circle cx="200" cy="300" r="4" fill="var(--ink)"/><path d="M200 304 V314 M194 308 H206 M200 314 L196 320 M200 314 L204 320"/>
+    <circle cx="420" cy="500" r="4" fill="var(--ink)"/><path d="M420 504 V514 M414 508 H426 M420 514 L416 520 M420 514 L424 520"/>
+    <circle cx="610" cy="300" r="4" fill="var(--ink)"/><path d="M610 304 V314 M604 308 H616 M610 314 L606 320 M610 314 L614 320"/>
+  </g>
+  <path d="M192 293 L200 287 L208 293Z M412 493 L420 487 L428 493Z" fill="var(--accent-2)"/>
+  <g stroke="var(--ink)" stroke-width=".8"><path d="M14 14 V30 M6 22 H22 M626 14 V30 M618 22 H634 M14 530 V546 M6 538 H22 M626 530 V546 M618 538 H634"/></g>
+  <g font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink-2)">
+    <text x="40" y="214">ngõ đất</text><text x="330" y="144">phố cổ</text><text x="380" y="224">phố nghề</text><text x="500" y="234">đồi nắng</text>
+    <text x="60" y="444">vườn xanh</text><text x="340" y="434">bến sông</text><text x="490" y="449">cảng biển</text><text x="180" y="244">chợ hoa</text>
+  </g>
+</svg>`;
 
-export function boardHtml(S, ctx) {
-  const v = currentView(S, ctx), sel = v.kind === 'tile' ? v.i : -1;
+export function homeHtml({ name, code, online, hasLocalSave, devDefault, version }) {
+  return `<main class="home">
+    <section class="home-art" aria-label="Bản đồ Phố Giấy">
+      <div class="strip"><span>Phố Giấy / Bản đồ</span><span>8 quận · 40 ô</span></div>
+      ${CITY}
+      <p class="human">Một con sông, tám khu phố, và những người que nhỏ đang chờ hàng xóm mới.</p>
+    </section>
+    <section class="home-form">
+      <div class="strip"><span>Phố Giấy / Bắt đầu</span><span>v${version}</span></div>
+      <div class="home-head">
+        <span class="kicker">Ai sẽ sống ở phố này?</span>
+        <h1 class="h1">Phố<br>Giấy</h1>
+        <p class="human">Mỗi người một máy, chung một con phố. Mua đất, xây nhà, đừng quên chào hàng xóm.</p>
+      </div>
+      <label class="field"><span class="label">tên của bạn</span><input id="nm" maxlength="14" value="${esc(name)}" placeholder="ví dụ: Lan" autocomplete="nickname"></label>
+      ${!online ? '<p class="label">Không tải được thư viện kết nối nên chưa chơi online được (kiểm tra mạng). Vẫn chơi thử trên máy này được.</p>' : `
+      <div class="join-grid">
+        <div>
+          <span class="label">01 · mở phòng mới</span>
+          <p>Nhận một mã 5 ký tự, gửi link cho bạn bè.</p>
+          <button type="button" class="btn primary" id="create">Tạo phòng mới</button>
+        </div>
+        <div>
+          <span class="label">02 · vào phòng bạn bè</span>
+          <label style="display:flex;flex-direction:column;gap:4px"><span>Mã phòng</span><input id="code" class="code-in" maxlength="5" placeholder="K7Q2M" value="${esc(code)}" autocomplete="off"></label>
+          <button type="button" class="btn" id="join">Vào phòng</button>
+        </div>
+      </div>`}
+      <p class="err label" id="err" role="alert"></p>
+      <div class="local-box">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap">
+          <span class="kicker" style="color:var(--ink)">Thử trên một máy</span>
+          <span class="label">không cần mạng · bạn điều khiển mọi người</span>
+        </div>
+        <div class="local-row">
+          <div class="seg" role="group" aria-label="Số người chơi" id="count">${[2, 3, 4, 5, 6].map(n => `<button type="button" data-n="${n}" class="${n === 3 ? 'on' : ''}" aria-pressed="${n === 3}">${n}</button>`).join('')}</div>
+          <label class="check"><input type="checkbox" id="devchk" ${devDefault ? 'checked' : ''}>công cụ dev</label>
+          <button type="button" class="btn sm" id="local">Chơi thử ngay</button>
+          ${hasLocalSave ? '<button type="button" class="btn ghost sm" id="resume-local">Tiếp tục ván thử</button>' : ''}
+        </div>
+      </div>
+      <div class="foot"><span>Phố Giấy v${version} · board game mua bán xây phố</span><span><a href="#" data-act="rules">Luật chơi</a> · <a href="../versions/">Các phiên bản</a></span></div>
+    </section>
+  </main>`;
+}
+
+// ============ SẢNH CHỜ ============
+export function lobbyHtml({ room, url, seats, me, isHost, canStart, status, statusOk }) {
+  const taken = new Set(seats.map(x => x.piece));
+  const mine = seats[me];
+  const offline = seats.filter(x => x.online === false).map(x => x.name);
+  return `<main class="page">
+    <div class="topline">
+      <span class="t">Phố Giấy / Sảnh chờ</span>
+      <div class="r"><span class="label ${statusOk ? 'ok' : 'bad'}">● ${esc(status)}</span>${btn('exit', 'Rời phòng', 'xs')}</div>
+    </div>
+    <div class="lobby">
+      <section class="left">
+        <span class="kicker">Ai đã đến?</span>
+        <div><span class="label">mã phòng</span><div class="room-code">${esc(room)}</div></div>
+        <p class="human">Gửi mã hoặc đường link cho bạn bè. Ai mở trên máy mình là vào được phòng.</p>
+        <div class="copy-row"><label class="sr" for="roomlink">Link phòng</label><input id="roomlink" class="link" readonly value="${esc(url)}"><button type="button" class="btn dark" id="copy">Sao chép link</button></div>
+        <div class="rules-box">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span class="kicker" style="color:var(--ink)">Luật ván này</span><span class="label">chỉnh được ở bản 0.5</span></div>
+          <div class="grid"><div><span class="label">tiền khởi đầu</span><span>${money(START_MONEY)}</span></div><div><span class="label">lương qua Nhà</span><span>${SALARY}</span></div><div><span class="label">đấu giá</span><span>chưa có</span></div><div><span class="label">giới hạn giờ</span><span>không</span></div></div>
+        </div>
+      </section>
+      <section class="right">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><h2 class="h3" style="font-size:24px">Ghế quanh bàn</h2><span class="label">${seats.length} / 6</span></div>
+        <div class="seats">
+          ${seats.map((x, k) => `<div class="seat">${pieceSvg(x.piece, 40)}<div style="display:flex;flex-direction:column;gap:2px"><span class="nm">${esc(x.name)}${k === me ? ' <small class="label">(bạn)</small>' : ''}</span><span class="label ${x.online === false ? 'bad' : k === 0 ? '' : 'ok'}">${k === 0 ? 'chủ phòng' : x.online === false ? 'đang nối lại…' : 'đã vào'}</span></div></div>`).join('')}
+          ${Array.from({ length: Math.max(0, 6 - seats.length) }, () => '<div class="seat empty">ghế trống</div>').join('')}
+        </div>
+        ${mine ? `<div style="display:flex;flex-direction:column;gap:10px;border-top:var(--hair) solid var(--neutral);padding-top:16px">
+          <span style="font-size:13px;font-weight:600">Chọn quân cờ của bạn</span>
+          <div class="pick" role="radiogroup" aria-label="Quân cờ">${PIECES.map((p, k) => {
+            const chosen = mine.piece === k, busy = taken.has(k) && !chosen;
+            return `<button type="button" role="radio" aria-checked="${chosen}" aria-label="${p.n}${busy ? ', đã có người chọn' : ''}" data-act="piece" data-arg="${k}" ${busy ? 'disabled' : ''}>${pieceSvg(k, 30, false)}</button>`;
+          }).join('')}</div>
+        </div>` : ''}
+        <div class="go-row">
+          ${isHost ? btn('start', `Bắt đầu ván · ${seats.length} người`, 'primary lg', { disabled: !canStart, id: 'go' }) : '<span class="label">chờ chủ phòng bắt đầu ván…</span>'}
+          <span class="human" style="font-size:14px">${isHost && seats.length < 2 ? 'Cần ít nhất 2 người.' : offline.length ? `${esc(offline.join(', '))} đang nối lại. Bắt đầu bây giờ vẫn vào được khi nối xong.` : ''}</span>
+        </div>
+      </section>
+    </div>
+  </main>`;
+}
+
+// ============ BÀN CỜ ============
+function tileHtml(S, ctx, t, i, sel) {
+  const [r, c] = cell(i);
   const pos = k => (ctx.pos && ctx.pos[k] != null ? ctx.pos[k] : S.players[k].pos);
-  let html = '';
-  TILES.forEach((t, i) => {
-    const [r, c] = cell(i);
-    const here = S.players.map((p, k) => (!p.out && pos(k) === i ? pieceSvg(p.piece, 15) : '')).join('');
-    const o = S.owner[i], h = S.houses[i] || 0;
-    const cls = ['tile', t.type === 'corner' ? 'corner' : '', i === sel ? 'sel' : '', S.mort[i] ? 'mort' : ''].join(' ');
-    const style = `grid-row:${r};grid-column:${c}`;
-    if (t.type === 'corner') {
-      html += `<div class="${cls}" style="${style}" data-tile="${i}" title="${esc(t.name)}">
-        <span class="big">${pad(i)}</span><div class="t-name">${t.name}</div>${ICONS[t.key]}<div class="pieces">${here}</div></div>`;
-      return;
-    }
-    const price = buyable(t) ? t.price : t.type === 'tax' ? '−' + t.amount : '?';
-    const houses = h === 5 ? '<b></b>' : '<i></i>'.repeat(h);
-    html += `<div class="${cls}" style="${style}" data-tile="${i}" title="${esc(t.name)}">
-      <div class="t-top"><span class="num">${pad(i)}</span><span class="sw ${swClass(t)}"></span></div>
-      <div class="t-name">${t.name}</div>
-      <div class="pieces">${here}</div>
-      <div class="t-bot"><span>${price}</span><span class="houses">${houses}</span>${o != null ? `<span class="own">${pieceSvg(S.players[o].piece, 10)}</span>` : ''}</div>
-    </div>`;
-  });
-  return html + centerHtml(S, ctx);
+  const here = S.players.map((p, k) => (!p.out && pos(k) === i ? pieceSvg(p.piece, 15) : '')).join('');
+  const o = S.owner[i], h = S.houses[i] || 0;
+  const cls = ['tile', t.type === 'corner' ? 'corner' : '', i === sel ? 'sel' : '', S.mort[i] ? 'mort' : ''].join(' ');
+  const label = `${t.name}${o != null ? ', của ' + S.players[o].name : ''}`;
+  const open = `<button type="button" class="${cls}" style="grid-row:${r};grid-column:${c}" data-tile="${i}" aria-label="${esc(label)}">`;
+  if (t.type === 'corner') {
+    return `${open}<span class="t-name">${t.name}</span><span class="t-note">${CORNER_NOTE[t.key]}</span><span class="big">${pad(i)}</span><span class="pieces">${here}</span></button>`;
+  }
+  const price = buyable(t) ? t.price : t.type === 'tax' ? '−' + t.amount : '?';
+  const houses = h === 5 ? '<b></b>' : '<i></i>'.repeat(h);
+  return `${open}
+    <span class="t-top"><span class="t-num">${pad(i)}</span><span class="sw ${swClass(t)}"></span></span>
+    <span class="t-name">${t.name}</span>
+    <span class="pieces">${here}</span>
+    <span class="t-bot"><span>${price}</span><span class="houses">${houses}</span><span class="own" style="background:${o != null ? pieceColor(S.players[o].piece) : 'transparent'}"></span></span>
+  </button>`;
 }
 
-function dieSvg(n) {
-  const P6 = { 1: [[8, 8]], 2: [[4, 4], [12, 12]], 3: [[4, 4], [8, 8], [12, 12]], 4: [[4, 4], [12, 4], [4, 12], [12, 12]], 5: [[4, 4], [12, 4], [8, 8], [4, 12], [12, 12]], 6: [[4, 4], [12, 4], [4, 8], [12, 8], [4, 12], [12, 12]] };
-  return `<svg class="die" viewBox="0 0 16 16">${P6[n].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.4" style="fill:${n === 1 ? 'var(--accent-2)' : 'var(--ink)'}"/>`).join('')}</svg>`;
+function dieSvg(n, label) {
+  const P6 = { 1: [[8, 8]], 2: [[4.5, 4.5], [11.5, 11.5]], 3: [[4.5, 4.5], [8, 8], [11.5, 11.5]], 4: [[4.5, 4.5], [11.5, 4.5], [4.5, 11.5], [11.5, 11.5]], 5: [[4.5, 4.5], [11.5, 4.5], [8, 8], [4.5, 11.5], [11.5, 11.5]], 6: [[4.5, 4.5], [11.5, 4.5], [4.5, 8], [11.5, 8], [4.5, 11.5], [11.5, 11.5]] };
+  return `<svg class="die" viewBox="0 0 16 16" role="img" aria-label="${label} ${n}"><rect x=".5" y=".5" width="15" height="15" fill="var(--paper)" stroke="var(--ink)" stroke-width=".6"/>${P6[n].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.3" fill="${n === 1 ? 'var(--accent-2)' : 'var(--ink)'}"/>`).join('')}</svg>`;
 }
 
-const SCENE = `<svg class="scene" viewBox="0 0 260 90" aria-hidden="true">
-  <line x1="0" y1="80" x2="260" y2="80" stroke="var(--ink)" stroke-width=".6"/>
-  <rect x="0" y="80" width="260" height="10" fill="var(--cool-2-l)"/>
-  <path d="M0 85 q10 -3 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0" fill="none" stroke="var(--cool-2)" stroke-width=".6"/>
-  <rect x="18" y="44" width="34" height="36" fill="none" stroke="var(--ink)" stroke-width=".7"/><path d="M14 44 L35 28 L56 44" fill="none" stroke="var(--ink)" stroke-width=".7"/>
-  <rect x="70" y="30" width="22" height="50" fill="var(--d5)"/><circle cx="81" cy="22" r="7" fill="none" stroke="var(--accent)" stroke-width="1"/>
-  <g stroke="var(--ink)" stroke-width=".5">${[0, 1, 2, 3, 4, 5].map(k => `<line x1="${104 + k * 5}" y1="50" x2="${104 + k * 5}" y2="80"/>`).join('')}</g>
-  <circle cx="170" cy="56" r="16" fill="var(--d7)"/><line x1="170" y1="70" x2="170" y2="80" stroke="var(--ink)"/>
-  <circle cx="222" cy="22" r="9" fill="var(--accent-2)"/>
-  <g stroke="var(--ink)" stroke-width="1" fill="none"><circle cx="140" cy="59" r="3" fill="var(--ink)"/><path d="M140 62 V72 M135 66 H145 M140 72 L136 80 M140 72 L144 80"/></g>
-  <path d="M133 57 L140 52 L147 57Z" fill="var(--accent-2)"/>
-  <g stroke="var(--ink)" stroke-width="1" fill="none"><circle cx="200" cy="61" r="2.6" fill="var(--ink)"/><path d="M200 64 V73 M196 67 H204 M200 73 L197 80 M200 73 L203 80"/></g>
+const SCENE = `<svg class="scene" viewBox="0 0 260 70" aria-hidden="true">
+  <line x1="0" y1="62" x2="260" y2="62" stroke="var(--ink)" stroke-width=".6"/>
+  <rect x="10" y="30" width="28" height="32" fill="none" stroke="var(--ink)" stroke-width=".7"/><path d="M6 30 L24 16 L42 30" fill="none" stroke="var(--ink)" stroke-width=".7"/>
+  <rect x="52" y="34" width="22" height="28" fill="none" stroke="var(--ink)" stroke-width=".7"/><path d="M49 34 L63 23 L77 34" fill="none" stroke="var(--ink)" stroke-width=".7"/>
+  <rect x="96" y="14" width="18" height="48" fill="var(--d5)"/><circle cx="105" cy="8" r="6" fill="none" stroke="var(--accent)" stroke-width="1"/>
+  <g fill="none" stroke="var(--ink)" stroke-width="1"><circle cx="150" cy="40" r="3" fill="var(--ink)"/><path d="M150 43 V53 M145 47 H155 M150 53 L146 61 M150 53 L154 61"/></g>
+  <path d="M143 38 L150 33 L157 38Z" fill="var(--accent-2)"/>
+  <circle cx="200" cy="40" r="14" fill="var(--d7)"/><line x1="200" y1="52" x2="200" y2="62" stroke="var(--ink)"/>
+  <circle cx="244" cy="16" r="8" fill="var(--accent-2)"/>
 </svg>`;
 
 function centerHtml(S, ctx) {
   const v = currentView(S, ctx);
+  const last = S.players[S.turn];
   return `<div class="center">
     <span class="reg tl"></span><span class="reg tr"></span><span class="reg bl"></span><span class="reg br"></span>
     <div class="c-left">
-      <div class="logo"><small>BOARD GAME / VÒNG ${S.round}</small>Phố<br>Giấy</div>
-      <div><div class="dice">${dieSvg(S.dice[0])}${dieSvg(S.dice[1])}</div></div>
-      <p class="msg">${esc(S.msg)}</p>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span class="label" style="text-transform:uppercase;letter-spacing:.12em;font-family:var(--font-sans);font-size:11px">Vòng ${S.round} · xúc xắc</span>
+        <div class="dice-row">${dieSvg(S.dice[0], 'xúc xắc')}${dieSvg(S.dice[1], 'xúc xắc')}<span class="dice-sum">${S.dice[0] + S.dice[1]}</span></div>
+      </div>
+      <p class="msg" aria-live="polite">${esc(S.msg)}</p>
+      <div class="recent"><span class="label">vừa xảy ra</span>${S.log.slice(0, 2).map(l => `<span>${esc(l)}</span>`).join('')}</div>
       ${SCENE}
     </div>
-    <div class="c-right">${v.kind === 'card' ? eventCardHtml(v) : deedHtml(S, v.i)}</div>
+    <div class="c-right">${v.kind === 'card' ? eventCardHtml(v) : deedHtml(S, v.i, last)}</div>
   </div>`;
 }
 
@@ -108,170 +233,257 @@ export function deedHtml(S, i) {
   let body = '';
   if (t.type === 'prop') {
     const h = S.houses[i] || 0, full = ownsGroup(S, o, t.d);
-    const rows = [['đất trống', t.rent[0]], ['cả quận, đất trống', t.rent[0] * 2], ['1 nhà', t.rent[1]], ['2 nhà', t.rent[2]], ['3 nhà', t.rent[3]], ['4 nhà', t.rent[4]], ['phố', t.rent[5]]];
+    const rows = [['đất trống', t.rent[0]], ['cả quận', t.rent[0] * 2], ['1 nhà', t.rent[1]], ['2 nhà', t.rent[2]], ['3 nhà', t.rent[3]], ['4 nhà', t.rent[4]], ['phố', t.rent[5]]];
     const on = o == null ? -1 : h ? h + 1 : full ? 1 : 0;
-    body = `<table class="rent">${rows.map((r, k) => `<tr class="${k === on ? 'on' : ''}"><td>${r[0]}</td><td>${r[1]} ${CUR}</td></tr>`).join('')}</table>
-      <div class="foot">giá mua <b>${t.price} ${CUR}</b> · xây nhà ${DISTRICTS[t.d].house} · thế chấp ${t.price / 2}</div>`;
+    const others = group(t.d).filter(j => j !== i).map(j => `${TILES[j].name}: ${S.owner[j] == null ? 'chưa có chủ' : 'của ' + S.players[S.owner[j]].name}`);
+    body = `<div class="rent">${rows.map((r, k) => `<div class="${k === on ? 'on' : ''}"><span>${r[0]}${k === on ? ' ◂' : ''}</span><span>${r[1]} ${CUR}</span></div>`).join('')}</div>
+      <div class="foot2">giá mua <b>${t.price} ${CUR}</b> · nhà ${DISTRICTS[t.d].house} · thế chấp ${t.price / 2}</div>
+      <div class="note">${esc(others.join(' · '))}</div>`;
   } else if (t.type === 'station') {
-    body = `<table class="rent">${[1, 2, 3, 4].map(n => `<tr class="${o != null && ownedOfType(S, o, 'station') === n ? 'on' : ''}"><td>sở hữu ${n} ga</td><td>${25 * 2 ** (n - 1)} ${CUR}</td></tr>`).join('')}</table>
-      <div class="foot">giá mua <b>${t.price} ${CUR}</b> · thế chấp ${t.price / 2}</div>`;
+    const n = o != null ? ownedOfType(S, o, 'station') : 0;
+    body = `<div class="rent">${[1, 2, 3, 4].map(k => `<div class="${k === n ? 'on' : ''}"><span>có ${k} ga${k === n ? ' ◂' : ''}</span><span>${25 * 2 ** (k - 1)} ${CUR}</span></div>`).join('')}</div>
+      <div class="foot2">giá mua <b>${t.price} ${CUR}</b> · thế chấp ${t.price / 2}</div>`;
   } else if (t.type === 'util') {
-    body = `<table class="rent"><tr><td>1 tiện ích</td><td>4 × xúc xắc</td></tr><tr><td>cả 2 tiện ích</td><td>10 × xúc xắc</td></tr></table>
-      <div class="foot">giá mua <b>${t.price} ${CUR}</b> · thế chấp ${t.price / 2}</div>`;
+    const n = o != null ? ownedOfType(S, o, 'util') : 0;
+    body = `<div class="rent"><div class="${n === 1 ? 'on' : ''}"><span>có 1 tiện ích</span><span>4 × xúc xắc</span></div><div class="${n === 2 ? 'on' : ''}"><span>có cả 2</span><span>10 × xúc xắc</span></div></div>
+      <div class="foot2">giá mua <b>${t.price} ${CUR}</b> · thế chấp ${t.price / 2}</div>`;
   } else if (t.type === 'tax') {
-    body = `<div class="foot">đóng <b>${t.amount} ${CUR}</b> cho phố</div>`;
+    body = `<div class="foot2">đóng <b>${t.amount} ${CUR}</b> cho phố</div>`;
   } else if (t.type === 'card') {
-    body = `<div class="foot">dừng ở đây → rút một thẻ ${t.name}</div>`;
+    body = `<div class="foot2">dừng ở đây → rút một thẻ ${t.name}</div>`;
   }
-  const owner = buyable(t) ? `<div class="act">${o == null ? 'chưa có ai ở' : 'chủ: ' + esc(S.players[o].name) + (S.mort[i] ? ' · đang thế chấp' : '')}</div>` : '';
-  return `<div class="card">
+  const owner = buyable(t) ? `<div class="note">${o == null ? 'chưa có ai ở' : 'chủ: ' + esc(S.players[o].name) + (S.mort[i] ? ' · đang thế chấp' : '')}</div>` : '';
+  return `<article class="card">
     <div class="strip"><span>Phố Giấy / ${grp}</span><span>${pad(i)} / 40</span></div>
     <div class="k-row"><span class="kicker">${kick}</span>${t.type === 'corner' ? '' : `<span class="sw lg ${swClass(t)}"></span>`}</div>
-    <h3>${t.name}</h3>
+    <h3 class="h3">${t.name}</h3>
     ${t.human ? `<p class="human">${t.human}</p>` : ''}
     ${body}${owner}
-  </div>`;
+  </article>`;
 }
 
 export function eventCardHtml(v) {
   const c = CARDS[v.deck][v.id];
-  return `<div class="card">
+  return `<article class="card">
     <div class="strip"><span>Phố Giấy / ${v.deck === 'q' ? 'Câu hỏi' : 'Hàng xóm'}</span><span>thẻ ${String(v.id + 1).padStart(2, '0')}</span></div>
-    ${v.deck === 'q' ? '<span class="mark">?</span>' : ''}
-    <div class="kicker">${c.k}</div>
-    <h3>${c.t}</h3>
+    <div class="k-row"><span class="kicker">${c.k}</span>${v.deck === 'q' ? '<span class="mark" aria-hidden="true">?</span>' : ''}</div>
+    <h3 class="ev-title">${c.t}</h3>
     <div class="act">→ ${c.a}</div>
+  </article>`;
+}
+
+function dockHtml(S, ctx) {
+  const p = S.players[S.turn], { mine, mode, busy } = ctx;
+  if (!mine) {
+    let html = `<span class="label">${p.online === false ? esc(p.name) + ' đang mất kết nối…' : 'đang chờ ' + esc(p.name) + '…'}</span>`;
+    if (mode === 'host' && p.online === false) html += `<div class="row">${btn('forfeit', `Cho ${esc(p.name)} rời ván`, 'dark')}</div>`;
+    return `<div class="dock">${html}</div>`;
+  }
+  const d = { disabled: busy };
+  if (p.money < 0 && S.phase === 'end') {
+    return `<div class="dock">
+      <div class="debt"><span style="font-weight:700">${p.creditor != null ? 'Bạn còn thiếu ' + esc(S.players[p.creditor].name) : 'Bạn đang nợ'}</span><b>${money(p.money)} ${CUR}</b></div>
+      <span class="human" style="font-size:14px">Bán bớt nhà hoặc thế chấp đất ở tab "Đất của tôi". Chưa đủ thì đành rời phố.</span>
+      <div class="row">${btn('end', 'Kết thúc lượt', 'primary', { disabled: true })}${btn('bankrupt', 'Phá sản, rời ván', '', d)}</div>
+    </div>`;
+  }
+  if (S.phase === 'roll') {
+    return `<div class="dock">
+      <div class="row">${btn('roll', p.jail ? 'Lăn tìm đôi' : 'Lăn xúc xắc', 'primary', d)}${p.jail ? btn('bail', `Trả ${BAIL} ${CUR}`, '', { disabled: busy || p.money < BAIL }) + (p.cards ? btn('ticket', 'Dùng vé', '', d) : '') : ''}</div>
+      <span class="label">${p.jail ? `đang ở Trạm Nghỉ · lần thử ${p.jail}/3` : 'phím Space để lăn'}</span>
+    </div>`;
+  }
+  if (S.phase === 'buy') {
+    const t = TILES[p.pos];
+    return `<div class="dock">
+      <div class="row">${btn('buy', `Mua ${t.name} · ${t.price} ${CUR}`, 'primary', d)}${btn('skip', 'Bỏ qua', '', d)}</div>
+      <span class="label">mua xong còn ${money(p.money - t.price)} ${CUR} · phím B mua · S bỏ qua</span>
+    </div>`;
+  }
+  return `<div class="dock">
+    <div class="row">${btn('end', 'Kết thúc lượt', 'primary', d)}</div>
+    <span class="label">xây nhà hoặc thế chấp trước khi kết thúc lượt · phím E</span>
   </div>`;
 }
 
-// ---------- cột bên phải ----------
-export function sideHtml(S, ctx) {
-  const p = S.players[S.turn], alive = S.players.filter(x => !x.out).length;
-  const { me, mine, mode, busy } = ctx, local = mode === 'local', host = mode === 'host' || local;
-  const human = S.winner != null ? 'Phố vẫn còn đó, và những người đã sống ở đây.'
-    : !mine ? (me < 0 ? 'Bạn đang xem ván này.' : `Pha ấm trà, chờ ${esc(p.name)} lăn xúc xắc.`)
-    : p.jail ? 'Ngồi ghế đá, ngắm người qua lại.'
-    : { roll: 'Xúc xắc đang chờ trong lòng bàn tay.', buy: 'Một mảnh phố đang chờ người đến ở.', end: 'Uống ngụm trà rồi chuyền xúc xắc.' }[S.phase];
-  const title = S.winner != null ? `${esc(S.players[S.winner].name)} giữ được phố.`
-    : local ? `Lượt của ${esc(p.name)}.` : mine ? 'Lượt của bạn.' : `Lượt của ${esc(p.name)}.`;
-  const B = (act, label, primary, enabled = true, arg = '') =>
-    `<button class="btn ${primary ? 'primary' : ''}" data-act="${act}" data-arg="${arg}" ${enabled && !busy ? '' : 'disabled'}>${label}</button>`;
-
-  let actions = '';
-  if (S.winner != null) actions = host ? B('new', 'Chơi ván mới', true) : '<span class="label">chờ chủ phòng mở ván mới</span>';
-  else if (!mine) {
-    actions = `<span class="label">${p.online === false ? esc(p.name) + ' đang mất kết nối…' : 'đang chờ ' + esc(p.name) + '…'}</span>`;
-    if (mode === 'host' && p.online === false) actions += B('forfeit', `Cho ${esc(p.name)} rời ván`, false);
-  } else if (S.phase === 'roll') {
-    actions = B('roll', p.jail ? 'Lăn tìm đôi' : 'Lăn xúc xắc', true);
-    if (p.jail) actions += B('bail', `Trả ${BAIL} ${CUR}`, false, p.money >= BAIL) + (p.cards ? B('ticket', 'Dùng vé', false) : '');
-  } else if (S.phase === 'buy') {
-    const t = TILES[p.pos];
-    actions = B('buy', `Mua ${t.name} — ${t.price} ${CUR}`, true) + B('skip', 'Bỏ qua', false);
-  } else {
-    actions = B('end', 'Kết thúc lượt', true, p.money >= 0) + (p.money < 0 ? B('bankrupt', 'Phá sản', false) : '');
-  }
-
-  let manage = '';
-  const v = currentView(S, ctx);
-  if (mine && v.kind === 'tile' && S.owner[v.i] === S.turn) {
-    const i = v.i, t = TILES[i], ok = type => canManage(S, type, i) && !busy ? '' : 'disabled';
-    manage = `<div><div class="label">quản lý ${esc(t.name)}</div><div class="manage">
-      ${t.type === 'prop' ? `<button class="btn sm" data-act="build" data-arg="${i}" ${ok('build')}>Xây nhà (${DISTRICTS[t.d].house})</button>
-      <button class="btn sm" data-act="sell" data-arg="${i}" ${ok('sell')}>Bán nhà (+${DISTRICTS[t.d].house / 2})</button>` : ''}
-      ${S.mort[i] ? `<button class="btn sm" data-act="unmort" data-arg="${i}" ${ok('unmort')}>Chuộc (${unmortCost(t)})</button>`
-        : `<button class="btn sm" data-act="mort" data-arg="${i}" ${ok('mort')}>Thế chấp (+${t.price / 2})</button>`}
-    </div></div>`;
-  } else if (mine) {
-    manage = `<div class="label">bấm vào ô đất của mình trên bàn cờ để xây nhà hoặc thế chấp</div>`;
-  }
-
-  const where = local ? 'Ván thử trên máy này' : `Phòng ${esc(ctx.room)}`;
-  return `
-    <div class="side-top">
-      <span class="label">${where}${ctx.status && !local ? ' · ' + esc(ctx.status) : ''}</span>
-      <button class="btn sm" data-act="exit">${local ? 'Thoát ván' : 'Rời phòng'}</button>
-    </div>
-    <div>
-      <div class="strip"><span>Phố Giấy / Vòng ${S.round}</span><span>${pad(S.turn)} / ${String(S.players.length).padStart(2, '0')}</span></div>
-      <div class="kicker">${S.winner != null ? 'Ai giữ được phố?' : 'Đến lượt ai?'}</div>
-      <h2>${title}</h2>
-      <p class="human">${human}</p>
-    </div>
-    <div class="players">${S.players.map((x, k) => `
-      <div class="pl ${k === S.turn && S.winner == null ? 'cur' : ''} ${x.out ? 'out' : ''}">
-        ${pieceSvg(x.piece, 18)}<span class="nm">${esc(x.name)}${k === me && !local ? ' <span class="label">(bạn)</span>' : ''}</span>
-        <span class="tag">${[x.online === false && !x.out ? 'mất kết nối' : '', x.jail ? 'trạm nghỉ' : '', x.cards ? 'vé ×' + x.cards : '', Object.values(S.owner).filter(o => o === k).length + ' ô'].filter(Boolean).join(' · ')}</span>
-        <span class="money ${x.money < 0 ? 'neg' : ''}">${x.money}</span>
-      </div>`).join('')}</div>
-    <div class="actions">${actions}</div>
-    ${manage}
-    ${ctx.dev && S.opts.dev ? devHtml(S, ctx) : ''}
-    <ul class="log">${S.log.map(l => `<li>${esc(l)}</li>`).join('')}</ul>
-    <div class="sources">Phố Giấy v${ctx.version} · ${alive} người còn chơi</div>`;
+function landsHtml(S, ctx) {
+  const me = ctx.me;
+  if (me < 0) return '<p class="label empty-note">bạn đang xem ván này</p>';
+  const mine = Object.keys(S.owner).map(Number).filter(i => S.owner[i] === me).sort((a, b) => a - b);
+  if (!mine.length) return '<p class="label empty-note">chưa có mảnh đất nào. Dừng ở ô trống để mua.</p>';
+  const canAct = ctx.mine && !ctx.busy;
+  const ok = (type, i) => canAct && canManage(S, type, i);
+  return `<div class="lands">${mine.map(i => {
+    const t = TILES[i], h = S.houses[i] || 0;
+    const meta = S.mort[i] ? 'đang thế chấp' : t.type === 'prop' ? `${h === 5 ? 'phố' : h + ' nhà'} · thuê ${rentFor(S, i)}${!h && ownsGroup(S, me, t.d) ? ' (cả quận)' : ''}` : t.type === 'station' ? `${ownedOfType(S, me, 'station')} ga · thuê ${rentFor(S, i)}` : `${ownedOfType(S, me, 'util')} tiện ích`;
+    const acts = [];
+    if (t.type === 'prop' && !S.mort[i]) {
+      if (ownsGroup(S, me, t.d) && h < 5) acts.push(btn('build', `+ ${h === 4 ? 'Phố' : 'Nhà'} · ${DISTRICTS[t.d].house}`, 'sm', { arg: i, disabled: !ok('build', i) }));
+      if (h > 0) acts.push(btn('sell', `Bán · +${DISTRICTS[t.d].house / 2}`, 'sm', { arg: i, disabled: !ok('sell', i) }));
+    }
+    if (S.mort[i]) acts.push(btn('unmort', `Chuộc · ${unmortCost(t)}`, 'sm', { arg: i, disabled: !ok('unmort', i) }));
+    else if (!h) acts.push(btn('mort', `Thế chấp · +${t.price / 2}`, 'sm', { arg: i, disabled: !ok('mort', i) }));
+    return `<div class="land"><span class="sw md ${swClass(t)}"></span><div style="display:flex;flex-direction:column;gap:1px;min-width:0"><button type="button" class="nm" data-tile="${i}">${t.name}</button><span class="meta">${meta}</span></div><div class="acts">${acts.join('')}</div></div>`;
+  }).join('')}</div>`;
 }
 
 function devHtml(S, ctx) {
   const opts = [1, 2, 3, 4, 5, 6].map(n => `<option>${n}</option>`).join('');
   const v = currentView(S, ctx), vi = v.kind === 'tile' ? v.i : null;
+  const canRoll = S.phase === 'roll' && !ctx.busy && S.winner == null;
   return `<div class="dev">
-    <div class="label">công cụ dev · chỉ có ở ván thử</div>
-    <div class="manage">
-      <select id="dv1">${opts}</select><select id="dv2">${opts}</select>
-      <button class="btn sm" data-act="dev-roll" ${S.phase === 'roll' && !ctx.busy ? '' : 'disabled'}>Lăn số này</button>
-      <button class="btn sm" data-act="dev-money" data-arg="500">+500</button>
-      <button class="btn sm" data-act="dev-money" data-arg="-500">−500</button>
+    <span class="label">công cụ dev · chỉ có ở ván thử</span>
+    <div class="row">
+      <label class="sr" for="dv1">xúc xắc 1</label><select id="dv1">${opts}</select><label class="sr" for="dv2">xúc xắc 2</label><select id="dv2">${opts}</select>
+      ${btn('dev-roll', 'Lăn số này', 'xs', { disabled: !canRoll })}${btn('dev-money', '+500', 'xs', { arg: 500 })}${btn('dev-money', '−500', 'xs', { arg: -500 })}
     </div>
-    <div class="manage">
-      ${vi != null ? `<button class="btn sm" data-act="dev-goto" data-arg="${vi}" ${S.phase === 'roll' && !ctx.busy ? '' : 'disabled'}>Nhảy tới ${esc(TILES[vi].name)}</button>
-      ${buyable(TILES[vi]) && S.owner[vi] == null ? `<button class="btn sm" data-act="dev-own" data-arg="${vi}">Nhận ${esc(TILES[vi].name)}</button>` : ''}` : ''}
-      <button class="btn sm" data-act="dev-own-district" ${vi != null && TILES[vi].type === 'prop' ? '' : 'disabled'} data-arg="${vi ?? ''}">Nhận cả quận</button>
+    <div class="row">
+      ${vi != null ? btn('dev-goto', `Nhảy tới ${esc(TILES[vi].name)}`, 'xs', { arg: vi, disabled: !canRoll }) : ''}
+      ${vi != null && buyable(TILES[vi]) && S.owner[vi] == null ? btn('dev-own', `Nhận ${esc(TILES[vi].name)}`, 'xs', { arg: vi }) : ''}
+      ${btn('dev-own-district', 'Nhận cả quận', 'xs', { arg: vi ?? '', disabled: !(vi != null && TILES[vi].type === 'prop') })}
     </div>
   </div>`;
 }
 
-// ---------- sảnh ----------
-export function homeHtml({ name, code, online, hasLocalSave, devDefault }) {
-  return `
-    <div class="strip"><span>Phố Giấy / Bắt đầu</span><span>2–6 người</span></div>
-    <div class="kicker">Ai sẽ sống ở phố này?</div>
-    <h1>Mỗi người một máy, chung một con phố.</h1>
-    <p class="human">Một người tạo phòng rồi gửi mã cho bạn bè; mỗi người mở trên máy của mình.</p>
-    <label class="field"><span class="label">tên của bạn</span><input id="nm" maxlength="14" value="${esc(name)}" placeholder="ví dụ: Lan"></label>
-    ${!online ? '<p class="small">không tải được thư viện kết nối, chưa chơi online được (kiểm tra mạng). Vẫn chơi thử trên máy này được.</p>' : code ? `
-      <div class="row"><button class="btn primary" id="join">Vào phòng ${esc(code)}</button></div>
-      <p class="small">hoặc <a href="#" id="create">tạo phòng mới</a></p>` : `
-      <div class="row"><button class="btn primary" id="create">Tạo phòng mới</button></div>
-      <div class="or label">— hoặc vào phòng của bạn bè —</div>
-      <div class="row"><input id="code" class="code-in" maxlength="5" placeholder="MÃ PHÒNG"><button class="btn" id="join">Vào phòng</button></div>`}
-    <p class="small" id="err"></p>
-    <div class="local-box">
-      <div class="kicker">Thử trên một máy?</div>
-      <p class="human">Không cần tạo phòng hay chờ ai: bạn điều khiển mọi người chơi, để thử luật và giao diện.</p>
-      <div class="count" id="count">${[2, 3, 4, 5, 6].map(n => `<button class="btn sm ${n === 3 ? 'on' : ''}" data-n="${n}">${n} người</button>`).join('')}</div>
-      <label class="check"><input type="checkbox" id="devchk" ${devDefault ? 'checked' : ''}> bật công cụ dev (đặt xúc xắc, cộng tiền, nhảy ô)</label>
-      <div class="row"><button class="btn" id="local">Chơi thử ngay</button>${hasLocalSave ? '<button class="btn" id="resume-local">Tiếp tục ván thử</button>' : ''}</div>
-    </div>`;
+function sideHtml(S, ctx) {
+  const p = S.players[S.turn], { me, mine, mode } = ctx, local = mode === 'local';
+  const human = me < 0 && !local ? 'Bạn đang xem ván này.'
+    : !mine ? `Pha ấm trà, chờ ${esc(p.name)} lăn xúc xắc.`
+    : p.money < 0 ? 'Túi rỗng rồi. Bán gì đó, hoặc nhờ hàng xóm.'
+    : p.jail ? 'Ngồi ghế đá, ngắm người qua lại.'
+    : { roll: 'Xúc xắc đang chờ trong lòng bàn tay.', buy: 'Một mảnh phố đang chờ người đến ở.', end: 'Uống ngụm trà rồi chuyền xúc xắc.' }[S.phase];
+  const title = local ? `Lượt của ${esc(p.name)}.` : mine ? 'Lượt của bạn.' : `Lượt của ${esc(p.name)}.`;
+  const myCount = me >= 0 ? Object.values(S.owner).filter(o => o === me).length : 0;
+  return `<aside class="side" aria-label="Lượt chơi">
+    <div class="turn">
+      <div class="strip"><span>Đến lượt ai?</span><span>${pad(S.turn)} / ${String(S.players.length).padStart(2, '0')}</span></div>
+      <h2 class="h2" style="margin-top:4px">${title}</h2>
+      <p class="human">${human}</p>
+    </div>
+    ${dockHtml(S, ctx)}
+    <div class="players">${S.players.map((x, k) => {
+      const chips = Object.keys(S.owner).map(Number).filter(i => S.owner[i] === k).sort((a, b) => a - b).map(i => `<span class="sw ${swClass(TILES[i])}" title="${esc(TILES[i].name)}"></span>`).join('');
+      const tags = [k === me && !local ? '(bạn)' : '', x.online === false && !x.out ? 'mất kết nối' : '', x.jail ? `trạm nghỉ · thử ${x.jail}/3` : '', x.cards ? `vé ×${x.cards}` : '', x.out ? 'đã rời phố' : ''].filter(Boolean).join(' · ');
+      return `<div class="pl ${k === S.turn ? 'cur' : ''} ${x.out ? 'out' : ''}">
+        ${pieceSvg(x.piece, 20)}
+        <div class="info"><span class="nm">${esc(x.name)} <small>${esc(tags)}</small></span><span class="chips">${chips}</span></div>
+        <span class="money ${x.money < 0 ? 'neg' : ''}">${money(x.money)}</span>
+      </div>`;
+    }).join('')}</div>
+    <div>
+      <div class="tabs" role="tablist" aria-label="Thông tin">
+        <button type="button" class="tab" role="tab" aria-selected="${ctx.tab === 'land'}" data-act="tab" data-arg="land">${local ? 'Đất của ' + esc(p.name) : 'Đất của tôi'} · ${local ? Object.values(S.owner).filter(o => o === S.turn).length : myCount}</button>
+        <button type="button" class="tab" role="tab" aria-selected="${ctx.tab === 'log'}" data-act="tab" data-arg="log">Nhật ký</button>
+      </div>
+      <div role="tabpanel">${ctx.tab === 'log' ? `<ul class="log">${S.log.map(l => `<li>${esc(l)}</li>`).join('')}</ul>` : landsHtml(S, ctx)}</div>
+    </div>
+    ${ctx.dev && S.opts.dev ? devHtml(S, ctx) : ''}
+    <div class="side-foot"><span>Phố Giấy v${ctx.version}</span><span>${S.players.filter(x => !x.out).length} người còn chơi</span></div>
+  </aside>`;
 }
 
-export function lobbyHtml({ room, url, seats, me, isHost, canStart, status }) {
-  return `
-    <div class="strip"><span>Phố Giấy / Phòng ${esc(room)}</span><span>${seats.length} / 6</span></div>
-    <div class="kicker">Ai đã đến?</div>
-    <h1>Phòng <span class="room-code">${esc(room)}</span></h1>
-    <p class="human">Gửi mã hoặc đường link cho bạn bè. Ai mở link trên máy mình là vào được phòng.</p>
-    <div class="row"><input class="link" readonly value="${esc(url)}"><button class="btn" id="copy">Sao chép link</button></div>
-    <div class="players lobby">${seats.map((x, k) => `
-      <div class="pl">${pieceSvg(k, 18)}<span class="nm">${esc(x.name)}${k === me ? ' <span class="label">(bạn)</span>' : ''}</span>
-        <span class="tag">${k === 0 ? 'chủ phòng' : x.online === false ? 'mất kết nối' : 'đã vào'}</span></div>`).join('') || '<div class="label" style="padding:8px 0">đang chờ…</div>'}</div>
-    <div class="row">${isHost
-      ? `<button class="btn primary" id="go" ${canStart ? '' : 'disabled'}>Bắt đầu ván</button>`
-      : '<span class="label" style="align-self:center">chờ chủ phòng bắt đầu ván…</span>'}
-      <button class="btn" data-act="exit">Rời phòng</button></div>
-    <p class="small">${esc(status)}${isHost && seats.length < 2 ? ' · cần ít nhất 2 người' : ''}</p>`;
+export function gameHtml(S, ctx) {
+  const v = currentView(S, ctx), sel = v.kind === 'tile' ? v.i : -1;
+  const where = ctx.mode === 'local' ? 'ván thử trên máy này' : `phòng ${esc(ctx.room)}`;
+  return `<header class="topbar">
+      <div class="l"><span class="brand">Phố Giấy</span><span class="label">${where} · vòng ${S.round} · ${S.players.length} người</span></div>
+      <div class="r">${S.winner != null ? btn('review-end', 'Xem kết quả', 'xs') : ''}${btn('rules', 'Luật chơi', 'xs')}${btn('exit', ctx.mode === 'local' ? 'Thoát ván' : 'Rời phòng', 'xs')}</div>
+    </header>
+    ${ctx.banner ? `<div class="banner" role="status"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" aria-hidden="true"><path d="M3 12 a9 9 0 1 1 3 6.7"/><path d="M3 20 V13 H10"/></svg><b>${esc(ctx.banner)}</b><span class="human" style="font-size:14px">Bàn cờ vẫn ở đây. Đang thử nối lại mỗi 3 giây…</span></div>` : ''}
+    <main class="game">
+      <section class="board-sec" aria-label="Bàn cờ">
+        <div class="board">${TILES.map((t, i) => tileHtml(S, ctx, t, i, sel)).join('')}${centerHtml(S, ctx)}</div>
+      </section>
+      ${sideHtml(S, ctx)}
+    </main>`;
 }
 
-export function errorHtml(title, text) {
-  return `<div class="kicker">Có trục trặc</div><h1>${esc(title)}</h1><p class="human">${esc(text)}</p>
-    <div class="row"><button class="btn primary" data-act="home">Về trang đầu</button></div>`;
+// ============ KẾT THÚC VÁN ============
+export function endHtml(S, ctx) {
+  const st = S.stats, w = S.winner, n = S.players.length;
+  const argmax = arr => arr.reduce((b, v, i) => (v > arr[b] ? i : b), 0);
+  const rentK = argmax(st.rent);
+  const landEntries = Object.entries(st.lands).filter(([i]) => TILES[i].type !== 'corner' || i !== '0');
+  const topLand = landEntries.sort((a, b) => b[1] - a[1])[0];
+  const jailK = argmax(st.jails);
+  const order = S.players.map((p, k) => k).sort((a, b) => (a === w ? -1 : b === w ? 1 : (st.outRound[b] ?? 1e9) - (st.outRound[a] ?? 1e9)));
+  // biểu đồ tài sản
+  const series = st.worth, maxV = Math.max(1, ...series.flat());
+  const X = i => (series.length < 2 ? 0 : (i / (series.length - 1)) * 600), Y = v => 186 - (v / maxV) * 170;
+  const dash = ['', '6 3', '2 3', '8 3 2 3', '1 2', '4 4'];
+  const lines = S.players.map((p, k) => `<polyline points="${series.map((row, i) => `${X(i).toFixed(1)},${Y(row[k] ?? 0).toFixed(1)}`).join(' ')}" fill="none" stroke="${pieceColor(p.piece)}" stroke-width="${k === w ? 3 : 1.6}" stroke-dasharray="${k === w ? '' : dash[k % dash.length]}"/>`).join('');
+  return `<main class="page">
+    <div class="topline"><span class="t">Phố Giấy / ${ctx.mode === 'local' ? 'Ván thử' : 'Phòng ' + esc(ctx.room)} / Kết thúc</span><span class="label">${S.round} vòng · ${n} người</span></div>
+    <div class="end-hero">
+      <div class="txt">
+        <span class="kicker">Ai giữ được phố?</span>
+        <h1 class="h1">${esc(S.players[w].name)} giữ được phố.</h1>
+        <p class="human" style="font-size:18px;max-width:620px">Những người còn lại đã bán nhà, thế chấp đất, rồi lần lượt rời phố. Phố vẫn còn đó, và những người đã sống ở đây.</p>
+        <div class="row" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">
+          ${ctx.mode !== 'guest' ? btn('new', ctx.mode === 'host' ? 'Chơi ván mới, cùng phòng' : 'Chơi ván mới', 'primary lg') : '<span class="label">chờ chủ phòng mở ván mới…</span>'}
+          ${btn('review', 'Xem lại bàn cờ', 'lg')}${btn('exit', 'Về trang đầu', 'ghost lg')}
+        </div>
+      </div>
+      <svg viewBox="0 0 360 220" aria-hidden="true">
+        <line x1="0" y1="210" x2="360" y2="210" stroke="var(--ink)" stroke-width=".8"/>
+        <rect x="40" y="120" width="40" height="90" fill="var(--d5)"/><rect x="90" y="80" width="46" height="130" fill="var(--d5)"/><circle cx="113" cy="62" r="14" fill="none" stroke="var(--accent)" stroke-width="2"/>
+        <rect x="146" y="140" width="36" height="70" fill="none" stroke="var(--ink)" stroke-width=".8"/><path d="M140 140 L164 120 L188 140" fill="none" stroke="var(--ink)" stroke-width=".8"/>
+        <path d="M150 30 Q230 60 330 30" fill="none" stroke="var(--ink)" stroke-width=".6"/>
+        <circle cx="190" cy="44" r="7" fill="var(--accent)"/><circle cx="240" cy="50" r="7" fill="var(--accent-2)"/><circle cx="290" cy="44" r="7" fill="var(--accent)"/>
+        <g fill="none" stroke="var(--ink)" stroke-width="1.6"><circle cx="250" cy="160" r="6" fill="var(--ink)"/><path d="M250 166 V186 M238 170 L250 176 L262 166 M250 186 L242 208 M250 186 L258 208"/></g>
+      </svg>
+    </div>
+    <div class="stats">
+      <div class="stat"><b style="color:var(--accent)">${money(netWorth(S, w))}</b><span class="label">${CUR} tài sản của ${esc(S.players[w].name)}</span></div>
+      <div class="stat"><b style="color:var(--cool-2)">${money(st.rent[rentK])}</b><span class="label">${CUR} tiền thuê ${esc(S.players[rentK].name)} thu được</span></div>
+      <div class="stat"><b>${topLand ? esc(TILES[topLand[0]].name) : '—'}</b><span class="label">ô được dừng chân nhiều nhất${topLand ? ' · ' + topLand[1] + ' lần' : ''}</span></div>
+      <div class="stat"><b>${st.jails[jailK]}</b><span class="label">lần ${esc(S.players[jailK].name)} ngồi Trạm Nghỉ</span></div>
+    </div>
+    <div class="end-bottom">
+      <figure>
+        <figcaption>Tài sản theo vòng</figcaption>
+        <svg viewBox="0 0 600 200" role="img" aria-label="Biểu đồ tài sản ${n} người chơi theo vòng">
+          <g stroke="var(--neutral)" stroke-width=".5"><line x1="0" y1="${Y(maxV / 2)}" x2="600" y2="${Y(maxV / 2)}"/><line x1="0" y1="${Y(maxV)}" x2="600" y2="${Y(maxV)}"/></g>
+          <line x1="0" y1="188" x2="600" y2="188" stroke="var(--ink)" stroke-width=".8"/>
+          ${lines}
+          <g font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink-2)"><text x="2" y="${Y(maxV) - 4}">${money(maxV)}</text><text x="2" y="${Y(maxV / 2) - 4}">${money(Math.round(maxV / 2))}</text></g>
+        </svg>
+        <div class="legend">${S.players.map((p, k) => `<span><i style="background:${pieceColor(p.piece)}"></i>${esc(p.name)}</span>`).join('')}</div>
+      </figure>
+      <div class="rank">
+        <span class="rank-title" style="padding-bottom:8px">Thứ tự rời phố</span>
+        ${order.map((k, i) => `<div class="r ${i === 0 ? 'first' : ''}"><span class="mono" style="color:${i === 0 ? 'var(--accent)' : 'var(--ink-2)'}">${String(i + 1).padStart(2, '0')}</span>${pieceSvg(S.players[k].piece, 18)}<span style="font-weight:${i === 0 ? 700 : 600}">${esc(S.players[k].name)}</span><span class="label">${k === w ? 'còn lại' : st.outRound[k] ? 'vòng ' + st.outRound[k] : ''}</span></div>`).join('')}
+      </div>
+    </div>
+  </main>`;
 }
+
+// ============ LỖI, HỘP THOẠI ============
+export function errorHtml({ kicker = 'Có trục trặc', title, text, table = null, primary = null }) {
+  return `<main class="page"><div class="err-card">
+    <span class="kicker">${esc(kicker)}</span>
+    <h1 class="h3" style="font-size:26px">${esc(title)}</h1>
+    ${table ? `<div class="vtable">${table.map(([a, b, bad]) => `<span class="label">${esc(a)}</span><span class="${bad ? 'bad' : ''}">${esc(b)}</span>`).join('')}</div>` : ''}
+    <p class="human">${esc(text)}</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">${primary ? btn(primary[0], primary[1], 'primary') : ''}${btn('home', 'Về trang đầu', primary ? 'ghost' : 'primary')}</div>
+  </div></main>`;
+}
+
+export function modalHtml(m) {
+  return `<div class="modal-bg" data-act="modal-cancel"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="mtitle" data-stop="1">
+    <div class="strip"><span>${esc(m.strip || 'Phố Giấy')}</span><span>${esc(m.stripR || '')}</span></div>
+    ${m.kicker ? `<span class="kicker">${esc(m.kicker)}</span>` : ''}
+    <h2 class="h3" id="mtitle" style="font-size:24px">${esc(m.title)}</h2>
+    ${m.html || (m.text ? `<p class="human">${esc(m.text)}</p>` : '')}
+    <div class="row">${m.ok ? btn('modal-ok', esc(m.ok), m.danger ? 'dark' : 'primary') : ''}${btn('modal-cancel', esc(m.cancel || 'Đóng'), '')}</div>
+  </section></div>`;
+}
+
+export const RULES_HTML = `<ol class="human" style="font-style:normal;font-family:var(--font-sans);font-size:14px;color:var(--ink)">
+  <li>Mỗi người bắt đầu với ${money(START_MONEY)} ${CUR}. Đi qua <b>Nhà</b> nhận ${SALARY} ${CUR}.</li>
+  <li>Dừng ở đất chưa có chủ: mua hoặc bỏ qua. Đất có chủ: trả tiền thuê, gấp đôi nếu chủ có cả quận.</li>
+  <li>Có cả quận thì xây nhà, xây đều từng ô; 4 nhà rồi lên <b>phố</b>.</li>
+  <li>Lăn đôi được lăn tiếp; 3 lần đôi liền hoặc dừng ở <b>Lạc Đường</b> thì vào <b>Trạm Nghỉ</b>.</li>
+  <li>Ở Trạm Nghỉ: lăn đôi, trả ${BAIL} ${CUR} hoặc dùng vé. Sau 3 lần thử phải trả.</li>
+  <li>Thiếu tiền: bán nhà, thế chấp đất. Vẫn âm thì phá sản. Người cuối cùng còn lại giữ được phố.</li>
+</ol>`;

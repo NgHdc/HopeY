@@ -58,4 +58,6 @@ npm run dev       # hoặc: python -m http.server 5173 --bind 127.0.0.1
 - Trang đầu: http://127.0.0.1:5173/src/
 - Test: `npm test` · kiểm thử trình duyệt: `npm run e2e`
 
+**Đổi style** (màu, font, cỡ chữ, khoảng cách): chỉ sửa `design/tokens.css`, tải lại trang là thấy.
+
 Phong cách gốc: `../Slide_Style_Guide_Swiss_Paper.md`.

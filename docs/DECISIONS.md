@@ -47,3 +47,13 @@
 **Quyết định:** GitHub Actions dựng trang từ mọi tag (`/v/X.Y.Z/`), bản chính theo `deploy/current.txt` (`latest` hoặc một tag).
 **Vì sao:** rollback chỉ là sửa một dòng trên web GitHub, không cần biết git; mọi bản cũ vẫn chơi được nên dễ so sánh khi thiết kế lại.
 **Đánh đổi:** môi trường `github-pages` chỉ cho deploy từ `main`, nên tag và nhánh `dev` gọi Deploy gián tiếp qua workflow Release.
+
+### #10 — Đưa mockup 0.4 vào game trước, chỉnh style sau · 2026-11-27 · v0.4.0
+**Bối cảnh:** bạn muốn dùng bản thiết kế "Giấy mới" ngay và sẽ định hình style dần về sau.
+**Quyết định:** code giao diện theo mockup; mọi màu, font, cỡ chữ, khoảng cách gom vào `design/tokens.css`, `src/style.css` chỉ dùng biến. Đồ họa từng ô (giai đoạn B) để sang 0.4.x.
+**Vì sao:** đổi style về sau chỉ cần sửa một file, không đụng tới luật hay bố cục.
+
+### #11 — Inter + IBM Plex Mono thay Arial + Courier New · 2026-11-27 · v0.4.0 (thay một phần #3)
+**Quyết định:** chữ chính Inter, nhãn và số IBM Plex Mono, chữ nghiêng vẫn Noto Serif (#3).
+**Vì sao:** cả ba đủ dấu tiếng Việt, đều nét, đọc rõ ở cỡ 10–12 px trên màn hình. Courier New quá mảnh, Arial thiếu nhịp Swiss.
+**Đánh đổi:** cần tải font Google; không có mạng thì rơi về Arial / Courier New.

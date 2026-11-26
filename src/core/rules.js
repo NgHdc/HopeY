@@ -27,19 +27,44 @@ export function createGame(names, opts = {}) {
     schemaVersion: SCHEMA_VERSION,
     rng: (opts.seed ?? Math.floor(Math.random() * 2 ** 32)) >>> 0,
     opts: { dev: !!opts.dev },
-    players: names.map((name, i) => ({ name, money: START_MONEY, pos: 0, jail: 0, cards: 0, out: false, piece: i, creditor: null, online: true })),
+    players: names.map((name, i) => ({ name, money: START_MONEY, pos: 0, jail: 0, cards: 0, out: false, piece: (opts.pieces && opts.pieces[i] != null) ? opts.pieces[i] : i, creditor: null, online: true })),
     owner: {}, houses: {}, mort: {},
     turn: 0, phase: 'roll', doubles: 0, dice: [1, 1], round: 1,
     log: [], decks: null,
     view: { kind: 'tile', i: 0 }, winner: null,
     msg: 'Quân cờ đặt ở Nhà. Người đầu tiên lăn xúc xắc.',
+    stats: newStats(names.length),
   };
   S.decks = { q: shuffle(S, [...CARDS.q.keys()]), h: shuffle(S, [...CARDS.h.keys()]) };
   addLog(S, `Ván mới, ${names.length} người, mỗi người ${START_MONEY} ${CUR}.`);
   return S;
 }
 
+export function newStats(n) {
+  return { rent: Array(n).fill(0), lands: {}, jails: Array(n).fill(0), worth: [Array(n).fill(START_MONEY)], outRound: Array(n).fill(null) };
+}
+
 // ---------- tiện ích đọc trạng thái (UI dùng chung) ----------
+/** Tài sản: tiền + giá đất (thế chấp tính nửa) + giá nhà đã xây. */
+export function netWorth(S, k) {
+  const p = S.players[k];
+  if (p.out) return 0;
+  let w = p.money;
+  for (const i in S.owner) {
+    if (S.owner[i] !== k) continue;
+    const t = TILES[i];
+    w += S.mort[i] ? t.price / 2 : t.price;
+    if (t.type === 'prop') w += (S.houses[i] || 0) * DISTRICTS[t.d].house;
+  }
+  return w;
+}
+const WORTH_MAX = 64;
+/** Ghi tài sản mỗi vòng cho biểu đồ cuối ván. Quá WORTH_MAX điểm thì bỏ bớt một nửa, giữ điểm đầu và cuối. */
+function snapshotWorth(S) {
+  const w = S.stats.worth;
+  w.push(S.players.map((_, k) => netWorth(S, k)));
+  if (w.length > WORTH_MAX) S.stats.worth = w.filter((_, i) => i % 2 === 0 || i === w.length - 1);
+}
 export const ownedOfType = (S, o, type) => TILES.filter((t, i) => t.type === type && S.owner[i] === o).length;
 export const ownsGroup = (S, o, d) => o != null && group(d).every(i => S.owner[i] === o);
 export function rentFor(S, i) {
@@ -157,7 +182,7 @@ function afterLand(G) {
 function nextPlayer(G) {
   const S = G.S;
   let n = S.turn;
-  do { n = (n + 1) % S.players.length; if (n === 0) S.round++; } while (S.players[n].out);
+  do { n = (n + 1) % S.players.length; if (n === 0) { S.round++; snapshotWorth(S); } } while (S.players[n].out);
   S.turn = n; S.phase = 'roll'; S.doubles = 0;
   const p = S.players[n];
   S.view = { kind: 'tile', i: p.pos };
@@ -199,6 +224,7 @@ function nearest(from, type) { for (let s = 1; s <= 40; s++) { const i = (from +
 function sendJail(G, p) {
   const S = G.S;
   p.pos = JAIL; p.jail = 1; S.doubles = 0; S.view = { kind: 'tile', i: JAIL };
+  S.stats.jails[idx(S, p)]++;
   G.ev.push({ type: 'jump', seat: idx(S, p), to: JAIL });
   say(G, `${p.name} vào Trạm Nghỉ.`);
 }
@@ -206,6 +232,7 @@ function sendJail(G, p) {
 function land(G, p) {
   const S = G.S, i = p.pos, t = TILES[i];
   S.view = { kind: 'tile', i };
+  S.stats.lands[i] = (S.stats.lands[i] || 0) + 1;
   if (buyable(t)) {
     const o = S.owner[i];
     if (o == null) {
@@ -213,7 +240,7 @@ function land(G, p) {
       else say(G, `${p.name} chưa đủ tiền mua ${t.name}.`);
     } else if (o === idx(S, p)) say(G, `${p.name} về thăm ${t.name} của mình.`);
     else if (S.mort[i]) say(G, `${t.name} đang thế chấp, không thu tiền thuê.`);
-    else pay(G, p, o, rentFor(S, i), `thuê ${t.name}`);
+    else { const rent = rentFor(S, i); S.stats.rent[o] += rent; pay(G, p, o, rent, `thuê ${t.name}`); }
   } else if (t.type === 'tax') pay(G, p, null, t.amount, t.name);
   else if (t.type === 'card') draw(G, p, t.deck);
   else if (t.key === 'lost') sendJail(G, p);
@@ -265,9 +292,10 @@ function bankrupt(G, forced) {
     else { delete S.owner[i]; delete S.mort[i]; }
   }
   p.out = true; p.money = 0;
+  S.stats.outRound[S.turn] = S.round;
   say(G, `${p.name} ${forced ? 'rời ván' : 'phá sản'}${to != null ? ', đất chuyển cho ' + S.players[to].name : ', đất trả về phố'}.`);
   const alive = S.players.filter(x => !x.out);
-  if (alive.length === 1) { S.winner = idx(S, alive[0]); S.msg = `${alive[0].name} giữ được phố.`; return true; }
+  if (alive.length === 1) { S.winner = idx(S, alive[0]); S.msg = `${alive[0].name} giữ được phố.`; snapshotWorth(S); return true; }
   nextPlayer(G);
   return true;
 }

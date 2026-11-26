@@ -5,8 +5,25 @@ Quy trình phát hành và rollback: [`docs/RELEASE.md`](docs/RELEASE.md).
 
 ## [Chưa phát hành]
 
+## [0.4.0] — 2026-11-27 · Giấy mới
+
 ### Thêm
-- Bản nháp thiết kế 0.4 ("Giấy mới"): hệ thống thiết kế v2 và mockup 9 màn hình, đang chờ duyệt
+- Giao diện mới theo mockup "Giấy mới": trang đầu 50/50 với bản đồ phố, sảnh chờ có mã phòng lớn và 6 ghế, bàn cờ có cột lượt chơi gọn hơn
+- **Chọn quân cờ** trong sảnh chờ (mỗi người một quân, không trùng)
+- Tab **Đất của tôi**: xây nhà, bán nhà, thế chấp, chuộc ngay trong danh sách đất
+- Tab **Nhật ký**; dãy ô màu cho biết mỗi người có đất ở quận nào
+- Khi đang nợ: khung báo số tiền thiếu và chỉ cách xoay xở
+- **Màn hình kết thúc ván**: người thắng, tài sản, tiền thuê thu được, ô được dừng nhiều nhất, biểu đồ tài sản theo vòng, thứ tự rời phố
+- Hộp thoại riêng (rời phòng, phá sản, cho người rớt mạng rời ván, luật chơi) thay cho hộp `confirm` của trình duyệt
+- Dải báo khi mất kết nối với chủ phòng; trang lỗi khác phiên bản có bảng so sánh
+- Bố cục điện thoại: bàn cờ thu nhỏ, nút hành động dính ở đáy màn hình
+- Phím S để bỏ qua khi được hỏi mua
+
+### Đổi
+- Font: Inter (chữ chính) và IBM Plex Mono (nhãn, số) thay Arial và Courier New; vẫn dùng Noto Serif nghiêng
+- `design/tokens.css` v2 là **nơi duy nhất** để đổi màu, font, cỡ chữ, khoảng cách; `src/style.css` chỉ dùng biến
+- Giao thức online v3 (thêm chọn quân cờ); trạng thái ván schema v2 (thêm thống kê); ván 0.3 vẫn mở được
+- Giả lập trong `npm test` giảm còn 120 ván cho nhanh (đặt `SIM_GAMES` để chạy nhiều hơn)
 
 ## [0.3.0] — 2026-11-26 · Nền móng
 
@@ -56,7 +73,8 @@ Quy trình phát hành và rollback: [`docs/RELEASE.md`](docs/RELEASE.md).
 ### Đổi
 - Chữ nghiêng dùng Noto Serif thay Georgia (Georgia trên Windows lỗi dấu tiếng Việt)
 
-[Chưa phát hành]: https://github.com/NgHdc/HopeY/compare/v0.3.0...HEAD
+[Chưa phát hành]: https://github.com/NgHdc/HopeY/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/NgHdc/HopeY/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/NgHdc/HopeY/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/NgHdc/HopeY/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/NgHdc/HopeY/compare/v0.1.0...v0.1.1
