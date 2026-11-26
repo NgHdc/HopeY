@@ -1,49 +1,77 @@
-/* Phố Giấy — design tokens (Swiss Paper). Nguồn: docs/STYLE_GUIDE.md */
+/* ============================================================
+   Phố Giấy — design tokens v2 ("Giấy mới", 0.4.0)
+   ĐỔI STYLE CỦA GAME Ở ĐÂY: màu, font, cỡ chữ, khoảng cách, nét.
+   src/style.css chỉ dùng các biến này, không ghi màu/font cứng.
+   Nguồn: docs/STYLE_GUIDE.md · mockup: canvas "Phố Giấy 0.4 — Mockup giao diện"
+   ============================================================ */
 :root {
-  /* Nền & mực — CỐ ĐỊNH */
-  --paper: #F1ECE2;
-  --panel: #E7E0D1;
-  --ink: #22262B;
-  --ink-2: #5E6266;
+  /* ---------- Nền & mực ---------- */
+  --paper: #F1ECE2;      /* nền chính */
+  --panel: #E7E0D1;      /* khối, vùng giữa bàn cờ, ô góc */
+  --ink: #22262B;        /* chữ chính, nét */
+  --ink-2: #5E6266;      /* chữ phụ, nhãn */
 
-  /* Nhấn */
-  --accent: #B0472F;     /* rust — ≤ 2 chỗ / thành phần */
-  --accent-2: #D49A2A;   /* ochre */
+  /* ---------- Nhấn ---------- */
+  --accent: #B0472F;     /* gỉ sắt: nút chính, kicker — tối đa 2 chỗ / màn hình */
+  --accent-hover: #963B26;
+  --accent-2: #D49A2A;   /* ochre: xúc xắc, mặt trời, thẻ Câu hỏi */
   --cool-1: #6F90AE;
   --cool-1-l: #A9C1D6;
-  --cool-2: #2E6B6B;
+  --cool-2: #2E6B6B;     /* xanh ngọc: trạng thái tốt, thẻ Hàng xóm */
   --cool-2-l: #DCE8E4;
-  --neutral: #D9C8A6;    /* sand — lưới, số lớn mờ */
-  --grey: #9A978F;       /* concrete — thế chấp, vô hiệu */
+  --neutral: #D9C8A6;    /* cát: đường ngăn hàng, số lớn mờ */
+  --grey: #9A978F;       /* bê tông: thế chấp, vô hiệu */
 
-  /* 8 quận — luôn đi kèm hoa văn */
+  /* ---------- 8 quận (luôn đi kèm hoa văn, xem style.css .d1–.d8) ---------- */
   --d1: #8A6A4F;  /* Ngõ Đất   — hatch 45° */
   --d2: #A9C1D6;  /* Bến Sông  — lưới chấm */
   --d3: #C98A7A;  /* Chợ Hoa   — vạch dọc */
   --d4: #C9773A;  /* Phố Nghề  — vạch ngang */
-  --d5: #9E3B32;  /* Phố Cổ    — hatch chéo kép */
-  --d6: #D49A2A;  /* Đồi Nắng  — chấm tròn đặc */
-  --d7: #4C6E52;  /* Vườn Xanh — sóng mảnh */
+  --d5: #9E3B32;  /* Phố Cổ    — hatch kép */
+  --d6: #D49A2A;  /* Đồi Nắng  — chấm tròn */
+  --d7: #4C6E52;  /* Vườn Xanh — sóng */
   --d8: #34506E;  /* Cảng Biển — đặc */
 
-  /* Chữ */
-  --font-sans: Arial, "Helvetica Neue", Helvetica, sans-serif;
-  /* Georgia trên Windows thiếu glyph ồ/ề/ổ… → dùng font đủ dấu tiếng Việt */
-  --font-serif: "Noto Serif", Cambria, Georgia, serif;
-  --font-mono: "Courier New", Courier, monospace;
+  /* ---------- Quân cờ ---------- */
+  --piece-0: var(--accent);
+  --piece-1: var(--accent-2);
+  --piece-2: var(--cool-1);
+  --piece-3: var(--cool-2);
+  --piece-4: var(--ink);
+  --piece-5: var(--d7);
 
-  --fs-header: 11px;   /* IN HOA, letter-spacing .1em */
-  --fs-kicker: 12px;   /* IN HOA, letter-spacing .15em, accent */
-  --fs-title: 18px;
-  --fs-human: 13px;    /* Georgia italic */
-  --fs-price: 20px;
+  /* ---------- Chữ (đều đủ dấu tiếng Việt) ---------- */
+  --font-sans: "Inter", Arial, "Helvetica Neue", sans-serif;
+  --font-mono: "IBM Plex Mono", "Courier New", monospace;
+  --font-serif: "Noto Serif", Cambria, Georgia, serif;   /* chỉ dùng nghiêng cho human line */
+
+  --fs-micro: 10px;      /* nhỏ nhất cho phép */
+  --fs-label: 12px;      /* nhãn mono, strip */
+  --fs-small: 13px;
   --fs-body: 14px;
-  --fs-label: 12px;    /* Courier, chữ thường */
-  --fs-numeral: 64px;  /* neutral */
-  --fs-min: 10px;
+  --fs-human: 15px;
+  --fs-title: 22px;      /* tiêu đề thẻ */
+  --fs-h2: 30px;         /* "Lượt của bạn." */
+  --fs-h1: 52px;         /* tiêu đề trang */
+  --fs-display: 112px;   /* mã phòng */
+  --tracking-caps: .16em;
 
-  /* Nét & hình */
-  --hairline: 1px;
-  --radius: 0;
-  --step-ms: 120ms;    /* quân cờ đi mỗi ô */
+  /* ---------- Khoảng cách: lưới 8 ---------- */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px;
+
+  /* ---------- Nét ---------- */
+  --hair: .5px;          /* ranh ô, kẻ phụ */
+  --line: 1px;           /* khung, nút */
+  --mark: 1.5px;         /* đang chọn, đang tới lượt (nét đứt) */
+  --radius: 0;           /* Swiss: góc vuông */
+
+  /* ---------- Kích thước ---------- */
+  --btn-h: 48px;
+  --btn-h-lg: 56px;
+  --btn-h-sm: 44px;      /* nhỏ nhất vẫn ≥ 44px để dễ chạm */
+  --side-w: 440px;
+  --board-max: 860px;
+
+  /* ---------- Chuyển động ---------- */
+  --step-ms: 120ms;
 }

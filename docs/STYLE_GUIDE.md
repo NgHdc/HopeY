@@ -81,7 +81,7 @@ Kiểm tra: chữ `--ink` đọc rõ trên `--d2`, `--d3`, `--d6`; chữ `--pape
 
 ## 3. Hệ thống chữ (CỐ ĐỊNH, quy đổi cho game)
 
-Font: **Arial** · **Courier New** như bản gốc. Chữ nghiêng (human line) dùng **Noto Serif Italic** (dự phòng Cambria → Georgia): Georgia trên Windows thiếu glyph tiếng Việt như *ồ, ề, ổ* nên dấu bị tách rời. Mọi chỗ ghi "Georgia" bên dưới hiểu là font serif này.
+Font (từ 0.4.0, quyết định #11): **Inter** thay Arial, **IBM Plex Mono** thay Courier New. Bản in vẫn dùng được Arial / Courier New. Chữ nghiêng (human line) dùng **Noto Serif Italic** (dự phòng Cambria → Georgia): Georgia trên Windows thiếu glyph tiếng Việt như *ồ, ề, ổ* nên dấu bị tách rời. Mọi chỗ ghi "Georgia" bên dưới hiểu là font serif này.
 
 | Vai trò | Font | Bản in | Bản số | Màu | Ghi chú |
 |---|---|---|---|---|---|

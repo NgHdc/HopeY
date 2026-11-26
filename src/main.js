@@ -17,11 +17,14 @@ const params = new URLSearchParams(location.search);
 const isLocalhost = ['localhost', '127.0.0.1', ''].includes(location.hostname);
 
 const app = {
-  mode: null, screen: 'home', error: null,
-  truth: null,   // trạng thái thật (local/host: tự giữ; guest: bản mới nhất nhận được)
-  S: null,       // trạng thái đang hiển thị (đi sau truth khi đang chạy hiệu ứng)
-  me: -1, room: '', status: '', started: false, seats: [], net: null, token: '', name: '',
+  mode: null,            // 'local' | 'host' | 'guest'
+  screen: 'home',        // 'home' | 'lobby' | 'game' | 'error'
+  error: null,
+  truth: null,           // trạng thái thật (local/host tự giữ; guest: bản mới nhất nhận được)
+  S: null,               // trạng thái đang hiển thị (đi sau truth khi đang chạy hiệu ứng)
+  me: -1, room: '', status: '', statusOk: false, started: false, seats: [], net: null, token: '', name: '',
   viewOverride: null, lastView: '', pos: null, animating: false, queue: Promise.resolve(),
+  tab: 'land', review: false, modal: null, homeDraft: null, homeCount: 3,
 };
 
 // ---------- lưu trữ ----------
@@ -33,7 +36,7 @@ const store = {
 const roomKey = code => 'phogiay-room-' + code;
 function persist() {
   if (app.mode === 'local') store.set(LOCAL_KEY, { S: app.truth });
-  if (app.mode === 'host') store.set(roomKey(app.room), { S: app.truth, seats: app.seats.map(x => ({ name: x.name, token: x.token })) });
+  if (app.mode === 'host') store.set(roomKey(app.room), { S: app.truth, seats: app.seats.map(x => ({ name: x.name, token: x.token, piece: x.piece })) });
 }
 function setUrl(code) { try { history.replaceState(null, '', code ? '?room=' + code : location.pathname + (params.has('dev') ? '?dev' : '')); } catch { /* file:// */ } }
 const roomUrl = code => location.href.split(/[?#]/)[0] + '?room=' + code;
@@ -44,27 +47,26 @@ function ctx() {
   const sv = JSON.stringify(S.view);
   if (sv !== app.lastView) { app.lastView = sv; app.viewOverride = null; }
   const me = app.mode === 'local' ? S.turn : app.me;
+  const lost = app.mode === 'guest' && app.started && !app.statusOk;
   return {
     me, mine: S.winner == null && me === S.turn, mode: app.mode, room: app.room, status: app.status,
     dev: app.mode === 'local', version: APP_VERSION, viewOverride: app.viewOverride, pos: app.pos, busy: app.animating,
+    tab: app.tab, banner: lost ? 'Mất kết nối với chủ phòng.' : '',
   };
 }
 function render() {
-  const overlay = $('#setup'), sheet = $('#setup .sheet');
+  const root = $('#root');
+  // giữ chữ đang gõ ở trang đầu khi vẽ lại
+  if ($('#nm')) app.homeDraft = { name: $('#nm').value, code: $('#code') ? $('#code').value : '' };
   if (app.screen === 'game' && app.S) {
-    overlay.hidden = true;
     const c = ctx();
-    $('#board').innerHTML = V.boardHtml(app.S, c);
-    $('#side').innerHTML = V.sideHtml(app.S, c);
-    return;
-  }
-  overlay.hidden = false;
-  $('#board').innerHTML = ''; $('#side').innerHTML = '';
-  if (app.screen === 'error') sheet.innerHTML = V.errorHtml(...app.error);
-  else if (app.screen === 'lobby') renderLobby(sheet);
-  else renderHome(sheet);
+    root.innerHTML = app.S.winner != null && !app.review ? V.endHtml(app.S, c) : V.gameHtml(app.S, c);
+  } else if (app.screen === 'error') root.innerHTML = V.errorHtml(app.error);
+  else if (app.screen === 'lobby') renderLobby(root);
+  else renderHome(root);
+  $('#modal').innerHTML = app.modal ? V.modalHtml(app.modal) : '';
 }
-function setStatus(s) { app.status = s; if (app.screen !== 'home') render(); }
+function setStatus(s, ok = false) { app.status = s; app.statusOk = ok; if (app.screen !== 'home') render(); }
 
 /** Hiện trạng thái mới, chạy hiệu ứng đi từng ô theo các sự kiện. */
 function show(next, events = []) {
@@ -82,11 +84,16 @@ function show(next, events = []) {
       }
       app.pos = null; app.animating = false;
     }
+    if (next.winner != null && (!prev || prev.winner == null)) app.review = false;
     app.S = next;
     render();
   });
   return app.queue;
 }
+
+// ---------- hộp thoại ----------
+function ask(m) { app.modal = m; render(); const b = document.querySelector('.modal [data-act=modal-ok], .modal [data-act=modal-cancel]'); if (b) b.focus(); }
+function closeModal() { app.modal = null; render(); }
 
 // ---------- thao tác ----------
 function act(action) {
@@ -109,16 +116,15 @@ function commit(seat, action) {
 function startLocal(n, dev) {
   const first = (store.get(NAME_KEY) || '').trim() || DEFAULT_NAMES[0];
   const names = [first, ...DEFAULT_NAMES.filter(x => x !== first)].slice(0, n);
-  app.mode = 'local'; app.S = null;
+  Object.assign(app, { mode: 'local', S: null, review: false, tab: 'land', screen: 'game' });
   app.truth = createGame(names, { dev });
   store.set(SESSION_KEY, { mode: 'local' }, sessionStorage);
-  app.screen = 'game';
   persist(); show(app.truth);
 }
 function resumeLocal() {
   const saved = store.get(LOCAL_KEY), S = saved && migrate(saved.S);
   if (!S) return false;
-  app.mode = 'local'; app.truth = S; app.S = null; app.screen = 'game';
+  Object.assign(app, { mode: 'local', truth: S, S: null, screen: 'game', review: false });
   store.set(SESSION_KEY, { mode: 'local' }, sessionStorage);
   show(S);
   return true;
@@ -126,22 +132,23 @@ function resumeLocal() {
 
 // ---------- chủ phòng ----------
 const seatOfPeer = id => app.seats.findIndex(x => x.peerId === id);
+const freePiece = () => [0, 1, 2, 3, 4, 5].find(k => !app.seats.some(x => x.piece === k));
 function startHost(name, code) {
-  Object.assign(app, { mode: 'host', room: code, me: 0, name, truth: null, S: null });
+  Object.assign(app, { mode: 'host', room: code, me: 0, name, truth: null, S: null, review: false });
   store.set(SESSION_KEY, { mode: 'host', room: code, name }, sessionStorage);
   setUrl(code);
   const saved = store.get(roomKey(code)), S = saved && migrate(saved.S);
   if (S && saved.seats) {
     app.truth = S; app.started = true; app.screen = 'game';
-    app.seats = saved.seats.map((x, i) => ({ ...x, peerId: null, online: i === 0 }));
+    app.seats = saved.seats.map((x, i) => ({ ...x, piece: x.piece ?? i, peerId: null, online: i === 0 }));
     S.players.forEach((p, i) => { p.online = i === 0; });
     show(S);
   } else {
     app.started = false; app.screen = 'lobby';
-    app.seats = [{ name, token: Math.random().toString(36).slice(2), peerId: null, online: true }];
+    app.seats = [{ name, token: Math.random().toString(36).slice(2), peerId: null, online: true, piece: 0 }];
     render();
   }
-  app.net = openHost(code, { onOpen: render, onData: onHostData, onClose: onHostClose, onStatus: setStatus });
+  app.net = openHost(code, { onOpen: () => setStatus('phòng đã mở', true), onData: onHostData, onClose: onHostClose, onStatus: s => setStatus(s, s === 'phòng đã mở') });
 }
 function onHostData(peerId, d) {
   if (!d || typeof d !== 'object') return;
@@ -152,7 +159,7 @@ function onHostData(peerId, d) {
     let seat = tok ? app.seats.findIndex(x => x.token === tok) : -1;
     if (seat < 0 && !app.started) {
       if (app.seats.length >= 6) { app.net.send(peerId, { t: 'error', code: 'full' }); return; }
-      app.seats.push({ name, token: tok, peerId, online: true });
+      app.seats.push({ name, token: tok, peerId, online: true, piece: freePiece() });
       seat = app.seats.length - 1;
     }
     if (seat >= 0) {
@@ -163,11 +170,19 @@ function onHostData(peerId, d) {
     broadcastLobby();
     if (app.started) broadcastState([]);
     render();
-  } else if (d.t === 'act' && d.action && typeof d.action === 'object') {
+  } else if (d.t === 'piece') {
     const seat = seatOfPeer(peerId);
-    const a = d.action;
+    if (seat > 0) choosePiece(seat, d.piece);
+  } else if (d.t === 'act' && d.action && typeof d.action === 'object') {
+    const seat = seatOfPeer(peerId), a = d.action;
     if (seat > 0) commit(seat, { type: String(a.type), i: Number.isInteger(a.i) ? a.i : undefined });
   }
+}
+function choosePiece(seat, piece) {
+  if (app.started || !Number.isInteger(piece) || piece < 0 || piece > 5) return;
+  if (app.seats.some((x, k) => k !== seat && x.piece === piece)) return;
+  app.seats[seat].piece = piece;
+  broadcastLobby(); render();
 }
 function onHostClose(peerId) {
   const seat = seatOfPeer(peerId);
@@ -182,7 +197,7 @@ function onHostClose(peerId) {
 }
 function broadcastLobby() {
   if (app.mode !== 'host') return;
-  const seats = app.seats.map(x => ({ name: x.name, online: x.online }));
+  const seats = app.seats.map(x => ({ name: x.name, online: x.online, piece: x.piece }));
   app.net.broadcast(id => ({ t: 'lobby', seats, you: seatOfPeer(id), started: app.started }));
 }
 function broadcastState(events) {
@@ -191,9 +206,9 @@ function broadcastState(events) {
 }
 function startOnlineGame() {
   if (app.mode !== 'host' || app.seats.length < 2) return;
-  app.truth = createGame(app.seats.map(x => x.name));
+  app.truth = createGame(app.seats.map(x => x.name), { pieces: app.seats.map(x => x.piece) });
   app.truth.players.forEach((p, i) => { p.online = app.seats[i].online; });
-  app.started = true; app.screen = 'game'; app.S = null;
+  Object.assign(app, { started: true, screen: 'game', S: null, review: false, tab: 'land' });
   persist(); broadcastLobby(); broadcastState([]); show(app.truth);
 }
 
@@ -201,11 +216,11 @@ function startOnlineGame() {
 function startGuest(name, code) {
   const ses = store.get(SESSION_KEY, sessionStorage);
   const token = (ses && ses.mode === 'guest' && ses.room === code && ses.token) || Math.random().toString(36).slice(2) + Date.now().toString(36);
-  Object.assign(app, { mode: 'guest', room: code, name, token, seats: [], started: false, screen: 'lobby', truth: null, S: null });
+  Object.assign(app, { mode: 'guest', room: code, name, token, seats: [], started: false, screen: 'lobby', truth: null, S: null, review: false });
   store.set(SESSION_KEY, { mode: 'guest', room: code, name, token }, sessionStorage);
   setUrl(code);
   render();
-  app.net = joinHost(code, { t: 'hello', name, token }, { onData: onGuestData, onStatus: setStatus });
+  app.net = joinHost(code, { t: 'hello', name, token }, { onData: onGuestData, onStatus: s => setStatus(s, s === 'đã vào phòng') });
 }
 function onGuestData(d) {
   if (!d || typeof d !== 'object') return;
@@ -218,10 +233,11 @@ function onGuestData(d) {
     show(d.S, d.events || []);
   } else if (d.t === 'error') {
     if (app.net) app.net.destroy();
+    app.net = null;
     app.screen = 'error';
     app.error = d.code === 'version'
-      ? ['Hai máy đang chạy hai phiên bản khác nhau.', `Phòng ${app.room} dùng bản ${d.host}, máy bạn đang chạy bản ${APP_VERSION}. Tải lại trang (Ctrl + F5) để lấy bản mới nhất, hoặc nhờ chủ phòng tải lại.`]
-      : ['Phòng đã đủ người.', 'Phòng này đã có 6 người chơi.'];
+      ? { kicker: 'Sao không vào được?', title: 'Hai máy đang dùng hai phiên bản khác nhau.', table: [['phòng', 'v' + d.host], ['máy bạn', 'v' + APP_VERSION, true]], text: 'Tải lại trang (Ctrl + F5) để lấy bản mới nhất, hoặc nhờ chủ phòng tải lại.', primary: ['reload', 'Tải lại trang'] }
+      : { kicker: 'Hết chỗ', title: 'Phòng đã đủ 6 người.', text: 'Nhờ chủ phòng mở phòng mới, hoặc chờ ván sau.' };
     store.del(SESSION_KEY, sessionStorage);
     render();
   }
@@ -231,50 +247,60 @@ function onGuestData(d) {
 function goHome() {
   if (app.net) app.net.destroy();
   store.del(SESSION_KEY, sessionStorage);
-  Object.assign(app, { mode: null, screen: 'home', truth: null, S: null, net: null, room: '', status: '', started: false, seats: [], me: -1, viewOverride: null, pos: null, animating: false });
+  Object.assign(app, { mode: null, screen: 'home', truth: null, S: null, net: null, room: '', status: '', started: false, seats: [], me: -1, viewOverride: null, pos: null, animating: false, modal: null, review: false });
   app.queue = Promise.resolve();
   setUrl('');
   render();
 }
 function exit() {
-  const msg = app.mode === 'host' ? 'Rời phòng? Phòng sẽ đóng với mọi người.\n(Ván vẫn được lưu trên máy này.)'
-    : app.mode === 'guest' ? 'Rời phòng?' : null;
-  if (msg && !confirm(msg)) return;
+  if (app.mode === 'host' && app.started && app.truth && app.truth.winner == null) {
+    return ask({ strip: 'Rời phòng', stripR: 'chủ phòng', kicker: 'Đi thật à?', title: 'Bạn là chủ phòng: rời đi thì cả phòng tạm dừng.', text: `Ván vẫn được lưu trên máy này. Mở lại mã ${app.room} là mọi người chơi tiếp được.`, ok: 'Rời phòng', danger: true, cancel: 'Ở lại', onOk: goHome });
+  }
+  if (app.mode === 'host' || app.mode === 'guest') {
+    if (app.truth && app.truth.winner != null) return goHome();
+    return ask({ strip: 'Rời phòng', kicker: 'Đi thật à?', title: 'Rời phòng này?', text: app.started ? 'Bạn có thể quay lại bằng đúng link phòng trong tab này.' : '', ok: 'Rời phòng', danger: true, cancel: 'Ở lại', onOk: goHome });
+  }
   goHome();
 }
 
 // ---------- trang đầu & sảnh ----------
-function renderHome(sheet) {
-  const code = (params.get('room') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5);
+function renderHome(root) {
+  const urlCode = (params.get('room') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5);
   const local = store.get(LOCAL_KEY);
-  sheet.innerHTML = V.homeHtml({ name: store.get(NAME_KEY) || '', code, online: peerAvailable(), hasLocalSave: !!(local && local.S && local.S.winner == null), devDefault: isLocalhost || params.has('dev') });
-  let n = 3;
+  const draft = app.homeDraft || {};
+  root.innerHTML = V.homeHtml({ name: draft.name ?? store.get(NAME_KEY) ?? '', code: draft.code ?? urlCode, online: peerAvailable(), hasLocalSave: !!(local && local.S && local.S.winner == null), devDefault: isLocalhost || params.has('dev'), version: APP_VERSION });
+  $('#count').querySelectorAll('button').forEach(b => { const on = +b.dataset.n === app.homeCount; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
   const getName = () => {
     const v = $('#nm').value.trim().slice(0, 14);
     if (!v) { $('#err').textContent = 'nhập tên trước đã'; $('#nm').focus(); return null; }
     store.set(NAME_KEY, v); return v;
   };
   const on = (id, f) => { const el = $(id); if (el) el.onclick = e => { e.preventDefault(); f(); }; };
-  on('#create', () => { const v = getName(); if (v) startHost(v, makeRoomCode()); });
+  on('#create', () => { const v = getName(); if (v) { app.homeDraft = null; startHost(v, makeRoomCode()); } });
   on('#join', () => {
     const v = getName(); if (!v) return;
-    const c = code || $('#code').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-    if (c.length !== 5) { $('#err').textContent = 'mã phòng có 5 ký tự'; return; }
-    startGuest(v, c);
+    const c = ($('#code').value || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (c.length !== 5) { $('#err').textContent = 'mã phòng có 5 ký tự'; $('#code').focus(); return; }
+    app.homeDraft = null; startGuest(v, c);
   });
-  $('#count').onclick = e => { const b = e.target.closest('[data-n]'); if (!b) return; n = +b.dataset.n; $('#count').querySelectorAll('.btn').forEach(x => x.classList.toggle('on', x === b)); };
-  on('#local', () => { const v = $('#nm').value.trim(); if (v) store.set(NAME_KEY, v.slice(0, 14)); startLocal(n, $('#devchk').checked); });
-  on('#resume-local', () => { if (!resumeLocal()) { $('#err').textContent = 'không mở được ván thử đã lưu'; } });
+  const code = $('#code'); if (code) code.onkeydown = e => { if (e.key === 'Enter') $('#join').click(); };
+  $('#count').onclick = e => {
+    const b = e.target.closest('[data-n]'); if (!b) return;
+    app.homeCount = +b.dataset.n;
+    $('#count').querySelectorAll('button').forEach(x => { const on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); });
+  };
+  on('#local', () => { const v = $('#nm').value.trim(); if (v) store.set(NAME_KEY, v.slice(0, 14)); app.homeDraft = null; startLocal(app.homeCount, $('#devchk').checked); });
+  on('#resume-local', () => { app.homeDraft = null; if (!resumeLocal()) $('#err').textContent = 'không mở được ván thử đã lưu'; });
 }
-function renderLobby(sheet) {
+function renderLobby(root) {
   const url = roomUrl(app.room), isHost = app.mode === 'host';
-  sheet.innerHTML = V.lobbyHtml({ room: app.room, url, seats: app.seats, me: app.me, isHost, canStart: isHost && app.seats.length >= 2 && app.net && app.net.isOpen(), status: app.status });
+  const seats = app.seats.map(x => ({ ...x, piece: x.piece ?? 0 }));
+  root.innerHTML = V.lobbyHtml({ room: app.room, url, seats, me: app.me, isHost, canStart: isHost && app.seats.length >= 2 && app.net && app.net.isOpen(), status: app.status || 'đang kết nối…', statusOk: app.statusOk });
   $('#copy').onclick = () => {
-    sheet.querySelector('.link').select();
+    $('#roomlink').select();
     (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).catch(() => document.execCommand('copy'));
     $('#copy').textContent = 'Đã chép';
   };
-  const go = $('#go'); if (go) go.onclick = startOnlineGame;
 }
 
 // ---------- sự kiện ----------
@@ -283,19 +309,34 @@ document.addEventListener('click', e => {
   if (tile && app.S && app.screen === 'game') { ctx(); app.viewOverride = { kind: 'tile', i: +tile.dataset.tile }; render(); return; }
   const b = e.target.closest('[data-act]');
   if (!b) return;
+  if (b.classList.contains('modal-bg') && e.target.closest('.modal')) return; // bấm trong hộp thoại, không phải nền
   e.preventDefault();
-  const a = b.dataset.act, arg = b.dataset.arg === '' ? undefined : +b.dataset.arg;
+  const a = b.dataset.act, arg = b.dataset.arg === undefined || b.dataset.arg === '' ? undefined : (isNaN(+b.dataset.arg) ? b.dataset.arg : +b.dataset.arg);
   switch (a) {
+    case 'modal-ok': { const f = app.modal && app.modal.onOk; closeModal(); if (f) f(); return; }
+    case 'modal-cancel': return closeModal();
+    case 'rules': return ask({ strip: 'Luật chơi', kicker: 'Chơi thế nào?', title: 'Sáu điều cần biết', html: V.RULES_HTML });
     case 'exit': return exit();
     case 'home': return goHome();
+    case 'reload': return location.reload();
+    case 'tab': app.tab = arg; return render();
+    case 'review': app.review = true; return render();
+    case 'review-end': app.review = false; return render();
+    case 'start': return startOnlineGame();
+    case 'piece':
+      if (app.mode === 'host') choosePiece(0, arg);
+      else if (app.net) app.net.send({ t: 'piece', piece: arg });
+      return;
     case 'new':
       if (app.mode === 'host') return startOnlineGame();
       if (app.mode === 'local') return startLocal(app.truth.players.length, app.truth.opts.dev);
       return;
-    case 'forfeit':
-      if (app.mode === 'host' && confirm(`${app.truth.players[app.truth.turn].name} đang mất kết nối. Cho người này rời ván, đất trả về phố?`)) commit(app.truth.turn, { type: 'forfeit' });
-      return;
-    case 'bankrupt': if (confirm('Phá sản và rời ván?')) act({ type: 'bankrupt' }); return;
+    case 'forfeit': {
+      const p = app.truth.players[app.truth.turn];
+      return ask({ strip: 'Người chơi rớt mạng', kicker: `Chờ ${p.name} hay đi tiếp?`, title: `Cho ${p.name} rời ván?`, text: 'Đất trả về phố, mọi người chơi tiếp.', ok: `Cho ${p.name} rời ván`, danger: true, cancel: 'Chờ thêm', onOk: () => commit(app.truth.turn, { type: 'forfeit' }) });
+    }
+    case 'bankrupt':
+      return ask({ strip: 'Phá sản', kicker: 'Hết cách rồi?', title: 'Phá sản và rời ván?', text: 'Đất của bạn chuyển cho người bạn đang nợ (hoặc trả về phố). Bạn vẫn xem tiếp được.', ok: 'Phá sản', danger: true, cancel: 'Thử xoay xở tiếp', onOk: () => act({ type: 'bankrupt' }) });
     case 'dev-roll': return act({ type: 'roll', dice: [+$('#dv1').value, +$('#dv2').value] });
     case 'dev-money': return act({ type: 'debug', op: 'money', n: arg });
     case 'dev-goto': return act({ type: 'debug', op: 'goto', i: arg });
@@ -306,9 +347,11 @@ document.addEventListener('click', e => {
   }
 });
 document.addEventListener('keydown', e => {
-  if (app.screen !== 'game' || !app.S || app.animating || /INPUT|SELECT|TEXTAREA/.test(e.target.tagName) || !ctx().mine) return;
+  if (e.key === 'Escape' && app.modal) return closeModal();
+  if (app.modal || app.screen !== 'game' || !app.S || app.animating || /INPUT|SELECT|TEXTAREA|BUTTON/.test(e.target.tagName) && e.code === 'Space' || /INPUT|SELECT|TEXTAREA/.test(e.target.tagName) || !ctx().mine) return;
   if (e.code === 'Space') { e.preventDefault(); act({ type: 'roll' }); }
   else if (e.key === 'b' || e.key === 'B') act({ type: 'buy' });
+  else if (e.key === 's' || e.key === 'S') act({ type: 'skip' });
   else if (e.key === 'e' || e.key === 'E') act({ type: 'end' });
 });
 

@@ -12,8 +12,9 @@
 |---|---|---|---|
 | 0.1.x | Bản giấy nháp | Luật chơi cơ bản, chơi chung một máy | ✅ đã phát hành |
 | 0.2.x | Mở cửa phòng | Chơi online, phòng riêng (PeerJS) | ✅ đã phát hành |
-| 0.3.0 | Nền móng | Tách code, test, version, deploy có lưu trữ + rollback, chơi thử trên máy | ✅ **đang chạy** |
-| 0.4.0 | Giấy mới | Thiết kế lại toàn bộ UI và đồ họa | ⏭ tiếp theo |
+| 0.3.0 | Nền móng | Tách code, test, version, deploy có lưu trữ + rollback, chơi thử trên máy | ✅ đã phát hành |
+| 0.4.0 | Giấy mới | Thiết kế lại toàn bộ UI theo mockup | ✅ **đang chạy** |
+| 0.4.x | Giấy mới (tiếp) | Đồ họa từng ô, chỉnh style theo ý bạn | ⏭ tiếp theo |
 | 0.5.0 | Luật đầy đủ | Trao đổi, đấu giá, bộ thẻ đầy đủ, tùy chỉnh luật | |
 | 0.6.0 | Phòng bền | Kết nối ổn định, chuyển chủ phòng, chat, khán giả | |
 | 0.7.0 | Mọi màn hình | Điện thoại, máy tính bảng, bàn phím, trợ năng | |
@@ -75,10 +76,10 @@ Thứ tự này có chủ đích: **làm nền móng (0.3) trước khi thiết 
 **Mục tiêu:** mọi màn hình và hình vẽ đạt chuẩn `STYLE_GUIDE.md`, được thiết kế trước rồi mới code.
 
 ### Giai đoạn A — Thiết kế (chưa code)
-- [ ] **Kiểm kê UI hiện tại**: chụp mọi màn hình và trạng thái, ghi những chỗ chưa ổn.
+- [x] **Kiểm kê UI hiện tại**: chụp mọi màn hình và trạng thái, ghi những chỗ chưa ổn.
 - [ ] **Moodboard**: Swiss poster, bản đồ giấy, tem, vé tàu cũ, giấy kẻ ô; ảnh phố Việt cho 8 quận.
-- [ ] **Style guide v2**: lưới 8 px, thang chữ, thang khoảng cách, nét (0.5 / 1 / 1.5), trạng thái (hover / đang chọn / vô hiệu / lỗi), độ tương phản.
-- [ ] **Mockup độ trung thực cao** cho từng màn hình:
+- [x] **Style guide v2** (bản nháp trên canvas, khung 01): lưới 8 px, thang chữ, nét 0.5 / 1 / 1.5, thành phần. Đề xuất font Inter + IBM Plex Mono + Noto Serif, chờ duyệt.
+- [x] **Mockup độ trung thực cao** cho từng màn hình (canvas *Phố Giấy 0.4 — Mockup giao diện*, 10 khung):
   1. Trang chủ: tạo phòng / vào phòng
   2. Sảnh chờ: mã phòng, danh sách người, chọn quân cờ, chọn màu
   3. Bàn cờ: desktop 1440, laptop 1280, tablet 1024, điện thoại 390
@@ -87,9 +88,9 @@ Thứ tự này có chủ đích: **làm nền móng (0.3) trước khi thiết 
   6. Hộp thoại: mua, đấu giá, trao đổi, phá sản, xác nhận
   7. Màn hình kết thúc ván: người thắng, thống kê
   8. Trạng thái lỗi: mất kết nối, phòng không tồn tại, khác phiên bản
-- [ ] **Duyệt mockup** với bạn trước khi code.
+- [x] **Duyệt mockup**: đồng ý dùng làm nền (2026-11-27); style sẽ chỉnh dần ở các bản 0.4.x
 
-### Giai đoạn B — Đồ họa
+### Giai đoạn B — Đồ họa → chuyển sang 0.4.x (sau khi bạn định hình style)
 - [ ] Hình minh họa SVG cho **22 ô đất** (mỗi ô: 1 cảnh hình học + người que), **4 ga**, **2 tiện ích**, **4 ô góc**.
 - [ ] Bộ **8 hoa văn quận** dạng SVG `<pattern>` (thay cho CSS gradient), dùng chung cho bàn cờ, thẻ và bản in.
 - [ ] **Bản đồ thành phố** ở giữa bàn cờ: sông, đường, 8 quận, người que; nhà và phố hiện lên theo những gì người chơi xây.
@@ -98,10 +99,11 @@ Thứ tự này có chủ đích: **làm nền móng (0.3) trước khi thiết 
 - [ ] Biểu tượng giao diện (lăn, mua, xây, thế chấp, trao đổi…) cùng nét vẽ, không dùng clip-art.
 - [ ] Texture giấy thật (ảnh quét hoặc tự tạo), file nhẹ hơn 60 KB.
 
-### Giai đoạn C — Code UI
-- [ ] Viết lại CSS theo token v2; component hóa (Tile, Card, PlayerRow, Dialog, Button).
-- [ ] Bàn cờ vẽ bằng SVG (sắc nét ở mọi cỡ, xoay chữ theo cạnh như bản in).
-- [ ] Đọc màn hình: so sánh ảnh chụp trước/sau (visual regression) bằng script chụp ảnh tự động.
+### Giai đoạn C — Code UI ✅ (0.4.0)
+- [x] Viết lại CSS theo token v2 (`design/tokens.css` là nơi duy nhất để đổi style)
+- [x] Trang đầu, sảnh chờ (chọn quân cờ), bàn cờ, tab Đất của tôi / Nhật ký, màn hình kết thúc, hộp thoại, trạng thái lỗi, bố cục điện thoại
+- [ ] Bàn cờ vẽ bằng SVG, chữ xoay theo cạnh như bản in → 0.4.x
+- [ ] So sánh ảnh chụp trước/sau tự động (visual regression) → 0.4.x
 
 **Xong khi:** mọi màn hình khớp mockup; qua checklist mục 9 của `STYLE_GUIDE.md`; không có chữ dưới 10 px; tương phản ≥ 4.5:1.
 

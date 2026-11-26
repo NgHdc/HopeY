@@ -31,11 +31,11 @@ let id = 0; const pending = new Map();
 ws.onmessage = e => { const m = JSON.parse(e.data); if (m.id && pending.has(m.id)) { pending.get(m.id)(m); pending.delete(m.id); } };
 const send = (method, params = {}, sessionId) => new Promise(r => { const i = ++id; pending.set(i, r); ws.send(JSON.stringify({ id: i, method, params, sessionId })); });
 
-async function openPage(url) {
+async function openPage(url, width = 1440, height = 900) {
   const { result: { browserContextId } } = await send('Target.createBrowserContext');
   const { result: { targetId } } = await send('Target.createTarget', { url, browserContextId });
   const { result: { sessionId } } = await send('Target.attachToTarget', { targetId, flatten: true });
-  await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false }, sessionId);
+  await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: width < 600 }, sessionId);
   await send('Page.enable', {}, sessionId);
   const ev = async expr => {
     const r = await send('Runtime.evaluate', { expression: expr, returnByValue: true, awaitPromise: true }, sessionId);
@@ -64,6 +64,23 @@ try {
   check(await L.ev(`!!document.querySelector('[data-act=exit]')`), 'ván thử: có nút thoát');
   await L.ev(`document.querySelector('[data-act=exit]').click()`);
   check(await until(() => L.ev(`__phogiay.app.screen === 'home' && !!document.getElementById('resume-local')`), 3000), 'ván thử: thoát về trang đầu, có nút tiếp tục');
+  await L.shot('home.png');
+  await L.ev(`document.getElementById('resume-local').click()`);
+  check(await until(() => L.ev(`__phogiay.app.screen === 'game'`), 3000), 'ván thử: tiếp tục ván đã lưu');
+  await L.ev(`document.querySelector('[data-act=tab][data-arg=log]').click()`);
+  check(await L.ev(`document.querySelectorAll('.log li').length > 0`), 'ván thử: tab nhật ký');
+  // kết thúc ván: hai người lần lượt phá sản → còn một người thắng
+  for (let k = 0; k < 2; k++) {
+    await until(() => L.ev('!__phogiay.app.animating'), 5000);
+    await L.ev(`__phogiay.act({ type: 'debug', op: 'money', n: -5000 }); __phogiay.act({ type: 'bankrupt' })`);
+    await sleep(300);
+  }
+  check(await until(() => L.ev(`!!document.querySelector('.end-hero')`), 5000), 'ván thử: màn hình kết thúc ván');
+  await L.shot('end.png');
+  // điện thoại
+  const M = await openPage(BASE + '?local=4&dev', 390, 844);
+  check(await until(() => M.ev(`__phogiay.app.screen === 'game'`), 5000), 'điện thoại: vào bàn cờ');
+  await M.shot('mobile-game.png');
 
   // ---------- 2. online hai máy ----------
   const A = await openPage(BASE), B = await openPage(BASE);
@@ -75,6 +92,9 @@ try {
   await B.ev(`__phogiay.startGuest('Minh', '${code}')`);
   check(await until(() => A.ev('__phogiay.app.seats.length === 2')), 'online: khách vào phòng');
   await sleep(400); await B.shot('online-lobby-guest.png');
+  await B.ev(`document.querySelector('[data-act=piece][data-arg="3"]').click()`);
+  check(await until(() => A.ev('__phogiay.app.seats[1].piece === 3')), 'online: khách chọn quân lục giác');
+  await A.shot('online-lobby-host.png');
   await A.ev('__phogiay.startOnlineGame()');
   check(await until(() => B.ev(`__phogiay.app.screen === 'game' && __phogiay.app.me === 1`)), 'online: khách nhận bàn cờ');
   await B.ev(`__phogiay.act({ type: 'roll' })`); await sleep(800);
@@ -91,7 +111,10 @@ try {
   const sa = await A.ev(pick), sb = await B.ev(pick);
   check(sa === sb, `online: hai máy cùng trạng thái ${sa}`);
   await B.shot('online-game-guest.png');
-  await B.ev(`window.confirm = () => true; document.querySelector('[data-act=exit]').click()`);
+  await A.shot('online-game-host.png');
+  await B.ev(`document.querySelector('[data-act=exit]').click()`);
+  check(await until(() => B.ev(`!!document.querySelector('.modal [data-act=modal-ok]')`), 3000), 'online: rời phòng hỏi lại bằng hộp thoại');
+  await B.ev(`document.querySelector('.modal [data-act=modal-ok]').click()`);
   check(await until(() => A.ev(`__phogiay.app.truth.players[1].online === false`), 8000), 'online: khách rời phòng → chủ phòng thấy mất kết nối');
 } catch (e) {
   if (e.message !== 'bỏ qua phần online') { console.log('✗ lỗi:', e.message); failed++; }
