@@ -90,6 +90,7 @@ Checklist (chép vào mô tả Pull Request `dev → main`):
   git tag -a v0.3.0 -m "v0.3.0 — Nền móng"
   git push origin v0.3.0
   ```
+  > Đẩy **từng tag một**. Đẩy hơn 3 tag cùng lúc thì GitHub bỏ qua sự kiện tag, khi đó vào Actions → **Release** → Run workflow để tạo bù.
 - [ ] Workflow **Release** tự chạy: tạo GitHub Release từ CHANGELOG, rồi gọi **Deploy**: cập nhật `/`, thêm `/v/0.3.0/`, cập nhật `/versions/`
 - [ ] Mở bản chính, tạo một phòng thử, xem chân trang đúng số phiên bản
 
