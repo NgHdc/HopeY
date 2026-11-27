@@ -33,6 +33,9 @@ Muốn sửa file ngoài vùng của mình thì **không sửa**. Ghi đề xu�
 | `design/lab/**` (trang xem thử) | đọc | ✅ | ✅ (chỉ thêm file) |
 | `assets/stacks/**` (ảnh gốc, lát cắt) | đọc | đọc | ✅ |
 | `content/vietnam.json` (tên, mô tả ô) | đọc | ❌ | ✅ |
+| `design/themes/*.css`, `design/themes/README.md` (theme từng vùng đất, `docs/UI_REFRESH.md`) | đọc | ✅ | ❌ |
+| `design/themes/palettes.md`, `assets/themes/**` (bảng màu, hoa văn, minh họa) | đọc | đọc | ✅ |
+| `assets/avatars/**` (avatar nhân vật) | đọc | đọc | ✅ |
 | `docs/ART_PIPELINE.md` | ✅ | ✅ (mục của mình) | ✅ (mục của mình) |
 | `docs/agents/<tên>.md` | file của mình | file của mình | file của mình |
 | `.drawing-skill/`, `design/*.py`, `design/mockup/` | ❌ | ❌ | ❌ (của người dùng) |
