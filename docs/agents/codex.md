@@ -12,3 +12,10 @@
 - `python -I tools/art/test_build_stacks.py` xanh với ba asset giả lập; hash của toàn bộ 10 file trùng nhau sau hai lần chạy và sau `--only`.
 - Dựng lại sáu asset G1 trong `tools/art/g1-verify/`: manifest trùng, 12/12 dải PNG và sheet 16 góc trùng hash với bản Agy; không ghi vào vùng asset của Agy.
 - Nhãn `tách lớp` đã hiển thị đủ dấu bằng Arial trên máy; font dự phòng dùng `tach lop`. Tiếp theo: C3.
+
+## 2026-11-27 · C3
+- Đã thêm `src/render/stack.js` với `loadStacks`, `bake`, `drawStack`, `frameFor`, `mountTurntable` và kiểm tra schema manifest.
+- Style pixel tạo viền silhouette sau khi xếp lớp; style paper dùng bóng từng lát, lớp dưới tối dần và vân giấy lấy màu từ CSS tokens.
+- `node --test tests/render/*.test.mjs`: 3/3 xanh; kiểm tra canvas và hai style trong lab ở C4.
+- Đã xem ảnh mobile G1 của Agy và sửa tọa độ chân turntable để mô hình nằm giữa canvas theo toàn bộ khung bake.
+- Tiếp theo: C4 kiểm tra lab. Vướng: trình duyệt tự động của phiên Codex vẫn không khả dụng.
