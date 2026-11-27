@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <clipPath id="c"><circle cx="128" cy="128" r="116"/></clipPath>
+  </defs>
+  <!-- Bong cung sticker -->
+  <circle cx="128" cy="134" r="116" fill="#1F1A2E"/>
+  <!-- Nen huy hieu tron -->
+  <circle cx="128" cy="126" r="116" fill="#C93420" stroke="#1F1A2E" stroke-width="8"/>
+  <g clip-path="url(#c)">
+    <!-- Mang sang nen hoat hinh -->
+    <circle cx="96" cy="84" r="78" fill="#F26B52" opacity="0.45"/>
+    
+    <!-- Don ganh tre ngang vai & day treo quang ganh -->
+    <path d="M18 192 Q128 176 238 192" fill="none" stroke="#D99B38" stroke-width="14" stroke-linecap="round"/>
+    <path d="M18 192 Q128 176 238 192" fill="none" stroke="#1F1A2E" stroke-width="18" stroke-linecap="round" opacity="0.25"/>
+    <path d="M20 192 Q128 176 236 192" fill="none" stroke="#E8B44C" stroke-width="11" stroke-linecap="round"/>
+    <line x1="48" y1="192" x2="36" y2="246" stroke="#1F1A2E" stroke-width="5"/>
+    <line x1="208" y1="192" x2="220" y2="246" stroke="#1F1A2E" stroke-width="5"/>
+    <circle cx="206" cy="220" r="22" fill="#F5B71A" stroke="#1F1A2E" stroke-width="5.5"/>
+    
+    
+    <!-- Ao ba ba do son & khan co trang -->
+    <path d="M58 250 C62 196 90 178 128 178 C166 178 194 196 198 250 Z" fill="#A62414" stroke="#1F1A2E" stroke-width="7" stroke-linejoin="round"/>
+    <path d="M104 180 L128 214 L152 180 Z" fill="#FFF6DC" stroke="#1F1A2E" stroke-width="6" stroke-linejoin="round"/>
+    <!-- Toc bui sau gay -->
+    <circle cx="128" cy="146" r="46" fill="#2A2033" stroke="#1F1A2E" stroke-width="7"/>
+    <!-- Co & mat -->
+    <rect x="114" y="164" width="28" height="24" rx="10" fill="#FFD6B0" stroke="#1F1A2E" stroke-width="6"/>
+    <circle cx="128" cy="136" r="40" fill="#FFD6B0" stroke="#1F1A2E" stroke-width="7"/>
+    <!-- Mat cuoi & ma hong -->
+    <circle cx="112" cy="136" r="5.5" fill="#1F1A2E"/>
+    <circle cx="144" cy="136" r="5.5" fill="#1F1A2E"/>
+    <circle cx="110" cy="134" r="2" fill="#FFFFFF"/>
+    <circle cx="142" cy="134" r="2" fill="#FFFFFF"/>
+    <ellipse cx="101" cy="146" rx="7" ry="4.5" fill="#FF8FA3" opacity="0.75"/>
+    <ellipse cx="155" cy="146" rx="7" ry="4.5" fill="#FF8FA3" opacity="0.75"/>
+    <path d="M116 151 Q128 163 140 151" fill="none" stroke="#1F1A2E" stroke-width="5.5" stroke-linecap="round"/>
+    <!-- Quai non lua do -->
+    <path d="M90 122 Q128 192 166 122" fill="none" stroke="#E83B3B" stroke-width="6" stroke-linecap="round"/>
+    <!-- Non la vang rom rong vanh -->
+    <path d="M32 118 L128 36 L224 118 Q128 134 32 118 Z" fill="#F4CC5A" stroke="#1F1A2E" stroke-width="7" stroke-linejoin="round"/>
+    <path d="M62 114 L128 54 L194 114" fill="none" stroke="#D19A2A" stroke-width="4.5" stroke-linecap="round"/>
+    <path d="M84 120 Q128 128 172 120" fill="none" stroke="#D19A2A" stroke-width="4"/>
+    <path d="M128 36 L112 114" fill="none" stroke="#FFE796" stroke-width="5" opacity="0.75"/>
+    
+  </g>
+  <!-- Vien ngoai sac net de len tren -->
+  <circle cx="128" cy="126" r="116" fill="none" stroke="#1F1A2E" stroke-width="8"/>
+</svg>

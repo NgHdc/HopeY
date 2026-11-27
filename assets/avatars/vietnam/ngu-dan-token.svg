@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <clipPath id="tc"><circle cx="32" cy="31" r="27"/></clipPath>
+  </defs>
+  <circle cx="32" cy="34" r="27" fill="#1F1A2E"/>
+  <circle cx="32" cy="31" r="27" fill="#1D73B2" stroke="#1F1A2E" stroke-width="4.5"/>
+  <g clip-path="url(#tc)">
+    <circle cx="24" cy="21" r="16" fill="#64B5F0" opacity="0.35"/>
+    
+    <circle cx="32" cy="36" r="15.5" fill="#EAB082" stroke="#1F1A2E" stroke-width="4"/>
+    <path d="M16 30 C16 14 48 14 48 30 Z" fill="#1F1A2E" stroke="#1F1A2E" stroke-width="3.5"/>
+    <!-- Bang do do buoc tran cuc noi bat -->
+    <rect x="14" y="23" width="36" height="9" rx="3" fill="#E63B2E" stroke="#1F1A2E" stroke-width="3.5"/>
+    <path d="M48 26 L58 21 L56 31 Z" fill="#E63B2E" stroke="#1F1A2E" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="26" cy="38" r="2.4" fill="#1F1A2E"/>
+    <circle cx="38" cy="38" r="2.4" fill="#1F1A2E"/>
+    <path d="M25 44 Q32 50 39 44 Z" fill="#FFFFFF" stroke="#1F1A2E" stroke-width="2.5"/>
+    
+  </g>
+  <circle cx="32" cy="31" r="27" fill="none" stroke="#1F1A2E" stroke-width="4.5"/>
+</svg>

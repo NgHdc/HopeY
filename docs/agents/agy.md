@@ -4,6 +4,14 @@
 - Đã tạo nội dung chữ cho map Việt Nam (40 ô, 13 loại thẻ Vận mệnh, gợi ý Thanh Hóa) và chạy `node --test tests/*.test.mjs` (17/17 xanh).
 - File: `content/vietnam.json`.
 
+## 2026-11-27 · A2 (6 avatar vùng đất Dải đất — chờ duyệt)
+- Đã vẽ đủ 6 nhân vật Dải đất (`non-la`, `xich-lo`, `ao-dai`, `ong-do`, `ngu-dan`, `tha-dieu`) dạng SVG vector nét đậm kiểu sticker (đồng bộ sprite A · Pixel): mỗi nhân vật có portrait 256×256 + token 64×64 đọc rõ ở 24px, mọi file 1,0–3,1 KB (< 40 KB).
+- Đã tạo `assets/avatars/vietnam/avatars.json`, `assets/avatars/SOURCES.md` và bảng kiểm tra 6 chân dung + 6 token ở cỡ 24px tại `assets/avatars/check/vietnam-sheet.png`.
+- File: `assets/avatars/vietnam/*`, `assets/avatars/SOURCES.md`, `assets/avatars/check/vietnam-sheet.png`.
+- Việc tiếp theo: làm **A3** (6 cư dân Phố Giấy) rồi **A4** (minh họa giữa bàn). Đang vướng: không.
+
+![Bảng 6 avatar Dải đất](../../assets/avatars/check/vietnam-sheet.png)
+
 ## 2026-11-27 · A1 (Bảng màu + hoa văn 2 vùng đất — Style "Rực rỡ")
 - Đã chốt bảng màu rực rỡ đủ toàn bộ biến ở mục 2 `docs/UI_REFRESH.md` cho 2 vùng đất (`vietnam` — Dải đất, `classic` — Phố Giấy), kiểm chứng tự động 44/44 cặp chữ/nền đều đạt WCAG 2.1 AA ≥ 4,83:1.
 - Đã vẽ 2 hoa văn lặp SVG nền trong suốt (`assets/themes/vietnam-pattern.svg` sóng nước & mây, `assets/themes/classic-pattern.svg` giấy gấp & chấm lưới) và 2 ảnh swatch (`assets/themes/vietnam-swatch.png`, `assets/themes/classic-swatch.png`).
