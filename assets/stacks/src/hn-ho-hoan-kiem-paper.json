@@ -1,0 +1,12 @@
+{
+  "slices": 14,
+  "style": "paper",
+  "side_nose": "left",
+  "top_nose": "down",
+  "order": "reading",
+  "colours": 48,
+  "shade": 0.06,
+  "dark_thresh": 0,
+  "spacing": 2.1,
+  "squash": 0.75
+}

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Phố Giấy · Cổng duyệt 1 (A Pixel vs B Giấy xếp lớp)</title>
+  <link rel="stylesheet" href="../tokens.css">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 20px 26px 26px; background: var(--paper); color: var(--ink); font: 14px/1.4 var(--font-sans); }
+    header { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; border-bottom: 1.5px solid var(--ink); padding-bottom: 10px; margin-bottom: 16px; }
+    .eyebrow { font: 11px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-2); }
+    h1 { margin: 2px 0 0; font: 500 26px/1.1 var(--font-serif); }
+    .meta { font: 12px var(--font-mono); color: var(--ink-2); }
+    .grid { display: grid; gap: 14px; }
+    .row { display: grid; grid-template-columns: 185px 1fr 1fr; gap: 14px; border: 1px solid var(--ink); background: var(--panel); padding: 12px; align-items: stretch; }
+    .info { display: flex; flex-direction: column; justify-content: space-between; padding-right: 10px; border-right: 1px solid var(--ink); }
+    .badge { display: block; width: 100%; height: 10px; border: 1px solid var(--ink); margin-bottom: 8px; }
+    .info h2 { margin: 0 0 4px; font: 500 18px/1.2 var(--font-serif); }
+    .info p { margin: 0; font: 11px/1.45 var(--font-mono); color: var(--ink-2); }
+    .card { background: var(--paper); border: 1px solid var(--ink); padding: 10px 12px; display: grid; gap: 8px; }
+    .card-head { display: flex; justify-content: space-between; align-items: baseline; border-bottom: .5px solid var(--ink); padding-bottom: 5px; }
+    .card-head strong { font: 600 12px var(--font-mono); text-transform: uppercase; letter-spacing: .08em; }
+    .card-head span { font: 11px var(--font-mono); color: var(--ink-2); }
+    .views { display: grid; grid-template-columns: 1fr 1fr 78px; gap: 10px; align-items: end; }
+    .box { display: grid; place-items: center; gap: 4px; }
+    .box canvas { display: block; border: .5px solid var(--neutral); background: var(--paper); }
+    .box.pixel canvas { image-rendering: pixelated; }
+    .box.paper canvas { image-rendering: auto; }
+    .box small { font: 10px var(--font-mono); color: var(--ink-2); }
+    .tile-wrap { width: 64px; height: 64px; border: 1px solid var(--ink); padding: 0; display: grid; place-items: center; overflow: hidden; }
+    .tile-wrap canvas { border: 0; }
+    @media (max-width: 960px) { .row { grid-template-columns: 1fr; } .info { border-right: 0; border-bottom: 1px solid var(--ink); padding: 0 0 8px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="eyebrow">Cổng duyệt 1 · Agy G1 × Codex stack.js</div>
+      <h1>So sánh kiểu A (Pixel) và kiểu B (Giấy xếp lớp)</h1>
+    </div>
+    <div class="meta">Renderer: src/render/stack.js · 3 địa danh × 2 kiểu</div>
+  </header>
+  <div class="grid" id="grid"></div>
+  <script type="module">
+    import { loadStacks, drawStack, stackLayout } from '../../src/render/stack.js';
+
+    const entries = await loadStacks('../../assets/stacks/manifest.json');
+    const byId = Object.fromEntries(entries.map(e => [e.id, e]));
+    const rows = [
+      { base: 'hn-ho-hoan-kiem', title: 'Hồ Hoàn Kiếm – Tháp Rùa', city: 'Hà Nội · Quận 8', note: 'Khối đối xứng 3 tầng, mái đá xám rêu & hồ xanh.', band: '--d8' },
+      { base: 'dn-cau-rong', title: 'Cầu Rồng', city: 'Đà Nẵng · Quận 6', note: 'Dài mảnh, gầm cầu & 3 vòm rồng rỗng (parts).', band: '--d6' },
+      { base: 'hcm-cho-ben-thanh', title: 'Chợ Bến Thành', city: 'TP.HCM · Quận 7', note: 'Nhà lồng mái ngói + tháp đồng hồ (parts).', band: '--d7' },
+    ];
+    const grid = document.getElementById('grid');
+
+    function drawCentered(ctx, id, angle, w, h, layout, scale, style, angles) {
+      const baseY = (h - layout.height * scale) / 2 + layout.baseY * scale;
+      drawStack(ctx, id, angle, w / 2, baseY, { scale, style, angles });
+    }
+
+    for (const r of rows) {
+      const el = document.createElement('section');
+      el.className = 'row';
+      el.innerHTML = `
+        <div class="info">
+          <div>
+            <span class="badge" style="background:var(${r.band})"></span>
+            <h2>${r.title}</h2>
+            <p>${r.city}</p>
+          </div>
+          <p>${r.note}</p>
+        </div>`;
+      for (const [suffix, label] of [['pixel', 'A · Pixel'], ['paper', 'B · Giấy xếp lớp']]) {
+        const id = `${r.base}-${suffix}`;
+        const entry = byId[id];
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="card-head">
+            <strong>${label}</strong>
+            <span>${entry.count} lát · ${entry.w}×${entry.h}px · sp=${entry.spacing}</span>
+          </div>
+          <div class="views">
+            <div class="box ${suffix}"><canvas width="184" height="156"></canvas><small>Góc 35° (trước)</small></div>
+            <div class="box ${suffix}"><canvas width="184" height="156"></canvas><small>Góc 225° (sau)</small></div>
+            <div class="box ${suffix}"><div class="tile-wrap"><canvas width="64" height="64"></canvas></div><small>Ô 64px</small></div>
+          </div>`;
+        const [c1, c2, cTile] = card.querySelectorAll('canvas');
+        const layout = stackLayout(entry.w, entry.h, entry.count, entry.squash, entry.spacing);
+        const fitBig = Math.min(172 / layout.width, 146 / layout.height);
+        const scaleBig = suffix === 'pixel' ? Math.max(1, Math.floor(fitBig * 2) / 2) : fitBig;
+        drawCentered(c1.getContext('2d'), id, 35, c1.width, c1.height, layout, scaleBig, suffix, 36);
+        drawCentered(c2.getContext('2d'), id, 225, c2.width, c2.height, layout, scaleBig, suffix, 36);
+
+        const fitTile = Math.min(58 / layout.width, 58 / layout.height);
+        const tctx = cTile.getContext('2d');
+        tctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--paper');
+        tctx.fillRect(0, 0, 64, 64);
+        drawCentered(tctx, id, 35, 64, 64, layout, fitTile, suffix, 16);
+        el.append(card);
+      }
+      grid.append(el);
+    }
+    window.__g1Ready = true;
+  </script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+{
+  "assets": [
+    {
+      "id": "dn-cau-rong-paper",
+      "w": 18,
+      "h": 50,
+      "count": 14,
+      "spacing": 1.85,
+      "squash": 0.75,
+      "style": "paper",
+      "strip": "out/dn-cau-rong-paper.png",
+      "baked": "out/dn-cau-rong-paper.16.png",
+      "frameW": 74,
+      "frameH": 88
+    },
+    {
+      "id": "dn-cau-rong-pixel",
+      "w": 18,
+      "h": 58,
+      "count": 25,
+      "spacing": 1.0,
+      "squash": 0.75,
+      "style": "pixel",
+      "strip": "out/dn-cau-rong-pixel.png",
+      "baked": "out/dn-cau-rong-pixel.16.png",
+      "frameW": 81,
+      "frameH": 92
+    },
+    {
+      "id": "hcm-cho-ben-thanh-paper",
+      "w": 48,
+      "h": 35,
+      "count": 14,
+      "spacing": 2.0,
+      "squash": 0.75,
+      "style": "paper",
+      "strip": "out/hcm-cho-ben-thanh-paper.png",
+      "baked": "out/hcm-cho-ben-thanh-paper.16.png",
+      "frameW": 80,
+      "frameH": 93
+    },
+    {
+      "id": "hcm-cho-ben-thanh-pixel",
+      "w": 44,
+      "h": 31,
+      "count": 27,
+      "spacing": 1.0,
+      "squash": 0.75,
+      "style": "pixel",
+      "strip": "out/hcm-cho-ben-thanh-pixel.png",
+      "baked": "out/hcm-cho-ben-thanh-pixel.16.png",
+      "frameW": 74,
+      "frameH": 89
+    },
+    {
+      "id": "hn-ho-hoan-kiem-paper",
+      "w": 44,
+      "h": 40,
+      "count": 14,
+      "spacing": 2.1,
+      "squash": 0.75,
+      "style": "paper",
+      "strip": "out/hn-ho-hoan-kiem-paper.png",
+      "baked": "out/hn-ho-hoan-kiem-paper.16.png",
+      "frameW": 80,
+      "frameH": 95
+    },
+    {
+      "id": "hn-ho-hoan-kiem-pixel",
+      "w": 38,
+      "h": 34,
+      "count": 32,
+      "spacing": 1.0,
+      "squash": 0.75,
+      "style": "pixel",
+      "strip": "out/hn-ho-hoan-kiem-pixel.png",
+      "baked": "out/hn-ho-hoan-kiem-pixel.16.png",
+      "frameW": 71,
+      "frameH": 92
+    }
+  ]
+}
