@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96">
+  <!-- Hoa văn vùng đất Phố Giấy: chấm lưới giấy thủ công + nếp gấp tam giác tươi sáng -->
+  <g fill="none" stroke="#7AAAD8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.24">
+    <!-- Góc gấp giấy nhẹ -->
+    <path d="M16 26 L28 14 L28 26 Z"/>
+    <path d="M64 74 L76 62 L76 74 Z"/>
+    <!-- Đường kẻ đứt kiểu giấy cắt dán -->
+    <path d="M0 48 H96" stroke-dasharray="4 8" opacity="0.45"/>
+    <path d="M48 0 V96" stroke-dasharray="4 8" opacity="0.45"/>
+  </g>
+  <g fill="#E2849F" opacity="0.24">
+    <circle cx="72" cy="22" r="2.4"/>
+    <circle cx="24" cy="70" r="2.4"/>
+  </g>
+  <g fill="#E59A54" opacity="0.22">
+    <circle cx="48" cy="48" r="2"/>
+    <circle cx="0" cy="0" r="2"/>
+    <circle cx="96" cy="0" r="2"/>
+    <circle cx="0" cy="96" r="2"/>
+    <circle cx="96" cy="96" r="2"/>
+  </g>
+</svg>
