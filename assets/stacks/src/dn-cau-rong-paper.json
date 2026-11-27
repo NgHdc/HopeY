@@ -1,0 +1,31 @@
+{
+  "style": "paper",
+  "side_nose": "left",
+  "top_nose": "down",
+  "order": "reading",
+  "colours": 48,
+  "shade": 0.06,
+  "dark_thresh": 0,
+  "spacing": 1.85,
+  "squash": 0.75,
+  "parts": [
+    {
+      "file": "dn-cau-rong-paper-bridge.png",
+      "slices": 7,
+      "offset": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "dn-cau-rong-paper-dragon.png",
+      "slices": 8,
+      "offset": [
+        0,
+        1,
+        6
+      ]
+    }
+  ]
+}

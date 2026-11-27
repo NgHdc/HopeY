@@ -1,0 +1,31 @@
+{
+  "style": "paper",
+  "side_nose": "left",
+  "top_nose": "down",
+  "order": "reading",
+  "colours": 48,
+  "shade": 0.06,
+  "dark_thresh": 0,
+  "spacing": 2.0,
+  "squash": 0.75,
+  "parts": [
+    {
+      "file": "hcm-cho-ben-thanh-paper-hall.png",
+      "slices": 8,
+      "offset": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "hcm-cho-ben-thanh-paper-tower.png",
+      "slices": 14,
+      "offset": [
+        0,
+        11,
+        0
+      ]
+    }
+  ]
+}
