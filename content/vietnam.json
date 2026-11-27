@@ -1,0 +1,234 @@
+{
+  "tiles": {
+    "0": {
+      "name": "Xuất phát",
+      "human": "Mỗi lần đi qua nhận 200 ₫g lương."
+    },
+    "1": {
+      "name": "Làng Nôm",
+      "human": "Cầu đá chín nhịp bắc qua sông nhỏ, mái ngói chợ Nôm rêu phong."
+    },
+    "2": {
+      "name": "Vận mệnh",
+      "human": "Rút một lá Vận mệnh — chuyện bất ngờ đang chờ phía trước."
+    },
+    "3": {
+      "name": "Phố Hiến – Chùa Chuông",
+      "human": "Thương cảng xưa bên sông Hồng, tiếng chuông chùa chiều vang vọng."
+    },
+    "4": {
+      "name": "Trạm thu phí",
+      "human": "Xe qua trạm, nộp 150 ₫g phí đường bộ."
+    },
+    "5": {
+      "name": "Ga Hà Nội",
+      "human": "Sân ga rộng, còi tàu đêm giục người lên chuyến Bắc – Nam."
+    },
+    "6": {
+      "name": "Cầu Hàm Rồng",
+      "human": "Cầu thép bắc qua sông Mã, nối hai bờ núi Ngọc – núi Rồng."
+    },
+    "7": {
+      "name": "Vận mệnh",
+      "human": "Rút một lá Vận mệnh — chuyện bất ngờ đang chờ phía trước."
+    },
+    "8": {
+      "name": "Sầm Sơn – Hòn Trống Mái",
+      "human": "Sóng biển rì rào dưới chân núi Trường Lệ, hai khối đá chênh vênh."
+    },
+    "9": {
+      "name": "Thành Nhà Hồ",
+      "human": "Những khối đá xanh ghép khít không vữa, đứng vững qua hơn sáu trăm năm."
+    },
+    "10": {
+      "name": "Tù / Chỉ ghé thăm",
+      "human": "Ghé thăm thì cứ đi tiếp; bị giữ thì ngồi đếm song sắt."
+    },
+    "11": {
+      "name": "Cầu Cần Thơ",
+      "human": "Nhịp cầu dây văng vươn qua sông Hậu, sáng đèn mỗi tối."
+    },
+    "12": {
+      "name": "Điện lực",
+      "human": "Đường dây sáng đèn từ phố lớn tới tận ngõ nhỏ."
+    },
+    "13": {
+      "name": "Bến Ninh Kiều",
+      "human": "Gió sông Hậu mát rượi, thuyền xuôi ngược dưới ánh đèn bến nước."
+    },
+    "14": {
+      "name": "Chợ nổi Cái Răng",
+      "human": "Cây bẹo treo trái cây trước mũi ghe, tiếng máy nổ rộn ràng từ mờ sáng."
+    },
+    "15": {
+      "name": "Ga Huế",
+      "human": "Nhà ga cổ bên bờ sông Hương, tàu dừng trong tiếng chuông chiều."
+    },
+    "16": {
+      "name": "Cầu Trường Tiền",
+      "human": "Sáu vài mười hai nhịp cong mềm bắc qua dòng sông Hương xanh biếc."
+    },
+    "17": {
+      "name": "Vận mệnh",
+      "human": "Rút một lá Vận mệnh — chuyện bất ngờ đang chờ phía trước."
+    },
+    "18": {
+      "name": "Chùa Thiên Mụ",
+      "human": "Tháp Phước Duyên bảy tầng soi bóng xuống sông Hương chiều muộn."
+    },
+    "19": {
+      "name": "Đại Nội – Ngọ Môn",
+      "human": "Tường thành rêu phong, lầu Ngũ Phụng uy nghi giữa nắng cố đô."
+    },
+    "20": {
+      "name": "Quán cà phê vỉa hè",
+      "human": "Ghế nhựa thấp, ly cà phê sữa đá, ngồi nghỉ không mất đồng nào."
+    },
+    "21": {
+      "name": "Đồ Sơn – Cát Bà",
+      "human": "Rừng xanh ôm vịnh đá vôi, gió biển mặn mà thổi suốt bốn mùa."
+    },
+    "22": {
+      "name": "Vận mệnh",
+      "human": "Rút một lá Vận mệnh — chuyện bất ngờ đang chờ phía trước."
+    },
+    "23": {
+      "name": "Cảng Hải Phòng",
+      "human": "Cần cẩu vươn cao bên bến tàu, còi tàu vang lên mỗi chuyến rời bến."
+    },
+    "24": {
+      "name": "Nhà hát Lớn",
+      "human": "Mặt tiền vàng nhạt cổ kính, quảng trường trước cửa rợp bóng phượng đỏ."
+    },
+    "25": {
+      "name": "Ga Đà Nẵng",
+      "human": "Tàu rời ga giữa lòng phố biển, chuẩn bị vượt đèo Hải Vân."
+    },
+    "26": {
+      "name": "Ngũ Hành Sơn – Sơn Trà",
+      "human": "Năm ngọn núi đá vôi bên bờ biển, bán đảo xanh mướt vươn ra khơi."
+    },
+    "27": {
+      "name": "Cầu Rồng",
+      "human": "Thân rồng vàng uốn lượn qua sông Hàn, cuối tuần lại phun lửa phun nước."
+    },
+    "28": {
+      "name": "Nước sạch",
+      "human": "Dòng nước mát chảy đều tới từng mái nhà."
+    },
+    "29": {
+      "name": "Cầu Vàng",
+      "human": "Hai bàn tay đá khổng lồ nâng dải lụa vàng giữa mây ngàn Bà Nà."
+    },
+    "30": {
+      "name": "Vào tù",
+      "human": "Đi nhầm đường rồi — vào thẳng ô 10 ngồi nghỉ."
+    },
+    "31": {
+      "name": "Nhà thờ Đức Bà",
+      "human": "Gạch ngói đỏ au giữa lòng thành phố, tháp chuông đôi đứng lặng qua trăm năm."
+    },
+    "32": {
+      "name": "Chợ Bến Thành",
+      "human": "Tháp đồng hồ bốn mặt quen thuộc, bên trong rộn rã tiếng chào hàng."
+    },
+    "33": {
+      "name": "Vận mệnh",
+      "human": "Rút một lá Vận mệnh — chuyện bất ngờ đang chờ phía trước."
+    },
+    "34": {
+      "name": "Landmark 81",
+      "human": "Tòa tháp kính vươn cao bên bờ sông Sài Gòn, sáng rực cả đường chân trời."
+    },
+    "35": {
+      "name": "Ga Sài Gòn",
+      "human": "Sân ga nhộn nhịp người đi kẻ đến từ sáng sớm tới khuya."
+    },
+    "36": {
+      "name": "Vận mệnh",
+      "human": "Rút một lá Vận mệnh — chuyện bất ngờ đang chờ phía trước."
+    },
+    "37": {
+      "name": "Văn Miếu",
+      "human": "Hàng bia tiến sĩ trên lưng rùa đá, sân gạch rợp bóng cây cổ thụ."
+    },
+    "38": {
+      "name": "Phí đỗ xe phố cổ",
+      "human": "Đỗ xe giữa phố đông, nộp 100 ₫g phí bến bãi."
+    },
+    "39": {
+      "name": "Hồ Hoàn Kiếm – Tháp Rùa",
+      "human": "Mặt hồ xanh lục quanh năm, Tháp Rùa nhỏ nhắn soi bóng giữa lòng phố cổ."
+    }
+  },
+  "cards": [
+    {
+      "id": "sell_random",
+      "title": "Bán nhà ngẫu nhiên",
+      "text": "Chợ đang cần gạch ngói: bán ngẫu nhiên một công trình ở ô cao nhất của quận, thu lại 50% giá xây."
+    },
+    {
+      "id": "downgrade",
+      "title": "Hạ cấp nhà người khác",
+      "text": "Gió bão thổi qua phố bạn chọn: hạ một bậc công trình ở ô cao nhất của đối thủ, không hoàn tiền."
+    },
+    {
+      "id": "discount",
+      "title": "Vé giảm 50%",
+      "text": "Quen biết chủ nhà: giữ lại tối đa 2 vé, tự động giảm một nửa tiền thuê ở lần trả kế tiếp."
+    },
+    {
+      "id": "fly",
+      "title": "Vé máy bay",
+      "text": "Có chuyến bay sớm: chọn một ô bất kỳ để bay tới, trừ ô Vào tù. Qua Xuất phát vẫn nhận lương."
+    },
+    {
+      "id": "jail",
+      "title": "Vào tù",
+      "text": "Quên giấy tờ đi đường: vào thẳng ô 10, không nhận lương."
+    },
+    {
+      "id": "gamble",
+      "title": "Con bạc",
+      "text": "Ngồi vào sới đầu ngõ: cược chẵn hoặc lẻ và tung hai viên xúc xắc. Đúng nhận lãi gấp đôi; sai mất cược và bay tới ô thuê đắt nhất của đối thủ."
+    },
+    {
+      "id": "birthday",
+      "title": "Sinh nhật",
+      "text": "Hôm nay là ngày vui của bạn: mỗi người chơi khác gửi tặng 30 ₫g."
+    },
+    {
+      "id": "goto_start",
+      "title": "Về Xuất phát",
+      "text": "Chuyến xe đêm đưa bạn thẳng về ô Xuất phát, nhận đủ lương."
+    },
+    {
+      "id": "wealth_tax",
+      "title": "Thu thuế",
+      "text": "Đoàn kiểm tra ghé phố: nộp 7,5% tổng giá trị công trình đang có, làm tròn lên bội 10."
+    },
+    {
+      "id": "bonus",
+      "title": "Thưởng 100",
+      "text": "Buôn may bán đắt đầu tháng, nhận thêm 100 ₫g."
+    },
+    {
+      "id": "fine",
+      "title": "Phạt 50",
+      "text": "Bày hàng lấn vỉa hè, nộp phạt 50 ₫g."
+    },
+    {
+      "id": "back_3",
+      "title": "Lùi 3 ô",
+      "text": "Quên đồ ở quán cũ, quay lại 3 ô."
+    },
+    {
+      "id": "jail_free",
+      "title": "Vé ra tù",
+      "text": "Giữ lại tấm vé này để rời khỏi ô Tù miễn phí."
+    }
+  ],
+  "hints": {
+    "thanhhoa": "Người xưa nói: ai giữ đủ ba nơi này sẽ thành vua."
+  }
+}
