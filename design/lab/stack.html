@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Phố Giấy · Lab sprite stack</title>
+  <link rel="stylesheet" href="../tokens.css">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 14px/1.5 var(--font-sans); }
+    button, input, select { font: inherit; }
+    button, select { color: var(--ink); background: var(--paper); border: 1px solid var(--ink); border-radius: 0; padding: 8px 12px; cursor: pointer; }
+    button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+    button:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    header { padding: 24px clamp(16px, 4vw, 48px); border-bottom: 1px solid var(--ink); display: flex; justify-content: space-between; gap: 16px; align-items: end; }
+    .eyebrow { font: 12px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); }
+    h1 { margin: 4px 0 0; font: 500 clamp(28px, 4vw, 48px)/1.08 var(--font-serif); }
+    .sub { margin: 0; max-width: 310px; color: var(--ink-2); text-align: right; }
+    main { display: grid; grid-template-columns: minmax(220px, 280px) minmax(0, 1fr); min-height: calc(100vh - 112px); }
+    aside { border-right: 1px solid var(--ink); padding: 24px; }
+    h2 { font: 12px var(--font-mono); text-transform: uppercase; letter-spacing: .12em; margin: 0 0 16px; }
+    #assetList { display: grid; gap: 8px; }
+    .asset { width: 100%; display: flex; align-items: center; gap: 10px; text-align: left; min-height: 64px; }
+    .asset canvas { width: 56px; height: 48px; flex: none; }
+    .asset span { overflow-wrap: anywhere; }
+    .note { font: 12px/1.5 var(--font-mono); color: var(--ink-2); margin-top: 24px; }
+    .workspace { min-width: 0; padding: 24px clamp(16px, 3vw, 40px) 48px; }
+    .topline { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    h3 { font: 500 26px var(--font-serif); margin: 0; overflow-wrap: anywhere; }
+    #meta { color: var(--ink-2); font: 12px var(--font-mono); }
+    .stage { --stage-bg: var(--paper); min-height: 400px; margin-top: 18px; border: 1px solid var(--ink); background: var(--stage-bg); display: grid; place-items: center; position: relative; overflow: hidden; }
+    .stage canvas { width: 100%; height: 400px; display: block; touch-action: none; }
+    .stage.pixel canvas { image-rendering: pixelated; }
+    .stage.paper canvas { image-rendering: auto; }
+    .stage-label { position: absolute; left: 12px; top: 12px; font: 11px var(--font-mono); color: var(--ink-2); pointer-events: none; }
+    .controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; border-bottom: 1px solid var(--ink); padding: 18px 0; }
+    .controls label { display: grid; gap: 7px; font: 12px var(--font-mono); }
+    .controls input { width: 100%; accent-color: var(--ink); }
+    .switches { display: flex; flex-wrap: wrap; gap: 8px; padding: 18px 0; align-items: center; }
+    .switches label { font: 12px var(--font-mono); margin-left: auto; }
+    .switches select { margin-left: 6px; }
+    .onboard { display: grid; grid-template-columns: 128px minmax(0, 280px); gap: 20px; align-items: start; }
+    .tile { width: 128px; height: 128px; border: 1px solid var(--ink); background: var(--panel); padding: 5px; display: grid; grid-template-columns: 64px 1fr; gap: 4px; }
+    .tile canvas { width: 64px; height: 64px; background: var(--paper); border: 1px solid var(--ink); image-rendering: pixelated; }
+    .tile small { font: 10px/1.1 var(--font-mono); overflow-wrap: anywhere; }
+    .deed { border: 1px solid var(--ink); min-height: 180px; background: var(--paper); }
+    .deed .band { height: 16px; background: var(--d1); border-bottom: 1px solid var(--ink); }
+    .deed h4 { margin: 12px 16px 4px; font: 500 21px var(--font-serif); overflow-wrap: anywhere; }
+    .deed p { margin: 0 16px 12px; color: var(--ink-2); font: 12px var(--font-mono); }
+    .deed canvas { width: 100%; height: 90px; }
+    .section { margin: 22px 0 12px; }
+    @media (max-width: 700px) { header { align-items: start; flex-direction: column; } .sub { text-align: left; } main { display: block; } aside { border-right: 0; border-bottom: 1px solid var(--ink); padding: 16px; } #assetList { display: flex; overflow-x: auto; } .asset { flex: 0 0 160px; } .workspace { padding: 18px 16px 32px; } .stage, .stage canvas { min-height: 300px; height: 300px; } .controls { grid-template-columns: 1fr; gap: 10px; } .switches label { margin-left: 0; width: 100%; } .onboard { gap: 12px; grid-template-columns: 128px minmax(0, 1fr); } }
+  </style>
+</head>
+<body>
+  <header>
+    <div><div class="eyebrow">Design lab / sprite stack</div><h1>Phố có hình</h1></div>
+    <p class="sub">Chọn địa danh, xoay mô hình và kiểm tra kích thước trên bàn cờ. Mẫu demo chỉ hiện khi chưa có asset thật.</p>
+  </header>
+  <main>
+    <aside><h2>Asset trong manifest</h2><div id="assetList"></div><p class="note" id="sourceNote"></p></aside>
+    <section class="workspace">
+      <div class="topline"><h3 id="assetTitle">Đang tải…</h3><span id="meta"></span></div>
+      <div class="stage pixel" id="stage"><span class="stage-label">Kéo để xoay · chuyển động tắt theo cài đặt hệ thống</span></div>
+      <div class="controls">
+        <label>Squash <output id="squashValue">0.75</output><input id="squash" type="range" min="0.5" max="1" step="0.01" value="0.75"></label>
+        <label>Spacing <output id="spacingValue">1.00</output><input id="spacing" type="range" min="0" max="3" step="0.05" value="1"></label>
+        <label>Scale <output id="scaleValue">4.0×</output><input id="scale" type="range" min="1" max="8" step="0.25" value="4"></label>
+      </div>
+      <div class="switches">
+        <button id="pixel" aria-pressed="true">A · Pixel</button><button id="paper" aria-pressed="false">B · Giấy xếp lớp</button>
+        <label>Nền <select id="background"><option value="paper">Màu giấy</option><option value="d1">Quận 1</option><option value="d2">Quận 2</option><option value="d3">Quận 3</option><option value="d4">Quận 4</option><option value="d5">Quận 5</option><option value="d6">Quận 6</option><option value="d7">Quận 7</option><option value="d8">Quận 8</option></select></label>
+        <button id="board" aria-pressed="false">Xem trên bàn</button>
+      </div>
+      <div id="boardView" hidden><h2 class="section">Tỉ lệ trên bàn cờ</h2><div class="onboard"><div class="tile"><canvas id="tileCanvas" width="64" height="64"></canvas><small id="tileName"></small></div><div class="deed"><div class="band" id="deedBand"></div><h4 id="deedName"></h4><p>Thẻ đất · mô phỏng kích thước</p><canvas id="deedCanvas" width="280" height="90"></canvas></div></div></div>
+    </section>
+  </main>
+  <script type="module">
+    import { loadStacks, listStacks, drawStack, mountTurntable } from '../../src/render/stack.js';
+    const $ = id => document.getElementById(id);
+    const stage = $('stage');
+    const sliders = ['squash', 'spacing', 'scale'];
+    let entries = [], selected, controller, style = 'pixel';
+    const requestedManifest = new URLSearchParams(location.search).get('manifest');
+    if (requestedManifest) {
+      entries = await loadStacks(requestedManifest);
+      $('sourceNote').textContent = 'Nguồn: ảnh G1 của Agy (chỉ đọc).';
+    } else {
+      try {
+        entries = await loadStacks('../../assets/stacks/manifest.json');
+        $('sourceNote').textContent = 'Nguồn: assets/stacks/manifest.json';
+      } catch {
+        entries = await loadStacks('../../tools/art/fixtures/manifest.json');
+        $('sourceNote').textContent = 'Nguồn: fixture C2. Địa danh G1 sẽ hiện khi có manifest thật.';
+      }
+    }
+    const names = { 'dn-cau-rong': 'Cầu Rồng', 'hcm-cho-ben-thanh': 'Chợ Bến Thành',
+      'hn-ho-hoan-kiem': 'Tháp Rùa', 'demo': 'Mẫu thử', 'demo-parts': 'Mẫu ghép khối' };
+    const labelFor = entry => {
+      const base = entry.id.replace(/-(pixel|paper)$/, '');
+      return `${names[base] ?? base} · ${entry.style === 'paper' ? 'B giấy' : 'A pixel'}`;
+    };
+    const options = () => Object.fromEntries(sliders.map(id => [id, Number($(id).value)]));
+    function paintBoard() {
+      if (!selected || $('boardView').hidden) return;
+      const opts = { ...options(), style, angles: 16 };
+      for (const [id, x, y, scale] of [['tileCanvas', 32, 53, 0.65], ['deedCanvas', 140, 74, 1.3]]) {
+        const canvas = $(id), ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawStack(ctx, selected.id, 35, x, y, { ...opts, scale });
+      }
+      $('tileName').textContent = selected.id;
+      $('deedName').textContent = selected.id;
+    }
+    function choose(entry) {
+      selected = entry;
+      style = entry.style;
+      $('pixel').setAttribute('aria-pressed', String(style === 'pixel'));
+      $('paper').setAttribute('aria-pressed', String(style === 'paper'));
+      stage.className = 'stage ' + style;
+      $('squash').value = entry.squash;
+      $('spacing').value = entry.spacing;
+      $('squashValue').textContent = entry.squash.toFixed(2);
+      $('spacingValue').textContent = entry.spacing.toFixed(2);
+      $('assetTitle').textContent = labelFor(entry);
+      $('meta').textContent = `${entry.count} lát · ${entry.w}×${entry.h}px`;
+      for (const button of document.querySelectorAll('.asset')) button.setAttribute('aria-pressed', String(button.dataset.id === entry.id));
+      controller?.destroy();
+      controller = mountTurntable(stage, entry.id, { speed: 20, drag: true, ...options(), style });
+      paintBoard();
+    }
+    for (const entry of entries) {
+      const button = document.createElement('button');
+      button.className = 'asset'; button.dataset.id = entry.id;
+      const preview = document.createElement('canvas'); preview.width = 56; preview.height = 48;
+      const name = document.createElement('span'); name.textContent = labelFor(entry);
+      button.append(preview, name);
+      button.addEventListener('click', () => choose(entry));
+      $('assetList').append(button);
+      drawStack(preview.getContext('2d'), entry.id, 35, 28, 38, { scale: 0.65, style: entry.style });
+    }
+    if (entries.length) choose(entries.find(entry => entry.id === 'hn-ho-hoan-kiem-pixel')
+      ?? entries.find(entry => entry.style === 'pixel') ?? entries[0]);
+    for (const id of sliders) $(id).addEventListener('input', () => {
+      $(id + 'Value').textContent = Number($(id).value).toFixed(id === 'scale' ? 1 : 2) + (id === 'scale' ? '×' : '');
+      controller?.update(options()); paintBoard();
+    });
+    for (const name of ['pixel', 'paper']) $(name).addEventListener('click', () => {
+      const base = selected?.id.replace(/-(pixel|paper)$/, '');
+      const counterpart = entries.find(entry => entry.id === `${base}-${name}`);
+      if (counterpart && counterpart.id !== selected.id) { choose(counterpart); return; }
+      style = name;
+      $('pixel').setAttribute('aria-pressed', String(name === 'pixel'));
+      $('paper').setAttribute('aria-pressed', String(name === 'paper'));
+      stage.className = 'stage ' + style;
+      controller?.update({ style }); paintBoard();
+    });
+    $('background').addEventListener('change', () => {
+      const name = $('background').value;
+      stage.style.setProperty('--stage-bg', `var(--${name})`);
+      $('deedBand').style.background = `var(--${name === 'paper' ? 'd1' : name})`;
+    });
+    $('board').addEventListener('click', () => {
+      $('boardView').hidden = !$('boardView').hidden;
+      $('board').setAttribute('aria-pressed', String(!$('boardView').hidden));
+      paintBoard();
+    });
+  </script>
+</body>
+</html>

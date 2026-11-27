@@ -19,3 +19,9 @@
 - `node --test tests/render/*.test.mjs`: 3/3 xanh; kiểm tra canvas và hai style trong lab ở C4.
 - Đã xem ảnh mobile G1 của Agy và sửa tọa độ chân turntable để mô hình nằm giữa canvas theo toàn bộ khung bake.
 - Tiếp theo: C4 kiểm tra lab. Vướng: trình duyệt tự động của phiên Codex vẫn không khả dụng.
+
+## 2026-11-27 · C4
+- Đã tạo `design/lab/stack.html`: lưới asset, turntable, chỉnh squash/spacing/scale, chuyển A/B, nền giấy/quận và mô phỏng ô 64px cùng thẻ đất.
+- Lab đọc manifest G1 của Agy qua URL `manifest`; sau khi merge sẽ tự đọc `assets/stacks/manifest.json`. Mặc định mở Tháp Rùa kiểu A · Pixel theo lựa chọn của người dùng.
+- Kiểm chứng HTTP 200 cho lab, renderer, manifest và PNG G1; đã xem ảnh chụp Agy: [desktop](../../assets/stacks/check/g1-lab-desktop.png), [mobile 390px](../../assets/stacks/check/g1-lab-mobile.png), [so sánh sau sửa mái](../../assets/stacks/check/g1-lab-compare.png).
+- Tiếp theo: Claude merge và mở lab. Vướng: ảnh desktop/mobile trên được chụp trước bản sửa căn giữa C3; công cụ trình duyệt Codex không khả dụng để chụp lại.
