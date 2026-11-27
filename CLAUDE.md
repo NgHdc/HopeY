@@ -14,6 +14,12 @@ Trả lời bằng tiếng Việt. Đọc file này trước, **chỉ mở thêm
 - E2E: `npm run e2e` (Edge headless qua CDP, cần server dev đang chạy).
 - Máy hay thiếu RAM: không tự bật lại server dev nếu nó bị tắt, hỏi người dùng trước.
 
+## Làm việc cùng Codex và Agy
+- Có 3 agent làm song song. Ai sửa file nào và mỗi agent dùng worktree, nhánh nào: xem `AGENTS.md`.
+- Claude giữ engine (`src/core`, `src/net`, `main.js`, `view.js`, `style.css`) và là người merge các nhánh `codex/*`, `agy/*` vào `dev` khi người dùng đồng ý.
+- Agent khác ghi tiến độ vào `docs/agents/<tên>.md`. Đọc file này khi cần biết họ đang làm gì.
+- Kế hoạch art (sprite stacking) nằm ở `docs/ART_PIPELINE.md`.
+
 ## Bản đồ code (src/)
 | File | Vai trò |
 |---|---|
