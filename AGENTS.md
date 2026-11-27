@@ -47,8 +47,18 @@ Muốn sửa file ngoài vùng của mình thì **không sửa**. Ghi đề xu�
 - Ảnh do AI tạo phải ghi nguồn (tên công cụ và prompt) vào `assets/stacks/SOURCES.md`.
 - Không dùng ảnh của tác giả khác, kể cả ảnh trong moodboard. Moodboard chỉ để tham khảo cảm giác.
 - Không đưa thông tin cá nhân của người dùng vào file, prompt hay dịch vụ bên ngoài.
-- Xong mỗi việc: ghi 3–5 dòng vào `docs/agents/<tên>.md` gồm ngày, đã làm gì, file nào, việc tiếp theo, chỗ đang vướng. Đây là cách các agent nói chuyện với nhau.
+- Xong mỗi việc: ghi 3–5 dòng vào `docs/agents/<tên>.md` gồm ngày, đã làm gì, file nào, việc tiếp theo, chỗ đang vướng.
+- **Xong việc là phải commit.** Không để file đã `git add` hay untracked rồi dừng.
 - Commit kết thúc bằng một dòng ghi tên agent, ví dụ `Agent: codex` hoặc `Agent: agy`.
+
+## 3b. Nói chuyện qua `agents-hub/` (bắt buộc)
+
+Thư mục `../agents-hub/` (cạnh các worktree, không thuộc git) là chỗ 3 agent nói chuyện với nhau, người dùng không cần chép tin qua lại. Đọc `agents-hub/README.md`.
+- **Bắt đầu mỗi việc:** đọc `agents-hub/inbox/<tên>.md`. Tin đã xử lý thì đổi `[chưa đọc]` thành `[đã đọc]`.
+- **Nhận việc, xong việc, bị vướng:** sửa dòng của việc đó trong `agents-hub/BOARD.md` (cột Trạng thái: `đang làm` / `chờ duyệt` / `xong` / `vướng`; cột Chờ ai).
+- **Cần agent khác làm gì:** thêm tin vào cuối `agents-hub/inbox/<tên-người-nhận>.md`, theo mẫu `## YYYY-MM-DD HH:MM · từ <tên> · [chưa đọc]`.
+- Claude theo dõi hộp thư của mình và BOARD. Việc chuyển sang `chờ duyệt` thì Claude kiểm tra và merge khi người dùng đồng ý.
+- Người dùng xem mọi thứ ở `agents-hub/dashboard.html`.
 
 ## 4. Việc cụ thể
 Kế hoạch đầy đủ ở `docs/ART_PIPELINE.md`: mỗi việc có mã, đầu vào, đầu ra và tiêu chí xong.

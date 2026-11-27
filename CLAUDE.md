@@ -19,6 +19,7 @@ Trả lời bằng tiếng Việt. Đọc file này trước, **chỉ mở thêm
 - Có 3 agent làm song song. Ai sửa file nào và mỗi agent dùng worktree, nhánh nào: xem `AGENTS.md`.
 - Claude giữ engine (`src/core`, `src/net`, `main.js`, `view.js`, `style.css`) và là người merge các nhánh `codex/*`, `agy/*` vào `dev` khi người dùng đồng ý.
 - Agent khác ghi tiến độ vào `docs/agents/<tên>.md`. Đọc file này khi cần biết họ đang làm gì.
+- Giao tiếp giữa 3 agent qua `../agents-hub/` (BOARD.md, inbox/, dashboard.html). Đầu phiên và trước khi đề xuất bước tiếp theo: đọc `inbox/claude.md`, BOARD, và `git status` của `../Monopoly-codex`, `../Monopoly-agy` (họ hay làm xong mà chưa commit).
 - Kế hoạch art (sprite stacking) nằm ở `docs/ART_PIPELINE.md`.
 
 ## Bản đồ code (src/)
