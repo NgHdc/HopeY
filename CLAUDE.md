@@ -10,9 +10,10 @@ Trả lời bằng tiếng Việt. Đọc file này trước, **chỉ mở thêm
 
 ## Chạy và test
 - Server dev: `npm run dev` (python http.server 5173), mở http://127.0.0.1:5173/src/?local=3&dev. Mở `file://` không chạy.
-- Test: `npm test`, tức `node --test tests/*.test.mjs`: 16 test luật và 120 ván bot giả lập.
+- Test: `npm test`, tức `node --test tests/*.test.mjs`: test luật, test thẻ Vận mệnh, và 80 ván bot giả lập cho mỗi map (khoảng 1,5 phút).
 - E2E: `npm run e2e` (Edge headless qua CDP, cần server dev đang chạy).
 - Máy hay thiếu RAM: không tự bật lại server dev nếu nó bị tắt, hỏi người dùng trước.
+- Cổng 5173 có thể đang phục vụ worktree của Codex/Agy: kiểm tra `curl http://127.0.0.1:5173/src/core/version.js` trước khi chạy e2e. E2E nhận `BASE_URL`.
 
 ## Làm việc cùng Codex và Agy
 - Có 3 agent làm song song. Ai sửa file nào và mỗi agent dùng worktree, nhánh nào: xem `AGENTS.md`.
@@ -24,9 +25,9 @@ Trả lời bằng tiếng Việt. Đọc file này trước, **chỉ mở thêm
 | File | Vai trò |
 |---|---|
 | `core/version.js` | APP_VERSION, PROTOCOL_VERSION (online), SCHEMA_VERSION + `migrate()` cho save cũ |
-| `core/board.js` | 40 ô `TILES`, 8 quận `DISTRICTS`, `rentTable`, hằng số (START_MONEY 1500, SALARY 200) |
-| `core/cards.js` | Thẻ `CARDS.q` / `CARDS.h`; mỗi thẻ có `fx` dạng dữ liệu (gain, pay, goto, nearest, back, repairs, jail, ticket, collectEach, payEach) |
-| `core/rules.js` | Engine thuần: `applyAction(state, seat, action) → {ok, state, events}`. Random dùng `state.rng` có seed, không dùng Math.random. Có stats |
+| `core/board.js` | Phần chung: hằng số (START_MONEY 1500, SALARY 200, JAIL 10, GO_JAIL 30), `rentTable`, `P`/`ST` dựng ô, `groupOf` |
+| `core/maps/` | Mỗi map một file: `classic.js` (Phố Giấy gốc), `vietnam.js` (Dải đất, mặc định). Map = `terms`, `districts`, `tiles` (40 ô), `decks` (thẻ có `fx` dạng dữ liệu), `hooks` (`afterStep`, `onPassStart`). `index.js`: `MAPS`, `mapOf(S)` |
+| `core/rules.js` | Engine thuần: `applyAction(state, seat, action) → {ok, state, events}`. Đọc bàn từ `mapOf(S)`. Random dùng `state.rng` có seed. Phase lựa chọn: `buy`, `downgrade`, `fly`, `gamble` (`CHOICE_PHASES`); `choiceTiles`, `betRange`, `gambleTarget` cho UI và bot |
 | `net/peer.js` | Mở và nhập phòng; peer id = `phogiay-p${PROTOCOL}-` + mã 5 ký tự |
 | `ui/view.js` | Chỉ có hàm dựng chuỗi HTML (home, lobby, game, end, modal, luật) |
 | `main.js` | Trạng thái app, render, hàng đợi animation, chế độ local/host/guest, phím tắt |
@@ -52,9 +53,9 @@ Trả lời bằng tiếng Việt. Đọc file này trước, **chỉ mở thêm
 
 ## Tài liệu (chỉ mở khi cần)
 - `docs/ROADMAP.md`: các bản đã xong và bản kế tiếp.
-- `docs/DECISIONS.md`: lý do các quyết định kỹ thuật (#1–#11).
+- `docs/DECISIONS.md`: lý do các quyết định kỹ thuật (#1–#12).
 - `docs/STYLE_GUIDE.md`: style Swiss Paper.
-- `docs/MAP_VIETNAM.md`: **thiết kế map Việt Nam và bộ thẻ Vận mệnh (việc đang làm)**.
+- `docs/MAP_VIETNAM.md`: thiết kế map Việt Nam và bộ thẻ Vận mệnh (đã code ở 0.5.0).
 - `CHANGELOG.md`.
 
 ## Hướng nghệ thuật (đang bàn, chưa code)
@@ -62,7 +63,7 @@ Trả lời bằng tiếng Việt. Đọc file này trước, **chỉ mở thêm
 - "Agnes" là tên một vùng đất, có cô bé đại diện, vẽ kiểu màu nước.
 - Canvas thảo luận: https://claude.ai/artifact/FCTmds2AKdLEdaXujWpThs. Canvas đang để công khai và có ảnh của tác giả khác, nên nhắc người dùng chuyển về riêng tư.
 - Mockup UI 0.4: https://claude.ai/artifact/XgBsVGfNrQCLjF5zMmkzRf
-- Map Việt Nam (`docs/MAP_VIETNAM.md`) là map thật đầu tiên. Các vùng đất Agnes làm sau, dùng chung cơ chế nhiều map.
+- Map Việt Nam (`docs/MAP_VIETNAM.md`) là map thật đầu tiên, đã code ở 0.5.0. Các vùng đất Agnes làm sau: thêm một file trong `src/core/maps/`.
 
 ## Việc người dùng tự làm (đừng lặp lại)
 - Thêm collaborator trong GitHub Settings → Collaborators.

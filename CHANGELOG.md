@@ -5,6 +5,25 @@ Quy trình phát hành và rollback: [`docs/RELEASE.md`](docs/RELEASE.md).
 
 ## [Chưa phát hành]
 
+Dự kiến phát hành là **0.5.0 · Dải đất**. Thiết kế ở [`docs/MAP_VIETNAM.md`](docs/MAP_VIETNAM.md).
+
+### Thêm
+- **Nhiều map.** Chọn bàn cờ ở trang đầu (ván thử) hoặc trong sảnh (chủ phòng chọn, khách thấy ngay).
+- **Map "Dải đất" (Việt Nam)**, là map mặc định: 8 thành phố từ Hưng Yên tới Hà Nội, 4 ga Thống Nhất, ô Tù / Vào Tù, Cà phê vỉa hè. Vị trí và giá ô giữ như bàn gốc.
+- **Bộ thẻ Vận mệnh** (16 lá), xáo bằng seed của ván và hết bộ thì xáo lại:
+  - Bán nhà ngẫu nhiên, Hạ cấp nhà đối thủ (chọn ô sáng trên bàn cờ)
+  - Vé giảm 50% tiền thuê (giữ tối đa 2), Vé máy bay (bay tới ô bất kỳ trừ Vào Tù)
+  - **Con bạc**: kéo thanh cược, chọn Chẵn hoặc Lẻ; thua thì bị đưa tới ô của đối thủ có tiền thuê cao nhất
+  - Sinh nhật, Thu thuế công trình 7,5% và các thẻ thường
+- **Cơ chế ẩn Vương quốc Thanh Hóa**: giữ đủ 3 ô Thanh Hóa (không cầm cố) thì mỗi người nộp 50 một lần, sau đó cống nạp 10 mỗi lần chủ qua Xuất phát. Không ghi trong luật, thẻ đất chỉ có một dòng gợi ý.
+- Công cụ dev: rút đúng một lá thẻ bất kỳ.
+- Test riêng cho từng thẻ mới. Bot giả lập chạy trên cả hai map.
+
+### Đổi
+- Dữ liệu bàn cờ tách ra `src/core/maps/` (`classic.js`, `vietnam.js`). Bỏ `src/core/cards.js`.
+- Giao thức online v4 (có thao tác mới). Trạng thái ván schema v3: ván 0.4 mở ra thành bàn gốc.
+- Giả lập trong `npm test`: 80 ván mỗi map.
+
 ## [0.4.0] — 2026-11-27 · Giấy mới
 
 ### Thêm

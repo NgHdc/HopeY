@@ -4,14 +4,15 @@
 //   guest: khách online, gửi thao tác và vẽ trạng thái nhận được
 import { APP_VERSION, PROTOCOL_VERSION, migrate } from './core/version.js';
 import { createGame, applyAction, setOnline } from './core/rules.js';
-import { TILES, group } from './core/board.js';
+import { groupOf } from './core/board.js';
+import { MAPS, DEFAULT_MAP, mapOf } from './core/maps/index.js';
 import * as V from './ui/view.js';
 import { openHost, joinHost, makeRoomCode, peerAvailable } from './net/peer.js';
 
 const $ = s => document.querySelector(s);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const STEP_MS = 120;
-const SESSION_KEY = 'phogiay-session-v2', LOCAL_KEY = 'phogiay-local', NAME_KEY = 'phogiay-name';
+const SESSION_KEY = 'phogiay-session-v2', LOCAL_KEY = 'phogiay-local', NAME_KEY = 'phogiay-name', MAP_KEY = 'phogiay-map';
 const DEFAULT_NAMES = ['Lan', 'Minh', 'Hoa', 'Tuấn', 'Mai', 'Nam'];
 const params = new URLSearchParams(location.search);
 const isLocalhost = ['localhost', '127.0.0.1', ''].includes(location.hostname);
@@ -25,6 +26,8 @@ const app = {
   me: -1, room: '', status: '', statusOk: false, started: false, seats: [], net: null, token: '', name: '',
   viewOverride: null, lastView: '', pos: null, animating: false, queue: Promise.resolve(),
   tab: 'land', review: false, modal: null, homeDraft: null, homeCount: 3,
+  mapId: DEFAULT_MAP,    // map chọn ở trang đầu (ván thử) hoặc ở sảnh (chủ phòng)
+  bet: 0,                // mức cược đang kéo ở thẻ Con bạc
 };
 
 // ---------- lưu trữ ----------
@@ -34,6 +37,7 @@ const store = {
   del: (k, s = localStorage) => { try { s.removeItem(k); } catch { /* bỏ qua */ } },
 };
 const roomKey = code => 'phogiay-room-' + code;
+{ const m = store.get(MAP_KEY); if (MAPS[m]) app.mapId = m; }
 function persist() {
   if (app.mode === 'local') store.set(LOCAL_KEY, { S: app.truth });
   if (app.mode === 'host') store.set(roomKey(app.room), { S: app.truth, seats: app.seats.map(x => ({ name: x.name, token: x.token, piece: x.piece })) });
@@ -51,7 +55,7 @@ function ctx() {
   return {
     me, mine: S.winner == null && me === S.turn, mode: app.mode, room: app.room, status: app.status,
     dev: app.mode === 'local', version: APP_VERSION, viewOverride: app.viewOverride, pos: app.pos, busy: app.animating,
-    tab: app.tab, banner: lost ? 'Mất kết nối với chủ phòng.' : '',
+    tab: app.tab, banner: lost ? 'Mất kết nối với chủ phòng.' : '', bet: app.bet,
   };
 }
 function render() {
@@ -87,6 +91,11 @@ function show(next, events = []) {
     if (next.winner != null && (!prev || prev.winner == null)) app.review = false;
     app.S = next;
     render();
+    const k = events.find(e => e.type === 'kingdom');
+    if (k && next.players[k.seat]) {
+      const D = mapOf(next).districts[2];
+      ask({ strip: 'Bí mật của dải đất', stripR: 'Thanh Hóa', kicker: 'Ai giữ đủ ba nơi?', title: `${next.players[k.seat].name} lập nên Vương quốc Thanh Hóa`, text: D.reveal || '' });
+    }
   });
   return app.queue;
 }
@@ -113,11 +122,11 @@ function commit(seat, action) {
 }
 
 // ---------- ván thử trên máy ----------
-function startLocal(n, dev) {
+function startLocal(n, dev, map = app.mapId) {
   const first = (store.get(NAME_KEY) || '').trim() || DEFAULT_NAMES[0];
   const names = [first, ...DEFAULT_NAMES.filter(x => x !== first)].slice(0, n);
   Object.assign(app, { mode: 'local', S: null, review: false, tab: 'land', screen: 'game' });
-  app.truth = createGame(names, { dev });
+  app.truth = createGame(names, { dev, map });
   store.set(SESSION_KEY, { mode: 'local' }, sessionStorage);
   persist(); show(app.truth);
 }
@@ -175,7 +184,7 @@ function onHostData(peerId, d) {
     if (seat > 0) choosePiece(seat, d.piece);
   } else if (d.t === 'act' && d.action && typeof d.action === 'object') {
     const seat = seatOfPeer(peerId), a = d.action;
-    if (seat > 0) commit(seat, { type: String(a.type), i: Number.isInteger(a.i) ? a.i : undefined });
+    if (seat > 0) commit(seat, { type: String(a.type), i: Number.isInteger(a.i) ? a.i : undefined, bet: Number.isInteger(a.bet) ? a.bet : undefined, pick: a.pick === 'even' || a.pick === 'odd' ? a.pick : undefined });
   }
 }
 function choosePiece(seat, piece) {
@@ -198,7 +207,7 @@ function onHostClose(peerId) {
 function broadcastLobby() {
   if (app.mode !== 'host') return;
   const seats = app.seats.map(x => ({ name: x.name, online: x.online, piece: x.piece }));
-  app.net.broadcast(id => ({ t: 'lobby', seats, you: seatOfPeer(id), started: app.started }));
+  app.net.broadcast(id => ({ t: 'lobby', seats, you: seatOfPeer(id), started: app.started, map: app.mapId }));
 }
 function broadcastState(events) {
   if (app.mode !== 'host' || !app.net || !app.truth) return;
@@ -206,7 +215,7 @@ function broadcastState(events) {
 }
 function startOnlineGame() {
   if (app.mode !== 'host' || app.seats.length < 2) return;
-  app.truth = createGame(app.seats.map(x => x.name), { pieces: app.seats.map(x => x.piece) });
+  app.truth = createGame(app.seats.map(x => x.name), { pieces: app.seats.map(x => x.piece), map: app.mapId });
   app.truth.players.forEach((p, i) => { p.online = app.seats[i].online; });
   Object.assign(app, { started: true, screen: 'game', S: null, review: false, tab: 'land' });
   persist(); broadcastLobby(); broadcastState([]); show(app.truth);
@@ -226,6 +235,7 @@ function onGuestData(d) {
   if (!d || typeof d !== 'object') return;
   if (d.t === 'lobby') {
     app.seats = d.seats; app.me = d.you; app.started = d.started;
+    if (MAPS[d.map]) app.lobbyMap = d.map;
     if (!app.started) { app.screen = 'lobby'; render(); }
   } else if (d.t === 'state') {
     app.truth = d.S; app.me = d.you; app.started = true;
@@ -268,7 +278,7 @@ function renderHome(root) {
   const urlCode = (params.get('room') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5);
   const local = store.get(LOCAL_KEY);
   const draft = app.homeDraft || {};
-  root.innerHTML = V.homeHtml({ name: draft.name ?? store.get(NAME_KEY) ?? '', code: draft.code ?? urlCode, online: peerAvailable(), hasLocalSave: !!(local && local.S && local.S.winner == null), devDefault: isLocalhost || params.has('dev'), version: APP_VERSION });
+  root.innerHTML = V.homeHtml({ name: draft.name ?? store.get(NAME_KEY) ?? '', code: draft.code ?? urlCode, online: peerAvailable(), hasLocalSave: !!(local && local.S && local.S.winner == null), devDefault: isLocalhost || params.has('dev'), version: APP_VERSION, mapId: app.mapId });
   $('#count').querySelectorAll('button').forEach(b => { const on = +b.dataset.n === app.homeCount; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
   const getName = () => {
     const v = $('#nm').value.trim().slice(0, 14);
@@ -295,7 +305,7 @@ function renderHome(root) {
 function renderLobby(root) {
   const url = roomUrl(app.room), isHost = app.mode === 'host';
   const seats = app.seats.map(x => ({ ...x, piece: x.piece ?? 0 }));
-  root.innerHTML = V.lobbyHtml({ room: app.room, url, seats, me: app.me, isHost, canStart: isHost && app.seats.length >= 2 && app.net && app.net.isOpen(), status: app.status || 'đang kết nối…', statusOk: app.statusOk });
+  root.innerHTML = V.lobbyHtml({ room: app.room, url, seats, me: app.me, isHost, canStart: isHost && app.seats.length >= 2 && app.net && app.net.isOpen(), status: app.status || 'đang kết nối…', statusOk: app.statusOk, mapId: isHost ? app.mapId : app.lobbyMap || DEFAULT_MAP });
   $('#copy').onclick = () => {
     $('#roomlink').select();
     (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).catch(() => document.execCommand('copy'));
@@ -315,7 +325,12 @@ document.addEventListener('click', e => {
   switch (a) {
     case 'modal-ok': { const f = app.modal && app.modal.onOk; closeModal(); if (f) f(); return; }
     case 'modal-cancel': return closeModal();
-    case 'rules': return ask({ strip: 'Luật chơi', kicker: 'Chơi thế nào?', title: 'Sáu điều cần biết', html: V.RULES_HTML });
+    case 'rules': { const M = app.S && app.screen === 'game' ? mapOf(app.S) : MAPS[app.mapId]; return ask({ strip: 'Luật chơi', stripR: M.name, kicker: 'Chơi thế nào?', title: 'Những điều cần biết', html: V.rulesHtml(M) }); }
+    case 'map':
+      if (!MAPS[arg]) return;
+      if (app.mode === null) { app.mapId = arg; store.set(MAP_KEY, arg); return render(); }
+      if (app.mode === 'host' && !app.started) { app.mapId = arg; store.set(MAP_KEY, arg); broadcastLobby(); return render(); }
+      return;
     case 'exit': return exit();
     case 'home': return goHome();
     case 'reload': return location.reload();
@@ -329,7 +344,7 @@ document.addEventListener('click', e => {
       return;
     case 'new':
       if (app.mode === 'host') return startOnlineGame();
-      if (app.mode === 'local') return startLocal(app.truth.players.length, app.truth.opts.dev);
+      if (app.mode === 'local') return startLocal(app.truth.players.length, app.truth.opts.dev, app.truth.map);
       return;
     case 'forfeit': {
       const p = app.truth.players[app.truth.turn];
@@ -341,10 +356,20 @@ document.addEventListener('click', e => {
     case 'dev-money': return act({ type: 'debug', op: 'money', n: arg });
     case 'dev-goto': return act({ type: 'debug', op: 'goto', i: arg });
     case 'dev-own': return act({ type: 'debug', op: 'own', i: arg });
-    case 'dev-own-district': group(TILES[arg].d).forEach(i => act({ type: 'debug', op: 'own', i })); return;
+    case 'dev-own-district': { const T = mapOf(app.truth).tiles; groupOf(T, T[arg].d).forEach(i => act({ type: 'debug', op: 'own', i })); return; }
+    case 'dev-card': { const [deck, id] = $('#dvc').value.split(':'); return act({ type: 'debug', op: 'card', deck, id: +id }); }
+    case 'fly': case 'downgrade': return act({ type: a, i: arg });
+    case 'gamble': return act({ type: 'gamble', bet: +$('#bet').value, pick: arg });
     case 'build': case 'sell': case 'mort': case 'unmort': return act({ type: a, i: arg });
     default: return act({ type: a });
   }
+});
+document.addEventListener('input', e => {
+  if (e.target.id !== 'bet') return;
+  app.bet = +e.target.value;
+  const v = $('#betv'), w = $('#betw');
+  if (v) v.textContent = app.bet + ' ₫g';
+  if (w) w.textContent = app.bet * 2;
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && app.modal) return closeModal();

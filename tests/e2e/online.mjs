@@ -61,6 +61,31 @@ try {
   await until(() => L.ev(`!__phogiay.app.animating && __phogiay.app.truth.phase === 'buy'`), 5000);
   check(await L.ev(`__phogiay.app.truth.players[0].pos === 3`), 'ván thử: đặt xúc xắc 1+2 → ô 3');
   await L.shot('local-game.png');
+  // thẻ Vận mệnh qua giao diện (map Việt Nam là mặc định)
+  check(await L.ev(`__phogiay.app.truth.map === 'vietnam'`), 'ván thử: mặc định là map Việt Nam');
+  const endTurn = async () => {
+    await until(() => L.ev('!__phogiay.app.animating'), 5000);
+    await L.ev(`if (__phogiay.app.truth.phase === 'buy') document.querySelector('[data-act=skip]').click()`);
+    await sleep(150);
+    await L.ev(`document.querySelector('[data-act=end]').click()`);
+    await until(() => L.ev(`__phogiay.app.truth.phase === 'roll' && !__phogiay.app.animating`), 5000);
+  };
+  await endTurn();
+  await L.ev(`document.getElementById('dvc').value = 'v:6'; document.querySelector('[data-act=dev-card]').click()`);
+  check(await until(() => L.ev(`__phogiay.app.truth.phase === 'gamble' && !!document.getElementById('bet')`), 3000), 'Con bạc: hiện thanh cược');
+  await L.ev(`const b = document.getElementById('bet'); b.value = '100'; b.dispatchEvent(new Event('input', { bubbles: true })); document.querySelector('[data-act=gamble][data-arg=even]').click()`);
+  check(await until(() => L.ev(`!!__phogiay.app.truth.gamble && __phogiay.app.truth.gamble.bet === 100`), 3000), 'Con bạc: cược 100 vào chẵn');
+  await until(() => L.ev('!__phogiay.app.animating'), 5000);
+  check(await L.ev(`!!document.querySelector('.gamble-res')`), 'Con bạc: hiện kết quả xúc xắc cược');
+  await L.shot('vn-gamble.png');
+  await endTurn();
+  await L.ev(`document.getElementById('dvc').value = 'v:4'; document.querySelector('[data-act=dev-card]').click()`);
+  check(await until(() => L.ev(`__phogiay.app.truth.phase === 'fly' && !!document.querySelector('.board.picking')`), 3000), 'Máy bay: bàn cờ sáng ô chọn được');
+  await L.ev(`document.querySelector('[data-tile="39"]').click()`);
+  await sleep(100);
+  await L.ev(`document.querySelector('.dock [data-act=fly]').click()`);
+  check(await until(() => L.ev(`__phogiay.app.truth.players[__phogiay.app.truth.turn].pos === 39`), 3000), 'Máy bay: bay tới Hồ Gươm');
+  await L.shot('vn-fly.png');
   check(await L.ev(`!!document.querySelector('[data-act=exit]')`), 'ván thử: có nút thoát');
   await L.ev(`document.querySelector('[data-act=exit]').click()`);
   check(await until(() => L.ev(`__phogiay.app.screen === 'home' && !!document.getElementById('resume-local')`), 3000), 'ván thử: thoát về trang đầu, có nút tiếp tục');
@@ -97,13 +122,16 @@ try {
   await A.shot('online-lobby-host.png');
   await A.ev('__phogiay.startOnlineGame()');
   check(await until(() => B.ev(`__phogiay.app.screen === 'game' && __phogiay.app.me === 1`)), 'online: khách nhận bàn cờ');
+  check(await B.ev(`__phogiay.app.truth.map === 'vietnam'`), 'online: khách nhận đúng map chủ phòng chọn');
   await B.ev(`__phogiay.act({ type: 'roll' })`); await sleep(800);
   check(await A.ev(`__phogiay.app.truth.turn === 0 && __phogiay.app.truth.phase === 'roll'`), 'online: khách lăn trái lượt bị chặn');
   for (let k = 0; k < 24; k++) {
     const st = await A.ev('({ turn: __phogiay.app.truth.turn, phase: __phogiay.app.truth.phase })');
-    const W = st.turn === 0 ? A : B, type = st.phase === 'roll' ? 'roll' : st.phase === 'buy' ? 'buy' : 'end';
+    const W = st.turn === 0 ? A : B, type = { roll: 'roll', buy: 'buy', gamble: 'gamble', fly: 'fly', downgrade: 'downgrade' }[st.phase] || 'end';
     await until(() => W.ev('!__phogiay.app.animating'), 8000);
-    await W.ev(`__phogiay.act({ type: '${type}' })`);
+    // phase lựa chọn của thẻ Vận mệnh: cược tối thiểu, bay tới ô kế bên, hạ ô có nhà đầu tiên
+    const extra = { gamble: ", bet: 50, pick: 'even'", fly: ', i: (__phogiay.app.truth.players[__phogiay.app.truth.turn].pos + 1) % 40 === 30 ? 31 : (__phogiay.app.truth.players[__phogiay.app.truth.turn].pos + 1) % 40', downgrade: ', i: +Object.keys(__phogiay.app.truth.houses).find(i => __phogiay.app.truth.owner[i] !== __phogiay.app.truth.turn)' }[type] || '';
+    await W.ev(`__phogiay.act({ type: '${type}'${extra} })`);
     await sleep(type === 'roll' ? 600 : 250);
   }
   await until(() => B.ev('!__phogiay.app.animating'), 8000); await sleep(500);
