@@ -4,6 +4,15 @@
 - Đã tạo nội dung chữ cho map Việt Nam (40 ô, 13 loại thẻ Vận mệnh, gợi ý Thanh Hóa) và chạy `node --test tests/*.test.mjs` (17/17 xanh).
 - File: `content/vietnam.json`.
 
+## 2026-11-28 · A6 phác (2 bản phác bản đồ Dải đất kiểu pixel — chờ duyệt)
+- Đã dựng 2 bản phác bản đồ Dải đất (gốc `160×240`, phóng ×3 = `480×720`, không chữ) từ đường bờ Natural Earth 50m (public domain): đủ địa hình Bắc–Trung–Nam, ruộng bậc thang Tây Bắc, Trường Sơn, sông Hồng, sông Mê Kông, đường sắt Thống Nhất, 8 chấm màu quận kèm 8 địa danh pixel 11–15px (Tháp Rùa mái đá xám, cần cẩu Hải Phòng, cây nhãn Hưng Yên, cổng Thành Nhà Hồ, Ngọ Môn, Cầu Rồng, Chợ Bến Thành, chợ nổi), Phú Quốc, Côn Đảo, **Quần đảo Hoàng Sa** và khung **Quần đảo Trường Sa**.
+- File: `assets/themes/check/vietnam-map-draft-a.png` (A · biển xanh RPG rực rỡ, 11,4 KB), `assets/themes/check/vietnam-map-draft-b.png` (B · bản đồ giấy cổ vàng kem nắng, 12,2 KB), `assets/themes/vietnam-map.json`, `assets/themes/SOURCES.md`.
+- Việc tiếp theo: chờ người dùng chọn bản A hay B ở A6; trong lúc chờ chuyển sang làm **A2p** (6 sprite Dải đất có hoạt ảnh). Đang vướng: chờ người dùng duyệt A6 phác.
+
+| A · Biển xanh đậm RPG | B · Bản đồ giấy cổ vàng kem |
+|---|---|
+| ![A6 phác A](../../assets/themes/check/vietnam-map-draft-a.png) | ![A6 phác B](../../assets/themes/check/vietnam-map-draft-b.png) |
+
 ## 2026-11-28 · A5 (UI kit pixel — chờ duyệt)
 - Đã vẽ trọn bộ UI kit pixel ở độ phân giải gốc (không khử răng cưa, nền trong suốt, mọi file ≤ 275 byte < 20 KB) theo đúng bảng màu A1 (`design/themes/palettes.md`):
   - 16 khung 9 ô (`border-image`): 8 khung Dải đất mặc định (`frame-panel`, `frame-card`, `frame-tile`, `btn`, `btn-press`, `btn-primary`, `btn-primary-press`, `input`) và 8 bản `-classic.png` cho Phố Giấy.
