@@ -4,6 +4,14 @@
 - Đã tạo nội dung chữ cho map Việt Nam (40 ô, 13 loại thẻ Vận mệnh, gợi ý Thanh Hóa) và chạy `node --test tests/*.test.mjs` (17/17 xanh).
 - File: `content/vietnam.json`.
 
+## 2026-11-28 · A2p (6 sprite pixel Dải đất có hoạt ảnh — chờ duyệt)
+- Đã vẽ 6 sprite sheet pixel chibi 32×32 (128×128, 4 hàng `idle`/`walk`/`happy`/`sad`, mỗi sheet 2,0–2,6 KB < 20 KB) + 6 chân dung nửa người 48×48 + cập nhật `assets/avatars/vietnam/avatars.json` theo đúng schema `docs/UI_REFRESH.md` mục 0.4.
+- Đã sửa triệt để mọi góp ý từ bản vector: **Cô Hai** (`non-la`) có quai nón dưới cằm không vắt ngang mặt + quang gánh; **Minh Thư** (`ao-dai`) mặc áo dài hồng sen thật tà dài tới gối xẻ hai bên lộ quần dài trắng và tà bay khi `walk`; 6 màu áo chính khác nhau hoàn toàn ở 32px (đỏ son, vàng mai, hồng sen, xanh ngọc, sọc xanh biển, xanh lá mạ).
+- File: `assets/avatars/vietnam/*.png`, `assets/avatars/vietnam/avatars.json`, `assets/avatars/SOURCES.md`, `assets/avatars/check/vietnam-sprites.png`, `assets/avatars/check/vietnam-sprites.gif`.
+- Việc tiếp theo: chờ người dùng duyệt **A6 phác** (chọn A hay B để hoàn thiện cả 2 map) và **A2p**; sau đó làm **A3p** (6 sprite Phố Giấy + dọn SVG cũ) → **A4p** → **G2**. Đang vướng: không.
+
+![6 sprite pixel Dải đất A2p](../../assets/avatars/check/vietnam-sprites.png)
+
 ## 2026-11-28 · A6 phác (2 bản phác bản đồ Dải đất kiểu pixel — chờ duyệt)
 - Đã dựng 2 bản phác bản đồ Dải đất (gốc `160×240`, phóng ×3 = `480×720`, không chữ) từ đường bờ Natural Earth 50m (public domain): đủ địa hình Bắc–Trung–Nam, ruộng bậc thang Tây Bắc, Trường Sơn, sông Hồng, sông Mê Kông, đường sắt Thống Nhất, 8 chấm màu quận kèm 8 địa danh pixel 11–15px (Tháp Rùa mái đá xám, cần cẩu Hải Phòng, cây nhãn Hưng Yên, cổng Thành Nhà Hồ, Ngọ Môn, Cầu Rồng, Chợ Bến Thành, chợ nổi), Phú Quốc, Côn Đảo, **Quần đảo Hoàng Sa** và khung **Quần đảo Trường Sa**.
 - File: `assets/themes/check/vietnam-map-draft-a.png` (A · biển xanh RPG rực rỡ, 11,4 KB), `assets/themes/check/vietnam-map-draft-b.png` (B · bản đồ giấy cổ vàng kem nắng, 12,2 KB), `assets/themes/vietnam-map.json`, `assets/themes/SOURCES.md`.

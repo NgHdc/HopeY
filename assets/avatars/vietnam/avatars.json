@@ -4,47 +4,185 @@
     "name": "Cô Hai",
     "line": "Gánh hàng rong qua mọi con phố.",
     "color": "#C93420",
-    "portrait": "non-la.svg",
-    "token": "non-la-token.svg"
+    "sheet": "non-la.png",
+    "portrait": "non-la-portrait.png",
+    "frame": 32,
+    "anims": {
+      "idle": [
+        0,
+        4,
+        4
+      ],
+      "walk": [
+        1,
+        4,
+        8
+      ],
+      "happy": [
+        2,
+        4,
+        6
+      ],
+      "sad": [
+        3,
+        3,
+        4
+      ]
+    }
   },
   {
     "id": "xich-lo",
     "name": "Bác Ba",
     "line": "Đạp xích lô rành từng con hẻm nhỏ.",
     "color": "#F0A814",
-    "portrait": "xich-lo.svg",
-    "token": "xich-lo-token.svg"
+    "sheet": "xich-lo.png",
+    "portrait": "xich-lo-portrait.png",
+    "frame": 32,
+    "anims": {
+      "idle": [
+        0,
+        4,
+        4
+      ],
+      "walk": [
+        1,
+        4,
+        8
+      ],
+      "happy": [
+        2,
+        4,
+        6
+      ],
+      "sad": [
+        3,
+        3,
+        4
+      ]
+    }
   },
   {
     "id": "ao-dai",
     "name": "Minh Thư",
-    "line": "Áo dài trắng tung bay nắng sân trường.",
+    "line": "Áo dài tung bay nắng sân trường.",
     "color": "#D43F84",
-    "portrait": "ao-dai.svg",
-    "token": "ao-dai-token.svg"
+    "sheet": "ao-dai.png",
+    "portrait": "ao-dai-portrait.png",
+    "frame": 32,
+    "anims": {
+      "idle": [
+        0,
+        4,
+        4
+      ],
+      "walk": [
+        1,
+        4,
+        8
+      ],
+      "happy": [
+        2,
+        4,
+        6
+      ],
+      "sad": [
+        3,
+        3,
+        4
+      ]
+    }
   },
   {
     "id": "ong-do",
     "name": "Ông Đồ",
     "line": "Bút lông mực tàu, đi đâu cũng chậm rãi.",
     "color": "#177D8C",
-    "portrait": "ong-do.svg",
-    "token": "ong-do-token.svg"
+    "sheet": "ong-do.png",
+    "portrait": "ong-do-portrait.png",
+    "frame": 32,
+    "anims": {
+      "idle": [
+        0,
+        4,
+        4
+      ],
+      "walk": [
+        1,
+        4,
+        8
+      ],
+      "happy": [
+        2,
+        4,
+        6
+      ],
+      "sad": [
+        3,
+        3,
+        4
+      ]
+    }
   },
   {
     "id": "ngu-dan",
     "name": "Anh Năm",
     "line": "Quăng lưới bình minh, gió biển quen mặt.",
     "color": "#1D73B2",
-    "portrait": "ngu-dan.svg",
-    "token": "ngu-dan-token.svg"
+    "sheet": "ngu-dan.png",
+    "portrait": "ngu-dan-portrait.png",
+    "frame": 32,
+    "anims": {
+      "idle": [
+        0,
+        4,
+        4
+      ],
+      "walk": [
+        1,
+        4,
+        8
+      ],
+      "happy": [
+        2,
+        4,
+        6
+      ],
+      "sad": [
+        3,
+        3,
+        4
+      ]
+    }
   },
   {
     "id": "tha-dieu",
     "name": "Bé Tí",
     "line": "Chạy theo cánh diều khắp bãi cỏ chiều.",
     "color": "#1A7D43",
-    "portrait": "tha-dieu.svg",
-    "token": "tha-dieu-token.svg"
+    "sheet": "tha-dieu.png",
+    "portrait": "tha-dieu-portrait.png",
+    "frame": 32,
+    "anims": {
+      "idle": [
+        0,
+        4,
+        4
+      ],
+      "walk": [
+        1,
+        4,
+        8
+      ],
+      "happy": [
+        2,
+        4,
+        6
+      ],
+      "sad": [
+        3,
+        3,
+        4
+      ]
+    }
   }
 ]
