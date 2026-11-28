@@ -61,7 +61,7 @@ Mọi cặp chữ/nền đã kiểm chứng tự động đạt **WCAG 2.1 AA �
   --shadow: 0 4px 0 var(--ink);
   --shadow-press: 0 1px 0 var(--ink);
   --font-display: "Baloo 2", "Inter", sans-serif;
-  --board-art: none;      /* cập nhật khi có A4: assets/themes/vietnam-board.svg */
+  --board-art: url("../../assets/themes/vietnam-board.svg");
 }
 ```
 
@@ -124,7 +124,7 @@ Mọi cặp chữ/nền đã kiểm chứng tự động đạt **WCAG 2.1 AA �
   --shadow: 0 4px 0 var(--ink);
   --shadow-press: 0 1px 0 var(--ink);
   --font-display: "Baloo 2", "Inter", sans-serif;
-  --board-art: none;      /* cập nhật khi có A4: assets/themes/classic-board.svg */
+  --board-art: url("../../assets/themes/classic-board.svg");
 }
 ```
 
