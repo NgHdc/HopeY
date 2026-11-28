@@ -4,6 +4,13 @@
 - Đã tạo nội dung chữ cho map Việt Nam (40 ô, 13 loại thẻ Vận mệnh, gợi ý Thanh Hóa) và chạy `node --test tests/*.test.mjs` (17/17 xanh).
 - File: `content/vietnam.json`.
 
+## 2026-11-28 · A4p (Nền lặp pixel 32×32 + bỏ SVG cũ — chờ duyệt)
+- Đã vẽ 2 nền lặp pixel 32×32 nối liền không thấy đường ghép: `assets/themes/vietnam-tile.png` (279 B — sóng nước & mây) và `assets/themes/classic-tile.png` (209 B — lưới chấm & góc giấy gấp), kèm ảnh kiểm tra lát 4×4 phóng ×3 `assets/themes/check/tiles-preview.png`.
+- Đã xóa 4 file SVG cũ (`vietnam-pattern.svg`, `classic-pattern.svg`, `vietnam-board.svg`, `classic-board.svg`) và cập nhật `--bg-pattern`, `--board-art` trong `design/themes/palettes.md` trỏ sang các file PNG pixel mới.
+- Việc tiếp theo: làm **G2** (`assets/stacks/STYLE.md`) rồi dừng chờ Cổng duyệt 2 trước khi làm G3. Đang vướng: không.
+
+![Kiểm tra nền lặp 32x32 A4p](../../assets/themes/check/tiles-preview.png)
+
 ## 2026-11-28 · A3p (6 sprite Phố Giấy có hoạt ảnh + bỏ avatar vector — chờ duyệt)
 - Đã vẽ 6 sprite sheet pixel chibi 32×32 (128×128, mỗi sheet ~2,0–2,1 KB < 20 KB) + 6 chân dung 48×48 + cập nhật `assets/avatars/classic/avatars.json` đúng schema mục 0.4 `UI_REFRESH.md`.
 - Đã tách hẳn màu giữa 6 nhân vật: **Bác Hải Đăng** (`hai-dang`) chuyển sang áo sọc **đỏ – trắng ngọn hải đăng (`#C73236`)** thay vì xanh dương để không trùng **Ông Lái Đò** (`#1E74BA`).
