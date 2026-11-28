@@ -15,7 +15,7 @@
 | 0.3.0 | Nền móng | Tách code, test, version, deploy có lưu trữ + rollback, chơi thử trên máy | ✅ đã phát hành |
 | 0.4.0 | Giấy mới | Thiết kế lại toàn bộ UI theo mockup | ✅ **đang chạy** |
 | 0.4.x | Giấy mới (tiếp) | Đồ họa từng ô, chỉnh style theo ý bạn | ⏭ tiếp theo |
-| 0.5.0 | Dải đất | Nhiều map, map Việt Nam, bộ thẻ Vận mệnh, cơ chế ẩn Thanh Hóa | 🧪 code xong trên `dev`, chờ phát hành |
+| 0.5.0 | Dải đất | Nhiều map, map Việt Nam, bộ thẻ Vận mệnh, cơ chế ẩn Thanh Hóa | ✅ phát hành 2026-11-28 |
 | 0.5.x | Luật đầy đủ | Trao đổi, đấu giá, tùy chỉnh luật | |
 | 0.6.0 | Phòng bền | Kết nối ổn định, chuyển chủ phòng, chat, khán giả | |
 | 0.7.0 | Mọi màn hình | Điện thoại, máy tính bảng, bàn phím, trợ năng | |

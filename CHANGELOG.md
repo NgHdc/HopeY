@@ -5,7 +5,9 @@ Quy trình phát hành và rollback: [`docs/RELEASE.md`](docs/RELEASE.md).
 
 ## [Chưa phát hành]
 
-Dự kiến phát hành là **0.5.0 · Dải đất**. Thiết kế ở [`docs/MAP_VIETNAM.md`](docs/MAP_VIETNAM.md).
+## [0.5.0] — 2026-11-28 · Dải đất
+
+Thiết kế ở [`docs/MAP_VIETNAM.md`](docs/MAP_VIETNAM.md).
 
 ### Thêm
 - **Nhiều map.** Chọn bàn cờ ở trang đầu (ván thử) hoặc trong sảnh (chủ phòng chọn, khách thấy ngay).
@@ -92,7 +94,8 @@ Dự kiến phát hành là **0.5.0 · Dải đất**. Thiết kế ở [`docs/M
 ### Đổi
 - Chữ nghiêng dùng Noto Serif thay Georgia (Georgia trên Windows lỗi dấu tiếng Việt)
 
-[Chưa phát hành]: https://github.com/NgHdc/HopeY/compare/v0.4.0...HEAD
+[Chưa phát hành]: https://github.com/NgHdc/HopeY/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/NgHdc/HopeY/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/NgHdc/HopeY/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/NgHdc/HopeY/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/NgHdc/HopeY/compare/v0.1.1...v0.2.0

@@ -68,7 +68,7 @@ Repo [danielwh2/sprite-stacking](https://github.com/danielwh2/sprite-stacking) (
 ## 3. Việc của Codex (C1–C6)
 
 **C1 · Đưa skill vào repo và đọc kỹ.**
-- Chép `skills/sprite-stacking/` vào `.agents/skills/sprite-stacking/` và `.claude/skills/sprite-stacking/`. Cả 3 agent sẽ dùng được.
+- Chép `skills/sprite-stacking/` vào `.agents/skills/sprite-stacking/` (chỉ một bản, cả 3 agent đọc ở đây).
 - Đọc toàn bộ `views_to_slices.py`, `viewer.html`, `references/engines.md`.
 - Ghi vào `tools/art/THIRD_PARTY.md`: commit hash, giấy phép MIT, tóm tắt các tham số.
 - Xong khi: `python -I tests/check.py` in ra `ok`, và ảnh mẫu cắt ra dải lát cắt đúng.

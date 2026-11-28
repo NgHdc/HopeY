@@ -1,7 +1,7 @@
 # Mã nguồn sprite stacking
 
 - Nguồn: `https://github.com/danielwh2/sprite-stacking`, commit `0cce02efe6aa81fffcd05744d7ab65d40f412de2` (Daniel White, 2026).
-- Giấy phép: MIT. Bản quyền và toàn văn giấy phép được giữ trong cả hai bản sao skill ở `.agents/skills/sprite-stacking/` và `.claude/skills/sprite-stacking/`.
+- Giấy phép: MIT. Bản quyền và toàn văn giấy phép được giữ trong skill ở `.agents/skills/sprite-stacking/` (chỉ giữ một bản, dùng chung cho cả 3 agent).
 - Đã đọc `SKILL.md`, `scripts/views_to_slices.py`, `scripts/viewer.html`, `references/engines.md` và `tests/check.py` trước khi chạy mã. `python -I tests/check.py` trong bản nguồn cho kết quả `ok`.
 
 ## Tham số bộ cắt lớp
