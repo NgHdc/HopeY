@@ -1,5 +1,12 @@
 # Nhật ký agent Agy
 
+## 2026-11-28 · A8 (Icon trạng thái + mic + favicon pixel — chờ duyệt)
+- Đã vẽ 8 icon 16×16 trong `assets/ui/icons/` (`net-ok.png`, `net-wait.png` 32×16 2 khung, `net-lost.png`, `host.png`, `watch.png`, `mic-on.png`, `mic-off.png`, `speaking.png` 32×16 2 khung) và 2 favicon pixel vẽ tay riêng ở kích thước gốc (`assets/ui/favicon-32.png`, `assets/ui/favicon-16.png`), mọi file ≤ 620 B, màu lấy từ `palettes.md`, viền mực 1px `--ink`.
+- Đã cập nhật `assets/ui/README.md`, `assets/ui/SOURCES.md` và xuất ảnh kiểm tra phóng ×4 `assets/ui/check/a8-status-mic-favicon.png`.
+- Việc tiếp theo: làm **A9** (art chế độ Xóm lạ trong `assets/xomla/`). Đang vướng: không.
+
+![A8 icon trạng thái, mic và favicon](../../assets/ui/check/a8-status-mic-favicon.png)
+
 ## 2026-11-27 · G6
 - Đã tạo nội dung chữ cho map Việt Nam (40 ô, 13 loại thẻ Vận mệnh, gợi ý Thanh Hóa) và chạy `node --test tests/*.test.mjs` (17/17 xanh).
 - File: `content/vietnam.json`.

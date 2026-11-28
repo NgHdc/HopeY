@@ -35,9 +35,10 @@ Mặc định (không hậu tố) dùng bảng màu **Dải đất (`vietnam`)**
 }
 ```
 
-## 2. 23 Icon 16×16 (`assets/ui/icons/`)
+## 2. Icon 16×16 (`assets/ui/icons/`)
 
 Phóng nguyên bội `calc(16 * var(--px))` hoặc `16px` / `32px` / `48px` kèm `image-rendering: pixelated`.
+Các icon hoạt ảnh 2 khung (`net-wait.png`, `speaking.png`) có kích thước `32×16` (2 khung `16×16` xếp ngang, dùng `background-size: 200% 100%` + `steps(2)`).
 
 | Nhóm | File |
 |---|---|
@@ -46,6 +47,11 @@ Phóng nguyên bội `calc(16 * var(--px))` hoặc `16px` / `32px` / `48px` kèm
 | Công trình & tiền | `house.png`, `hotel.png`, `coin.png` |
 | Xúc xắc 1–6 | `dice-1.png`, `dice-2.png`, `dice-3.png`, `dice-4.png`, `dice-5.png`, `dice-6.png` |
 | Vé, hành động, cảnh báo | `ticket.png`, `plane.png`, `warn.png` |
+| Trạng thái, vai trò & mic (A8) | `net-ok.png`, `net-wait.png` (32×16, 2 khung), `net-lost.png`, `host.png`, `watch.png`, `mic-on.png`, `mic-off.png`, `speaking.png` (32×16, 2 khung) |
+
+## 2b. Favicon pixel (A8)
+
+- `assets/ui/favicon-32.png` (32×32) và `assets/ui/favicon-16.png` (16×16, vẽ tay riêng từng pixel, không thu nhỏ từ 32×32): huy hiệu ngôi nhà Phố Giấy mái đỏ son `--accent`, cửa sổ vàng `--accent-2`, viền mực `--ink`, đọc rõ cả nền tab sáng lẫn tối.
 
 ## 3. Bảng màu sử dụng (trích `design/themes/palettes.md`)
 
@@ -56,3 +62,5 @@ Phóng nguyên bội `calc(16 * var(--px))` hoặc `16px` / `32px` / `48px` kèm
 ## 4. Ảnh kiểm tra
 
 ![Tổng hợp UI kit pixel phóng ×4](check/ui-kit.png)
+
+![Icon trạng thái, mic và favicon A8 phóng ×4](check/a8-status-mic-favicon.png)
