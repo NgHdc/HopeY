@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+  <!-- Minh họa giữa bàn vùng đất Dải đất (Việt Nam): màu nhạt, không át chữ & thẻ trung tâm -->
+  <defs>
+    <linearGradient id="landGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F6C86E" stop-opacity="0.34"/>
+      <stop offset="55%" stop-color="#EBA852" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#D99848" stop-opacity="0.32"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Khung hoa văn góc nhẹ kiểu giấy tranh dân gian -->
+  <g fill="none" stroke="#C98A32" stroke-width="2" opacity="0.24">
+    <rect x="20" y="20" width="560" height="560" rx="24"/>
+    <rect x="30" y="30" width="540" height="540" rx="18" stroke-dasharray="6 8"/>
+  </g>
+
+  <!-- Sóng biển Đông & mây cách điệu rải nhẹ ở rìa -->
+  <g fill="none" stroke="#3A8DA8" stroke-width="2.2" stroke-linecap="round" opacity="0.18">
+    <path d="M392 156 Q412 144 432 156 T472 156 T512 156"/>
+    <path d="M412 172 Q432 160 452 172 T492 172 T532 172"/>
+    <path d="M424 316 Q444 304 464 316 T504 316 T544 316"/>
+    <path d="M406 446 Q426 434 446 446 T486 446 T526 446"/>
+    <path d="M72 418 Q92 406 112 418 T152 418 T192 418"/>
+  </g>
+  <g fill="#FFFFFF" stroke="#D9A84E" stroke-width="2" opacity="0.28">
+    <path d="M70 112 C70 100 84 96 94 102 C100 92 118 94 122 106 C132 106 136 118 126 122 L74 122 C66 122 64 112 70 112 Z"/>
+    <path d="M446 90 C446 80 458 76 466 82 C472 72 488 74 492 84 C500 84 504 94 496 98 L450 98 C442 98 440 90 446 90 Z"/>
+    <path d="M84 494 C84 484 96 480 104 486 C110 476 126 478 130 488 C138 488 142 498 134 502 L88 502 C80 502 78 494 84 494 Z"/>
+  </g>
+
+  <!-- Dải đất chữ S cách điệu mềm mại, đặt hài hòa giữa khung -->
+  <path d="
+    M232 64
+    C262 56 304 62 332 82
+    C354 98 364 122 350 144
+    C338 162 314 166 306 184
+    C298 202 312 224 334 244
+    C360 268 388 292 394 330
+    C400 368 386 410 356 442
+    C332 468 302 482 284 506
+    C272 522 260 536 244 532
+    C230 528 228 508 238 490
+    C248 472 256 458 274 442
+    C298 422 328 398 334 362
+    C340 326 320 296 294 270
+    C268 244 242 216 244 184
+    C246 160 260 148 250 132
+    C240 116 206 114 202 96
+    C198 80 212 70 232 64 Z"
+    fill="url(#landGrad)" stroke="#C47E28" stroke-width="3" stroke-linejoin="round" opacity="0.45"/>
+
+  <!-- Các chấm đảo nhỏ gợi biển đảo quê hương -->
+  <g fill="#E8A84C" stroke="#C47E28" stroke-width="1.5" opacity="0.28">
+    <circle cx="446" cy="242" r="4"/>
+    <circle cx="458" cy="250" r="3"/>
+    <circle cx="442" cy="256" r="2.5"/>
+    <circle cx="470" cy="408" r="4"/>
+    <circle cx="484" cy="416" r="3"/>
+    <circle cx="464" cy="422" r="2.8"/>
+    <circle cx="216" cy="472" r="5"/>
+  </g>
+
+  <!-- Đường hành trình nét đứt nối 8 thành phố dọc dải đất -->
+  <path d="M276 114 L322 126 L296 138 L286 178 L334 268 L358 294 L324 434 L268 486"
+        fill="none" stroke="#9C5C24" stroke-width="2.2" stroke-dasharray="6 6" stroke-linecap="round" opacity="0.26"/>
+
+  <!-- 8 điểm thành phố tương ứng 8 quận (dùng đúng mã màu A1, độ mờ dịu để không át chữ) -->
+  <g stroke="#1F1A2E" stroke-width="2" opacity="0.36">
+    <!-- 8. Hà Nội -->
+    <circle cx="276" cy="114" r="7.5" fill="#22509E"/>
+    <!-- 5. Hải Phòng -->
+    <circle cx="322" cy="126" r="6" fill="#C72E3E"/>
+    <!-- 1. Hưng Yên -->
+    <circle cx="296" cy="138" r="6" fill="#945228"/>
+    <!-- 2. Thanh Hóa ★ -->
+    <circle cx="286" cy="178" r="6.5" fill="#1D73B2"/>
+    <!-- 4. Huế -->
+    <circle cx="334" cy="268" r="6" fill="#7F38AD"/>
+    <!-- 6. Đà Nẵng -->
+    <circle cx="358" cy="294" r="6.5" fill="#F0B016"/>
+    <!-- 7. TP.HCM -->
+    <circle cx="324" cy="434" r="7" fill="#157B52"/>
+    <!-- 3. Cần Thơ -->
+    <circle cx="268" cy="486" r="6" fill="#B84C10"/>
+  </g>
+
+  <!-- Tên nhỏ 8 thành phố dịu nhẹ để vùng chữ giữa bàn hoàn toàn thoáng -->
+  <g fill="#504664" font-family="Inter, Segoe UI, sans-serif" font-size="11" font-weight="700" opacity="0.26">
+    <text x="262" y="106" text-anchor="end">Hà Nội</text>
+    <text x="334" y="124">Hải Phòng</text>
+    <text x="308" y="148">Hưng Yên</text>
+    <text x="272" y="184" text-anchor="end">Thanh Hóa</text>
+    <text x="348" y="268">Huế</text>
+    <text x="372" y="298">Đà Nẵng</text>
+    <text x="338" y="438">TP.HCM</text>
+    <text x="254" y="492" text-anchor="end">Cần Thơ</text>
+  </g>
+
+  <!-- La bàn hoa mai nhỏ ở góc dưới phải -->
+  <g transform="translate(514 514)" opacity="0.28" stroke="#9C5C24" stroke-width="2" fill="none">
+    <circle cx="0" cy="0" r="24"/>
+    <circle cx="0" cy="0" r="18" stroke-dasharray="3 4"/>
+    <polygon points="0,-20 5,-4 0,-8 -5,-4" fill="#C93420" stroke="none"/>
+    <polygon points="0,20 5,4 0,8 -5,4" fill="#9C5C24" stroke="none"/>
+    <line x1="-18" y1="0" x2="18" y2="0"/>
+  </g>
+</svg>

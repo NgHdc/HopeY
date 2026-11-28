@@ -32,3 +32,16 @@ Công cụ: SVG dựng bằng Python cùng hệ nét viền sticker dày (`#1B26
 | `be-den-long` | Bé Lồng Đèn | `#F0B41C` (vàng nắng) | Bé Phố Cổ hai búi tóc tròn viền đỏ, áo đỏ, chiếc đèn lồng đỏ tua vàng treo góc trên; token nổi bật hai búi tóc tròn đối xứng. |
 | `co-vuon` | Chị Vườn Sen | `#1B7D44` (xanh lá vườn) | Cô làm vườn đeo kính tròn, mũ vải xanh có mầm lá non mọc trên đỉnh, chậu cây mầm; token nổi bật mầm lá xanh non trên mũ. |
 | `hai-dang` | Bác Hải Đăng | `#24579E` (xanh biển sâu) | Người gác hải đăng Cảng Biển mặc áo khoác vàng, râu bạc gọn, đội mũ thủy thủ trắng sao vàng; token nổi bật mũ thủy thủ trắng sao vàng. |
+
+## A2p · 6 sprite pixel Dải đất có hoạt ảnh (`assets/avatars/vietnam/`, 2026-11-28)
+
+Công cụ: Python 3 + Pillow + NumPy (vẽ pixel gốc 32×32/khung, sheet 128×128 = 4 hàng `idle`/`walk`/`happy`/`sad`, chân dung nửa người 48×48, không khử răng cưa, viền ngoài 1px `--ink` `#1F1A2E`, mỗi sheet 2,0–2,7 KB < 20 KB). Màu áo 6 nhân vật khác biệt hoàn toàn theo `design/themes/palettes.md`.
+
+| ID | Tên | Màu áo & đại diện | Tạo hình & lỗi đã sửa |
+|---|---|---|---|
+| `non-la` | Cô Hai | `#C93420` (đỏ son) | Áo bà ba đỏ son, nón lá vàng rơm, **quai nón nằm gọn dưới cằm** (không vắt ngang mặt), quang gánh tre + 2 thúng trái cây nhấp nhô khi bước đi. |
+| `xich-lo` | Bác Ba | `#F0A814` (vàng hoa mai) | Áo sơ mi vàng mai, khăn trắng vắt vai, mũ cối xanh rêu, tay cầm ghi-đông xích lô có chuông vàng. |
+| `ao-dai` | Minh Thư | `#D43F84` (hồng sen) | **Áo dài thật** cổ cao, tà dài tới gối xẻ hai bên để lộ **quần dài trắng**, tóc dài đen cài nơ; khi `walk` tà áo trước/sau bay về phía sau. |
+| `ong-do` | Ông Đồ | `#177D8C` (xanh ngọc lam) | Áo the dài xanh ngọc viền vàng, khăn đóng, kính gọng tròn, chòm râu bạc nhọn dài dưới cằm, cầm bút lông chấm mực đỏ. |
+| `ngu-dan` | Anh Năm | `#1D73B2` (xanh biển) | Áo sọc xanh biển – trắng, khăn đỏ buộc trán bay đuôi sau, mái chèo gỗ vắt chéo lưng. |
+| `tha-dieu` | Bé Tí | `#1A7D43` (xanh lá mạ) | Áo thun xanh lá mạ sọc vàng + quần ngắn nâu, tóc chỏm dựng, dây thả con diều vàng-đỏ bay phía sau. |

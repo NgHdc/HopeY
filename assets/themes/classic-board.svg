@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+  <!-- Minh họa giữa bàn vùng đất Phố Giấy (classic): bản đồ phố giấy gấp dịu nhẹ, không át chữ -->
+  <g fill="none" stroke="#5E8EC2" stroke-width="2" opacity="0.22">
+    <rect x="20" y="20" width="560" height="560" rx="24"/>
+    <rect x="30" y="30" width="540" height="540" rx="18" stroke-dasharray="6 8"/>
+  </g>
+
+  <!-- Dòng sông uốn lượn nhẹ nối Bến Sông ra Cảng Biển -->
+  <path d="M52 192 C144 162 214 234 302 224 C392 214 452 146 548 164 L548 214 C456 200 394 268 302 276 C210 284 142 216 52 242 Z"
+        fill="#7AB8E8" opacity="0.22"/>
+  <path d="M64 216 C150 188 218 254 304 248 C392 242 454 176 536 188"
+        fill="none" stroke="#3B8CE2" stroke-width="2.5" stroke-dasharray="10 10" stroke-linecap="round" opacity="0.22"/>
+
+  <!-- Đồi Nắng giấy gấp ở góc dưới trái -->
+  <g opacity="0.22">
+    <path d="M44 548 L156 412 L272 548 Z" fill="#F0B41C"/>
+    <path d="M156 412 L198 548 L272 548 Z" fill="#D99416"/>
+    <path d="M190 548 L282 448 L374 548 Z" fill="#5BB87A"/>
+    <path d="M282 448 L314 548 L374 548 Z" fill="#3B965C"/>
+  </g>
+
+  <!-- Đường dạo phố nét đứt khép vòng qua 8 khu phố -->
+  <ellipse cx="300" cy="306" rx="184" ry="166" fill="none" stroke="#455570" stroke-width="2.2" stroke-dasharray="7 8" opacity="0.22"/>
+
+  <!-- 8 biểu tượng tối giản đại diện 8 khu phố (màu đúng bảng A1, độ mờ dịu) -->
+  <g stroke="#1B263B" stroke-width="2" opacity="0.45">
+    <!-- 1. Ngõ Đất (mái nhà nhỏ) -->
+    <g transform="translate(154 120)">
+      <polygon points="0,-12 14,2 -14,2" fill="#945832"/>
+      <rect x="-10" y="2" width="20" height="12" fill="#FFFFFF"/>
+    </g>
+    <!-- 2. Bến Sông (thuyền giấy) -->
+    <g transform="translate(278 138)">
+      <polygon points="-16,4 16,4 10,12 -10,12" fill="#1E74BA"/>
+      <polygon points="0,-12 12,4 -8,4" fill="#FFFFFF"/>
+    </g>
+    <!-- 3. Chợ Hoa (hoa 4 cánh) -->
+    <g transform="translate(426 146)">
+      <circle cx="0" cy="-7" r="6" fill="#BD3E6D"/>
+      <circle cx="7" cy="0" r="6" fill="#BD3E6D"/>
+      <circle cx="0" cy="7" r="6" fill="#BD3E6D"/>
+      <circle cx="-7" cy="0" r="6" fill="#BD3E6D"/>
+      <circle cx="0" cy="0" r="4" fill="#F0B41C"/>
+    </g>
+    <!-- 4. Phố Nghề (bình gốm) -->
+    <g transform="translate(486 284)">
+      <ellipse cx="0" cy="4" rx="10" ry="11" fill="#B85210"/>
+      <rect x="-6" y="-11" width="12" height="6" rx="2" fill="#E57A2E"/>
+    </g>
+    <!-- 5. Phố Cổ (đèn lồng) -->
+    <g transform="translate(446 432)">
+      <ellipse cx="0" cy="0" rx="11" ry="9" fill="#C73236"/>
+      <rect x="-5" y="-12" width="10" height="4" fill="#F0B41C"/>
+      <rect x="-5" y="8" width="10" height="4" fill="#F0B41C"/>
+    </g>
+    <!-- 6. Đồi Nắng (mặt trời) -->
+    <g transform="translate(300 472)">
+      <circle cx="0" cy="0" r="10" fill="#F0B41C"/>
+    </g>
+    <!-- 7. Vườn Xanh (cây tán tròn) -->
+    <g transform="translate(152 426)">
+      <rect x="-3" y="2" width="6" height="12" fill="#945832"/>
+      <circle cx="0" cy="-4" r="11" fill="#1B7D44"/>
+    </g>
+    <!-- 8. Cảng Biển (hải đăng) -->
+    <g transform="translate(114 282)">
+      <polygon points="-7,14 7,14 4,-10 -4,-10" fill="#FFFFFF"/>
+      <rect x="-5" y="-2" width="10" height="5" fill="#24579E"/>
+      <polygon points="-6,-10 6,-10 0,-17" fill="#C7461E"/>
+    </g>
+  </g>
+
+  <!-- La bàn gấp giấy ở góc dưới phải -->
+  <g transform="translate(514 514)" opacity="0.28" stroke="#364970" stroke-width="2" fill="none">
+    <circle cx="0" cy="0" r="24"/>
+    <polygon points="0,-20 5,-4 0,-8 -5,-4" fill="#C7461E" stroke="none"/>
+    <polygon points="0,20 5,4 0,8 -5,4" fill="#364970" stroke="none"/>
+    <line x1="-18" y1="0" x2="18" y2="0"/>
+  </g>
+</svg>
