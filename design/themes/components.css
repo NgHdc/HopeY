@@ -64,6 +64,18 @@ body[data-map] .corner .big { display: none; }
 .tile.can-pick { outline: var(--px) solid var(--accent-2); }
 .tile.corner { background: var(--surface-2); }
 .tile .t-bot, .tile .t-num { color: var(--ink); }
+/* Dải quân có chỗ riêng giữa tên và giá. Cạnh ngang ưu tiên hai hàng;
+   cạnh dọc giữ dải hẹp theo chiều đứng để tên ô không bị che. */
+.tile:not(.corner) .pieces {
+  position: static; display: block; flex: 0 0 34px; width: 100%;
+  min-height: 34px; margin: 1px 0; pointer-events: none;
+}
+.tile:not(.corner) .t-name { position: relative; z-index: 1; flex: 0 0 auto; }
+.board .tile:nth-child(n + 12):nth-child(-n + 20) .pieces,
+.board .tile:nth-child(n + 32):nth-child(-n + 40) .pieces {
+  flex-basis: 38px; min-height: 38px;
+}
+.tile.corner .pieces { left: 5px; right: 5px; bottom: 5px; top: auto; height: 0; }
 .tile:has(.sw.st)::before, .tile:has(.sw.ut)::before, .tile:has(.sw.tx)::before,
 .tile:has(.sw.cv)::before, .tile:has(.sw.cq)::before, .tile:has(.sw.ch)::before, .tile.corner::before {
   content: ""; display: block; width: 32px; height: 32px; max-width: 100%;
@@ -94,6 +106,8 @@ body[data-map] .corner .big { display: none; }
 .rank .r.first { border-color: var(--ink); }
 @media (max-width: 600px) {
   .board { gap: var(--px); padding: var(--px); }
+  .board .tile:not(.corner) .pieces { min-height: 18px; flex-basis: 18px; margin: auto 0; }
+  .tile.corner .pieces { position: static; height: 18px; margin: auto; }
   .tile:has(.sw.st)::before, .tile:has(.sw.ut)::before, .tile:has(.sw.tx)::before,
   .tile:has(.sw.cv)::before, .tile:has(.sw.cq)::before, .tile:has(.sw.ch)::before, .tile.corner::before { width: 16px; height: 16px; }
   .btn, .pick button, .seg button { min-height: 40px; }

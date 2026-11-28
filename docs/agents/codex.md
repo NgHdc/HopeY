@@ -61,3 +61,18 @@
 - Lab `design/lab/theme.html` có chọn sáu portrait, sprite trên bàn/cột chơi, nút thử bốn trạng thái và nút đi năm ô qua góc bàn; sprite đi bộ 64px, quân thường 32px.
 - Đổi theme sang nền pixel, minh họa bàn và bản đồ PNG mới của Agy; xóa renderer/test SVG cũ. Lab giữ fallback quân hình học khi thiếu sprite.
 - Kiểm chứng: 29/29 test game, 5/5 test render, cả hai manifest HTTP trả sáu avatar, mã script hợp lệ. Trình duyệt tự động vẫn lỗi native pipe; Claude chụp khi duyệt. Tiếp theo: báo cổng duyệt 2.
+## 2026-11-28 · U7
+- Dành dải `.pieces` riêng giữa tên và giá trong `design/themes/components.css`, có cỡ riêng cho cạnh dọc, ngang và điện thoại.
+- Thêm `design/lab/pieces.html`: bàn thật, chuyển 1–6 người vào ô cạnh ngang, cạnh dọc hoặc góc, xem ở 1440px và 390px.
+- Kiểm chứng: test game và render xanh; chưa chụp màn hình tự động. Ở 390px, cần Claude thu nhỏ hoặc gom quân trong `src/ui/pieces.js` để sáu người không tràn ô.
+- Tiếp theo: U6; không vướng file trong phạm vi Codex.
+## 2026-11-29 · U6
+- Thêm `design/lab/social.html` và `design/themes/social.css`: chat giới hạn 30 tin/80 ký tự, biểu cảm 10 nút với bong bóng 2 giây, mic tắt mặc định và giữ để nói.
+- Lab có vòng sáng người đang nói trên bàn/danh sách, huy hiệu vai trò, trạng thái mạng, chế độ khán giả và bố cục 390px thu chat thành nút.
+- Icon A7/A8 chưa có trong nhánh hiện tại nên dùng ký hiệu tạm; cần thay khi Agy bàn giao. Chưa chụp được ảnh tự động, Claude sẽ chụp khi duyệt.
+- Tiếp theo: U9; không vướng file trong phạm vi Codex.
+## 2026-11-29 · U9
+- Thêm `design/lab/xomla.html` và `design/themes/xomla.css`: 40 ô sương, lật mở 520ms, địa danh bằng `drawStack`, ba lựa chọn đi và ô đích sáng.
+- Lab có bảng uy tín vòng 5/12, đấu giá kín, bầu cua, đoán giá chợ với trạng thái chờ kín và màn lật kết quả; thêm màn chuyền máy, công tắc sảnh và bảng kết thúc.
+- CSS đã tham chiếu bộ ảnh A9 trong `assets/xomla/` của Agy; cần merge ảnh vào dev để hiển thị. Chưa chụp được ảnh tự động vì cổng dev 5173 không chạy.
+- Tiếp theo: tích hợp A7/A8/A9 sau khi ảnh được merge, báo Claude mở cổng duyệt 3; vướng: ảnh còn ở nhánh Agy.
