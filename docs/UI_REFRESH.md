@@ -1,4 +1,85 @@
-# Làm mới giao diện: "Rực rỡ" (dự kiến 0.6.0)
+# Làm mới giao diện: "Pixel rực rỡ" (dự kiến 0.6.0)
+
+> **Bản nháp 2, 2026-11-28: ĐỔI HƯỚNG.** Người dùng chốt: **toàn bộ giao diện kiểu pixel** (retro game 2D) và **avatar là sprite pixel có hoạt ảnh**.
+> Mục 0 dưới đây **thay cho** mục 1 (hướng style) và mục 3 (avatar) của bản nháp 1. Các mục 2 (theme theo vùng đất) và 4 (thứ tự) vẫn dùng, với bảng việc mới ở mục 0.5.
+> Bảng màu A1 (`design/themes/palettes.md`) **giữ nguyên**: pixel art dùng màu phẳng, hợp với bảng màu này.
+
+## 0. Hướng pixel
+
+### 0.1 Nguyên tắc chung
+- **Một "điểm ảnh gốc" = `--px`** (mặc định 3px trên desktop, 2px trên điện thoại). Mọi viền, bóng, bo góc là bội số của `--px`. Không có đường cong mượt, không bóng mờ (blur), không gradient.
+- **Phóng to theo số nguyên** (×1, ×2, ×3…). Mọi ảnh pixel dùng `image-rendering: pixelated`.
+- **Góc "bậc thang":** góc thẻ, nút, ô được cắt kiểu pixel bằng `border-image` (khung 9 ô do Agy vẽ), hoặc tạm bằng `clip-path` nhiều bậc.
+- **Bóng cứng:** lệch `--px` × 2 xuống dưới, màu mực, không mờ. Nút bấm thì bóng thu lại và nút dịch xuống.
+- **Màu:** lấy từ theme của vùng đất (A1). Mỗi vật thể dùng tối đa khoảng 4 sắc độ: tối, chính, sáng, điểm nhấn.
+
+### 0.2 Chữ
+- **Tiêu đề, số tiền, nhãn ngắn:** font pixel. **Bắt buộc đủ dấu tiếng Việt**: kiểm tra bằng câu `Hồ Hoàn Kiếm – Tháp Rùa · Đà Nẵng · Thừa Thiên Huế · ỹ ữ ặ ỡ ợ`.
+- Codex thử các font miễn phí (giấy phép OFL) trên Google Fonts, ví dụ Pixelify Sans, Tiny5, Jersey 10, Silkscreen, VT323, Press Start 2P, và ghi kết quả vào `design/themes/README.md`.
+- **Đoạn văn dài** (mô tả ô, nội dung thẻ, luật, nhật ký): nếu không font pixel nào đọc tốt có dấu ở cỡ nhỏ, dùng font thường gọn (Inter) cho đoạn văn và ghi rõ quyết định. Đọc được quan trọng hơn đồng bộ.
+
+### 0.3 Bộ giao diện pixel (UI kit), Agy vẽ
+`assets/ui/` (PNG, màu đúng palette, mỗi file dưới 20 KB):
+- **Khung 9 ô** (cho `border-image`), mỗi khung 2 bản cho 2 vùng đất nếu khác màu:
+  - `frame-panel.png` (bảng, cột bên);
+  - `frame-card.png` (thẻ đất, thẻ sự kiện);
+  - `frame-tile.png` (ô bàn cờ);
+  - `btn.png`, `btn-press.png`, `btn-primary.png`, `btn-primary-press.png`;
+  - `input.png` (ô nhập chữ).
+- **Icon 16×16:** ga tàu, tiện ích điện, tiện ích nước, thuế/phí, thẻ Vận mệnh, thẻ Câu hỏi, thẻ Hàng xóm, Xuất phát, Tù, Vào Tù, cà phê / công viên, nhà, khách sạn (phố), đồng xu, xúc xắc 1–6, vé, máy bay, cảnh báo.
+- **Nền lặp:** `assets/themes/<map>-tile.png` 32×32 (thay pattern SVG).
+- **Minh họa giữa bàn:** `assets/themes/<map>-board.png`, độ phân giải thấp (khoảng 160×160, phóng ×4–5), màu nhạt để chữ đọc rõ.
+- Ảnh tổng hợp `assets/ui/check/ui-kit-<map>.png`.
+
+### 0.4 Avatar = sprite pixel có hoạt ảnh
+- **Khung 32×32** cho mỗi hình. Nhân vật toàn thân, kiểu chibi đầu to, cao khoảng 24–28px, đứng giữa khung, chân chạm đáy.
+- **Sprite sheet** `assets/avatars/<map>/<id>.png`: mỗi hàng là một hoạt ảnh, các khung xếp ngang.
+
+  | Hàng | Hoạt ảnh | Số khung | Tốc độ | Dùng khi |
+  |---|---|---|---|---|
+  | 0 | `idle`: đứng thở | 2–4 | 4 fps | mặc định |
+  | 1 | `walk`: đi bộ, mặt quay phải (lật ngang là đi trái) | 4 | 8 fps | quân di chuyển từng ô |
+  | 2 | `happy`: nhảy, giơ tay | 3–4 | 6 fps | mua đất, nhận tiền, thắng cược, thắng ván |
+  | 3 | `sad`: cúi đầu, đổ mồ hôi | 2–3 | 4 fps | trả tiền thuê, vào Tù, thua cược, phá sản |
+
+- **Chân dung** `<id>-portrait.png` 48×48: nửa người, dùng ở sảnh, cột người chơi, màn kết thúc (phóng ×1–×2).
+- **Hai nhân vật cùng map phải khác nhau rõ ở cỡ 32px:** màu áo chính khác hẳn (không 2 màu xanh gần nhau), dáng hoặc mũ khác nhau.
+- **Lỗi đã thấy ở bản vector, phải sửa:**
+  - Cô Hai: quai nón **dưới cằm**, không vắt ngang mặt.
+  - Minh Thư: **áo dài thật**: tà áo dài tới gối, xẻ hai bên, mặc quần dài; có thể đội nón lá hoặc tóc dài kẹp nơ.
+  - Phố Giấy: Ông Lái Đò và Bác Hải Đăng không được cùng màu xanh.
+- `avatars.json` thêm thông tin sheet:
+  ```json
+  { "id": "non-la", "name": "Cô Hai", "line": "…", "color": "#C93420",
+    "sheet": "non-la.png", "portrait": "non-la-portrait.png", "frame": 32,
+    "anims": { "idle": [0, 4, 4], "walk": [1, 4, 8], "happy": [2, 4, 6], "sad": [3, 3, 4] } }
+  ```
+  `anims[x] = [hàng, số khung, fps]`.
+- Mỗi sheet dưới 20 KB. Bỏ các file SVG cũ khi bản pixel đã sẵn sàng.
+- Ảnh kiểm tra `assets/avatars/check/<map>-sprites.png`: cả 6 nhân vật, mọi khung, phóng ×4. Thêm một ảnh GIF xem hoạt ảnh nếu tạo được.
+
+### 0.5 Bảng việc mới
+
+| Mã | Ai | Việc | Thay cho |
+|---|---|---|---|
+| A5 | agy | UI kit pixel (mục 0.3: khung 9 ô, icon, nền lặp) | (mới) |
+| A2p | agy | 6 sprite Dải đất có hoạt ảnh (mục 0.4) | A2 (vector) |
+| A3p | agy | 6 sprite Phố Giấy có hoạt ảnh | A3 (vector) |
+| A4p | agy | Nền lặp + minh họa giữa bàn kiểu pixel | A4 (SVG), pattern SVG |
+| U4 | codex | Chọn font pixel đủ dấu, thêm biến `--px`, `--font-pixel` vào theme | (mới) |
+| U3p | codex | `components.css` kiểu pixel: `border-image` từ UI kit (trong lúc chờ thì dùng `clip-path` bậc thang), bóng cứng, nút lún | U3 (vector) |
+| U2p | codex | `src/render/sprite.js`: hoạt ảnh bằng CSS `steps()` từ sheet, đổi hoạt ảnh, lật hướng; test; lab có nút thử 4 hoạt ảnh | U2 |
+| K1 | claude | Tích hợp: quân đi bộ (`walk`) theo đường đi, `happy`/`sad` theo sự kiện trong `rules.js`, font, khung, icon | |
+
+Thứ tự:
+- **Agy:** A5 → A2p → A3p → A4p. Codex cần UI kit sớm nhất.
+- **Codex:** U4 → U3p → U2p. Chưa có ảnh của Agy thì dùng khung tạm bằng `clip-path` và một sheet tạm tự vẽ.
+- Hai bên xong thì tới **cổng duyệt 2** (người dùng xem `design/lab/theme.html`), rồi tới **K1**.
+
+---
+
+## (Bản nháp 1, giữ để tham khảo: mục 1 và 3 đã bị thay bởi mục 0)
+
 
 Bản nháp 1, 2026-11-27. Người dùng đã chốt 3 điều:
 1. **Hướng style:** hoạt hình rực rỡ. Màu bão hòa, góc bo tròn, viền đậm, bóng đổ, nút to.
