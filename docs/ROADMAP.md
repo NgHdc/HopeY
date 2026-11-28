@@ -18,7 +18,7 @@
 | 0.5.0 | Dải đất | Nhiều map, map Việt Nam, bộ thẻ Vận mệnh, cơ chế ẩn Thanh Hóa | ✅ phát hành 2026-11-28 |
 | 0.5.x | Luật đầy đủ | Trao đổi, đấu giá, tùy chỉnh luật | |
 | 0.6.0 | Pixel | Giao diện pixel theo map, bản đồ vùng đất, nhân vật biết đi, quân trượt mượt | ✅ phát hành 2026-11-28 |
-| 0.7.0 | Phòng bền | Kết nối ổn định, chuyển chủ phòng, chat, khán giả | |
+| 0.7.0 | Phòng bền | Kết nối ổn định, chuyển chủ phòng, chat, khán giả | 🔨 đang làm (TURN pending) |
 | 0.8.0 | Mọi màn hình | Điện thoại, máy tính bảng, bàn phím, trợ năng | |
 | 0.9.0 | Có hồn | Chuyển động, âm thanh, cảm giác khi chơi | |
 | 0.10.0 | Beta | Cân bằng, chơi thử với người thật, sửa lỗi | |
@@ -150,17 +150,54 @@ Kế hoạch art: `docs/ART_PIPELINE.md`. Hoạt ảnh: `docs/HOSTING.md` mục 
 
 ---
 
-## 0.7.0 — Phòng bền
+## 0.7.0 — Phòng bền (đang làm, kế hoạch 2026-11-28)
 
-- [ ] **TURN server** dự phòng (cho mạng chặn WebRTC), cấu hình được.
-- [ ] **Chuyển chủ phòng**: chủ phòng rời → máy khác nhận trạng thái và làm chủ.
-- [ ] **Khán giả**: người đến sau xem ván, không chơi.
-- [ ] **Chat** ngắn + **biểu cảm** (vẫy tay, cười, "đắt quá!").
-- [ ] **Kiểm tra trạng thái**: chủ phòng gửi mã băm trạng thái; khách lệch thì xin lại bản đầy đủ.
-- [ ] **Chọn quân cờ** trong sảnh; **đá người** khỏi sảnh.
-- [ ] Thông báo rõ: đang nối lại, chủ phòng vắng, phòng đã đóng.
+**Mục tiêu:** chơi online với bạn bè không mất ván, thấy rõ ai đang ở đâu, nói chuyện được trong ván. Art tiếp tục song song: biểu cảm pixel và địa danh đợt 1.
 
-**Xong khi:** chơi ván 6 người qua 4G + wifi khác nhau 45 phút không mất ván; chủ phòng tắt trình duyệt giữa ván thì ván vẫn tiếp tục.
+**Xong khi:**
+- ván 4 người, 45 phút, trên 2 mạng wifi khác nhau không mất ván;
+- chủ phòng tắt trình duyệt giữa ván thì ván vẫn tiếp tục ở máy khác;
+- người đến muộn xem được ván;
+- test luật + e2e online xanh, có e2e mới cho chuyển chủ phòng và khán giả.
+
+### Claude (engine, mạng, ghép vào game)
+| Mã | Việc | Ghi chú |
+|---|---|---|
+| P0 | Sửa từ 0.6.0: nhân vật không đè tên ô, ô đông người xếp gọn | `pieces.js`; dùng chỗ đứng U7 của Codex |
+| P1 | **Kiểm tra trạng thái:** chủ phòng gửi mã băm kèm mỗi lượt; khách lệch thì xin bản đầy đủ | không đổi luật |
+| P2 | **Chuyển chủ phòng:** chủ phòng mất > 15 giây thì khách có ghế nhỏ nhất đang online mở lại phòng (peer id theo `mã phòng + đời`), các máy khác tự nối sang | khó nhất; e2e riêng |
+| P3 | **Khán giả:** vào sau khi ván đã bắt đầu thì xem, không chơi; danh sách khán giả ở cột bên | |
+| P4 | **Sảnh:** chủ phòng đá người khỏi sảnh; khách đổi tên | |
+| P5 | **Chat ngắn + biểu cảm** (vẫy tay, cười, "đắt quá!"…): biểu cảm hiện thành bong bóng trên đầu nhân vật | tăng `PROTOCOL_VERSION` lên 5 |
+| P6 | Thông báo rõ: đang nối lại, chủ phòng vắng, phòng đã đóng, mạng chặn | phần mạng chặn đã xong trên `dev` |
+| K2 | Ghép UI của Codex (U6–U8) và art của Agy (A7, A8, G3 đợt 1) vào game | sau cổng duyệt 3 |
+| ⏸ P7 | **TURN** (chơi qua 4G): `src/net/ice.js` đã sẵn chỗ cắm | **PENDING**: chờ người dùng tạo khóa Metered Open Relay |
+
+### Codex (giao diện, `design/`, `src/render/`)
+| Mã | Việc |
+|---|---|
+| U5 | Dọn lab: khung điện thoại trống, nút đổi bản đồ rực rỡ / giấy cổ, font VT323 |
+| U6 | Giao diện xã hội trong lab: khung chat, thanh biểu cảm, bong bóng trên đầu nhân vật, huy hiệu chủ phòng / khán giả, chip trạng thái mạng |
+| U7 | Chỗ đứng cho nhân vật trong ô: CSS ô chừa dải riêng cho quân, không che tên; thử 1–6 người một ô, desktop và 390px |
+| U8 | `src/render/landmark.js`: hình địa danh (sprite stacking) trên thẻ đất, có test + lab |
+
+### Agy (ảnh, `assets/`)
+| Mã | Việc |
+|---|---|
+| A7 | 10 biểu cảm pixel 16×16 + khung bong bóng 9 ô, cho 2 vùng đất |
+| A8 | Icon trạng thái mạng 16×16 (online, đang nối, mất kết nối, chủ phòng, khán giả) + favicon pixel cho trang |
+| G3a | Địa danh đợt 1: 6 địa danh Dải đất tiếp theo (quận 1–3 trừ 3 cái G1 đã có), kiểu A · Pixel theo `STYLE.md` |
+
+### Thứ tự và cổng duyệt
+```
+Claude: P0 ─► P1 ─► P6 ─► P4 ─► P3 ─► P2 ─────────────► K2 ─► P5 ─► phát hành 0.7.0
+Codex:  U5 ─► U7 (Claude cần cho P0) ─► U6 ─► U8 ─┐
+Agy:    A8 ─► A7 ─────────────────────────────────┼─► (cổng duyệt 3: người dùng xem lab xã hội + địa danh)
+        G3a ──────────────────────────────────────┘
+TURN (P7): cắm vào bất cứ lúc nào người dùng gửi khóa.
+```
+- **Cổng duyệt 3:** người dùng xem `design/lab/social.html` (chat, biểu cảm, bong bóng) và các địa danh G3a trên thẻ đất.
+- Trước khi phát hành: chơi thử thật trên 2 máy ở 2 mạng khác nhau.
 
 ---
 
