@@ -57,7 +57,7 @@ Trả lời bằng tiếng Việt. Đọc file này trước, **chỉ mở thêm
 - `docs/DECISIONS.md`: lý do các quyết định kỹ thuật (#1–#12).
 - `docs/STYLE_GUIDE.md`: style Swiss Paper.
 - `docs/HOSTING.md`: kế hoạch hoạt ảnh mượt + rời GitHub Pages sang Cloudflare (chờ duyệt).
-- `docs/LE_LANG.md`: bản nháp chế độ "Lệ làng" (luật ngầm, đoán lệ, thắng bằng uy tín). Chưa code.
+- `docs/XOM_LA.md`: bản nháp chế độ "Xóm lạ" (bàn cờ ẩn, trò chơi hội làng, lệ làng, thắng bằng uy tín 12 vòng). Chưa code, dự kiến 0.8.0.
 - `docs/MAP_VIETNAM.md`: thiết kế map Việt Nam và bộ thẻ Vận mệnh (đã code ở 0.5.0).
 - `CHANGELOG.md`.
 

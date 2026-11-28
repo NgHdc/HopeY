@@ -19,9 +19,10 @@
 | 0.5.x | Luật đầy đủ | Trao đổi, đấu giá, tùy chỉnh luật | |
 | 0.6.0 | Pixel | Giao diện pixel theo map, bản đồ vùng đất, nhân vật biết đi, quân trượt mượt | ✅ phát hành 2026-11-28 |
 | 0.7.0 | Phòng bền | Kết nối ổn định, chuyển chủ phòng, chat, khán giả | 🔨 đang làm (TURN pending) |
-| 0.8.0 | Mọi màn hình | Điện thoại, máy tính bảng, bàn phím, trợ năng | |
-| 0.9.0 | Có hồn | Chuyển động, âm thanh, cảm giác khi chơi | |
-| 0.10.0 | Beta | Cân bằng, chơi thử với người thật, sửa lỗi | |
+| 0.8.0 | Xóm lạ | Chế độ mới: bàn cờ ẩn (sương mù), trò chơi hội làng, lệ làng, thắng bằng uy tín sau 12 vòng | thiết kế nháp |
+| 0.9.0 | Mọi màn hình | Điện thoại, máy tính bảng, bàn phím, trợ năng | |
+| 0.10.0 | Có hồn | Chuyển động, âm thanh, cảm giác khi chơi | |
+| 0.11.0 | Beta | Cân bằng, chơi thử với người thật, sửa lỗi | |
 | 1.0.0 | Phát hành | Trang giới thiệu, hướng dẫn, bản in giấy (print & play) | |
 
 Thứ tự này có chủ đích: **làm nền móng (0.3) trước khi thiết kế lại (0.4)**. Có test, có bản lưu từng phiên bản và có rollback thì việc đập đi làm lại UI mới an toàn.
@@ -152,7 +153,7 @@ Kế hoạch art: `docs/ART_PIPELINE.md`. Hoạt ảnh: `docs/HOSTING.md` mục 
 
 ## 0.7.0 — Phòng bền (đang làm, kế hoạch 2026-11-28)
 
-**Mục tiêu:** chơi online với bạn bè không mất ván, thấy rõ ai đang ở đâu, **chat và mở mic** nói chuyện trong ván. Chuẩn bị cho chế độ "Lệ làng" (`docs/LE_LANG.md`, bản nháp): gửi mỗi máy một bản trạng thái đã cắt phần bí mật. Art tiếp tục song song: biểu cảm pixel và địa danh đợt 1.
+**Mục tiêu:** chơi online với bạn bè không mất ván, thấy rõ ai đang ở đâu, **chat và mở mic** nói chuyện trong ván. Chuẩn bị cho chế độ "Xóm lạ" ở 0.8.0 (`docs/XOM_LA.md`): gửi mỗi máy một bản trạng thái đã cắt phần bí mật. Art tiếp tục song song: biểu cảm pixel và địa danh đợt 1.
 
 **Xong khi:**
 - ván 4 người, 45 phút, trên 2 mạng wifi khác nhau không mất ván;
@@ -202,7 +203,18 @@ TURN (P7): cắm vào bất cứ lúc nào người dùng gửi khóa.
 
 ---
 
-## 0.8.0 — Mọi màn hình
+## 0.8.0 — Xóm lạ (thiết kế nháp: `docs/XOM_LA.md`)
+
+Chế độ chơi mới bên cạnh cờ tỷ phú cổ điển, bật/tắt từng phần trong sảnh. Làm theo 3 bước, mỗi bước chơi thử với người thật rồi mới làm tiếp:
+- [ ] Bước 1: bàn cờ ẩn (ô chỉ mở khi có người dừng chân, xếp theo seed) + 12 vòng uy tín + 2 trò hội làng (đấu giá kín, bầu cua)
+- [ ] Bước 2: lệ làng (3 lệ ẩn, trình làng, quỹ đình)
+- [ ] Bước 3: thêm trò hội làng, gài lệ mới
+
+**Cần trước:** 0.7.0 (gửi mỗi máy bản trạng thái đã cắt phần bí mật, chat, mic).
+
+---
+
+## 0.9.0 — Mọi màn hình
 
 - [ ] Bố cục điện thoại dọc: bàn cờ phóng to / thu nhỏ, khay hành động dưới cùng.
 - [ ] Cử chỉ chạm: chụm để phóng to, chạm giữ để xem thẻ đất.
@@ -215,7 +227,7 @@ TURN (P7): cắm vào bất cứ lúc nào người dùng gửi khóa.
 
 ---
 
-## 0.9.0 — Có hồn
+## 0.10.0 — Có hồn
 
 - [ ] Xúc xắc lăn (lật mặt 2D, ≤ 600 ms), quân cờ nhảy từng ô.
 - [ ] Hiệu ứng tiền bay giữa người chơi khi trả tiền thuê.
@@ -227,7 +239,7 @@ TURN (P7): cắm vào bất cứ lúc nào người dùng gửi khóa.
 
 ---
 
-## 0.10.0 — Beta
+## 0.11.0 — Beta
 
 - [ ] Cân bằng giá và tiền thuê bằng giả lập 10 000 ván bot (độ dài ván, tỉ lệ thắng theo thứ tự đi).
 - [ ] 5 buổi chơi thử với người thật, ghi lại vấn đề.
