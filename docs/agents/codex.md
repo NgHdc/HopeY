@@ -66,3 +66,8 @@
 - Thêm `design/lab/pieces.html`: bàn thật, chuyển 1–6 người vào ô cạnh ngang, cạnh dọc hoặc góc, xem ở 1440px và 390px.
 - Kiểm chứng: test game và render xanh; chưa chụp màn hình tự động. Ở 390px, cần Claude thu nhỏ hoặc gom quân trong `src/ui/pieces.js` để sáu người không tràn ô.
 - Tiếp theo: U6; không vướng file trong phạm vi Codex.
+## 2026-11-29 · U6
+- Thêm `design/lab/social.html` và `design/themes/social.css`: chat giới hạn 30 tin/80 ký tự, biểu cảm 10 nút với bong bóng 2 giây, mic tắt mặc định và giữ để nói.
+- Lab có vòng sáng người đang nói trên bàn/danh sách, huy hiệu vai trò, trạng thái mạng, chế độ khán giả và bố cục 390px thu chat thành nút.
+- Icon A7/A8 chưa có trong nhánh hiện tại nên dùng ký hiệu tạm; cần thay khi Agy bàn giao. Chưa chụp được ảnh tự động, Claude sẽ chụp khi duyệt.
+- Tiếp theo: U9; không vướng file trong phạm vi Codex.
