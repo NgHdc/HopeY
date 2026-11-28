@@ -55,3 +55,9 @@
 - Hai theme khai báo URL ảnh qua biến; nút lún theo `--px`, dùng Tiny5 và màu chữ theo nền, không có bo góc/blur/gradient. Sửa mẫu font trong `design/lab/fonts.html` để dấu nháy không cắt thuộc tính style.
 - Lab theme nạp Tiny5/VT323, giữ khung điện thoại có chiều rộng nội dung 390px. Nền pixel A4p chưa có nên `--bg-tile` đang dùng hoa văn hiện tại.
 - Kiểm chứng: 29/29 test game, 6/6 test renderer; chưa chụp 8 tổ hợp màn hình do CUA/native pipe lỗi. Tiếp theo: U2p.
+
+## 2026-11-28 · U2p
+- Đã thay `src/render/avatar.js` bằng `src/render/sprite.js` và `design/themes/sprite.css`: nạp JSON/sheet PNG, vẽ portrait hoặc sprite, chuyển idle/walk/happy/sad bằng CSS steps trên phần tử con.
+- Lab `design/lab/theme.html` có chọn sáu portrait, sprite trên bàn/cột chơi, nút thử bốn trạng thái và nút đi năm ô qua góc bàn; sprite đi bộ 64px, quân thường 32px.
+- Đổi theme sang nền pixel, minh họa bàn và bản đồ PNG mới của Agy; xóa renderer/test SVG cũ. Lab giữ fallback quân hình học khi thiếu sprite.
+- Kiểm chứng: 29/29 test game, 5/5 test render, cả hai manifest HTTP trả sáu avatar, mã script hợp lệ. Trình duyệt tự động vẫn lỗi native pipe; Claude chụp khi duyệt. Tiếp theo: báo cổng duyệt 2.

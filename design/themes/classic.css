@@ -1,7 +1,7 @@
 /* Phố Giấy · màu A1 của Agy. Chỉ khai báo biến theo map. */
 [data-map="classic"] {
   --bg: #F4F8FD;
-  --bg-pattern: url("../../assets/themes/classic-pattern.svg");
+  --bg-pattern: url("../../assets/themes/classic-tile.png");
   --surface: #FFFFFF;
   --surface-2: #E1EDF9;
   --ink: #1B263B;
@@ -52,7 +52,8 @@
   --font-pixel: "Tiny5", "VT323", monospace;
   --font-text: "Inter", Arial, "Helvetica Neue", sans-serif;
   --font-display: var(--font-pixel);
-  --board-art: none;
+  --board-art: url("../../assets/themes/classic-board.png");
+  --home-map: url("../../assets/themes/classic-map.png");
   --on-accent: #FFFFFF;
   --on-accent-2: #FFFFFF;
   --on-d6: var(--ink);

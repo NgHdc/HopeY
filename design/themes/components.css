@@ -1,5 +1,5 @@
 /* Khung pixel từ UI kit A5; màu và ảnh chọn qua biến của map. */
-body[data-map] { background-color: var(--bg); background-image: var(--bg-tile); background-repeat: repeat; image-rendering: pixelated; }
+body[data-map] { background-color: var(--bg); background-image: var(--bg-tile); background-size: calc(32 * var(--px)); background-repeat: repeat; image-rendering: pixelated; }
 body[data-map], button, input, select { font-family: var(--font-text); }
 body[data-map] img, body[data-map] .avatar { image-rendering: pixelated; }
 .h1, .h2, .h3, h1, h2, h3, .brand, .kicker, .label, .strip,
@@ -81,7 +81,8 @@ body[data-map] img, body[data-map] .avatar { image-rendering: pixelated; }
   border-image: var(--ui-input) 5 fill / 1 / 0 stretch;
   background: var(--surface); color: var(--ink);
 }
-.home-art, .center { background-image: var(--board-art), var(--bg-tile); background-size: contain, auto; background-repeat: no-repeat, repeat; }
+.home-art { background-image: var(--home-map), var(--bg-tile); background-size: contain, calc(32 * var(--px)); background-repeat: no-repeat, repeat; }
+.center { background-image: var(--board-art), var(--bg-tile); background-size: contain, calc(32 * var(--px)); background-repeat: no-repeat, repeat; }
 .topbar { border-color: var(--ink); background: var(--surface); }
 .rank .r.first { border-color: var(--ink); }
 @media (max-width: 600px) {
