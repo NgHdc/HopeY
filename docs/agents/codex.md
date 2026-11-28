@@ -61,3 +61,8 @@
 - Lab `design/lab/theme.html` có chọn sáu portrait, sprite trên bàn/cột chơi, nút thử bốn trạng thái và nút đi năm ô qua góc bàn; sprite đi bộ 64px, quân thường 32px.
 - Đổi theme sang nền pixel, minh họa bàn và bản đồ PNG mới của Agy; xóa renderer/test SVG cũ. Lab giữ fallback quân hình học khi thiếu sprite.
 - Kiểm chứng: 29/29 test game, 5/5 test render, cả hai manifest HTTP trả sáu avatar, mã script hợp lệ. Trình duyệt tự động vẫn lỗi native pipe; Claude chụp khi duyệt. Tiếp theo: báo cổng duyệt 2.
+## 2026-11-28 · U7
+- Dành dải `.pieces` riêng giữa tên và giá trong `design/themes/components.css`, có cỡ riêng cho cạnh dọc, ngang và điện thoại.
+- Thêm `design/lab/pieces.html`: bàn thật, chuyển 1–6 người vào ô cạnh ngang, cạnh dọc hoặc góc, xem ở 1440px và 390px.
+- Kiểm chứng: test game và render xanh; chưa chụp màn hình tự động. Ở 390px, cần Claude thu nhỏ hoặc gom quân trong `src/ui/pieces.js` để sáu người không tràn ô.
+- Tiếp theo: U6; không vướng file trong phạm vi Codex.

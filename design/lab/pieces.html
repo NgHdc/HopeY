@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lab dải quân · Phố Giấy</title>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../tokens.css"><link rel="stylesheet" href="../../src/style.css">
+<link rel="stylesheet" href="../themes/vietnam.css"><link rel="stylesheet" href="../themes/components.css">
+<style>
+body { margin:0; min-width:320px } .lab-tools { padding:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--surface);position:sticky;top:0;z-index:10 }
+.lab-tools button { padding:8px 12px;border:var(--border);background:var(--surface);color:var(--ink);cursor:pointer }
+.lab-tools button[aria-pressed=true] { background:var(--accent);color:var(--on-accent) }
+.lab-note { margin:0;padding:8px 12px;background:var(--surface-2) } .lab-frame { max-width:1440px;margin:auto }
+body[data-phone=true] .lab-frame { width:390px;max-width:100% } body[data-phone=true] .game { display:block }
+body[data-phone=true] .board-sec { width:100%;max-width:none }
+</style></head><body data-map="vietnam"><nav class="lab-tools" aria-label="Điều khiển lab">
+<strong>Dải quân trên bàn thật</strong><span>Người cùng ô:</span><span id="counts"></span>
+<label>Ô thử <select id="tile"><option value="5">cạnh ngang 05</option><option value="15">cạnh dọc 15</option><option value="0">góc 00</option></select></label>
+<button id="screen" type="button">Xem 390px</button></nav>
+<p class="lab-note">Chọn 1–6 người và ô cạnh ngang, cạnh dọc hoặc góc. Ở 390px, sáu quân cần thu nhỏ hoặc gom cụm trong lớp quân của game.</p>
+<div id="root" class="lab-frame"></div>
+<script type="module">
+import { createGame } from '../../src/core/rules.js';
+import { gameHtml } from '../../src/ui/view.js';
+const names=['Lan','Minh','An','Bình','Hà','Nam'];
+const counts=document.querySelector('#counts'), target=document.querySelector('#tile'), root=document.querySelector('#root');
+let count=4;
+function render(){
+ counts.innerHTML=names.map((_,i)=>`<button type="button" data-count="${i+1}" aria-pressed="${count===i+1}">${i+1}</button>`).join('');
+ const S=createGame(names,{map:'vietnam',seed:20261128});
+ S.players.forEach((p,i)=>{p.pos=i<count?Number(target.value):(i*7+2)%40;p.piece=i});
+ S.view={kind:'tile',i:Number(target.value)};
+ root.innerHTML=gameHtml(S,{mode:'local',room:'LAB',me:0,mine:false,busy:false,tab:'land',version:'lab',dev:false,bet:50,pos:null,banner:'',viewOverride:null});
+ counts.querySelectorAll('button').forEach(b=>b.onclick=()=>{count=Number(b.dataset.count);render()});
+}
+target.onchange=render;
+document.querySelector('#screen').onclick=e=>{const phone=document.body.dataset.phone!=='true';document.body.dataset.phone=String(phone);e.target.textContent=phone?'Xem 1440px':'Xem 390px'};
+render();
+</script></body></html>
