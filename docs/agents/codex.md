@@ -31,3 +31,9 @@
 - Đã tạo `design/lab/theme.html`, dùng trực tiếp `homeHtml`, `lobbyHtml`, `gameHtml`, `endHtml` và `createGame`; có nút đổi hai map, bốn màn hình và iframe 390×844.
 - Kiểm chứng HTTP 200 cho trang, view, rules và hai SVG hoa văn; gọi thử renderer Node cho đủ 8 kết hợp map/màn hình thành công.
 - Vướng: không chụp được desktop/mobile vì CUA báo `native pipe unavailable`; trang sẵn sàng xem tại `/design/lab/theme.html`.
+
+## 2026-11-28 · U3
+- Đã tạo `design/themes/components.css` cho nút viên thuốc, thẻ, ô bàn cờ, cột người chơi, sảnh chọn quân và các khối màn hình.
+- Màu sắc, bo góc, bóng và font lấy từ biến theme; nút có bóng cứng và trạng thái nhấn lún. Lab nạp CSS thành phần sau hai theme.
+- Kiểm tra mã CSS và link lab; chưa kiểm tra trực quan 390px do CUA/native pipe không kết nối được.
+- Tiếp theo: U2 avatar renderer và bộ chọn trong lab. Vướng: cần cập nhật trạng thái BOARD ngoài worktree.
