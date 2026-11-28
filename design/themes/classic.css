@@ -22,13 +22,16 @@
   --util: #167C8F;
   --tax: #B03E69;
   --card: #AD5605;
-  --radius-sm: 8px;
-  --radius-md: 16px;
-  --radius-lg: 999px;
-  --border: 2.5px solid var(--ink);
-  --shadow: 0 4px 0 var(--ink);
-  --shadow-press: 0 1px 0 var(--ink);
-  --font-display: "Baloo 2", "Inter", sans-serif;
+  --px: 3px;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --border: var(--px) solid var(--ink);
+  --shadow: calc(var(--px) * 2) calc(var(--px) * 2) 0 var(--ink);
+  --shadow-press: var(--px) 0 0 var(--ink);
+  --font-pixel: "Tiny5", "VT323", monospace;
+  --font-text: "Inter", Arial, "Helvetica Neue", sans-serif;
+  --font-display: var(--font-pixel);
   --board-art: none;
   --on-accent: #FFFFFF;
   --on-accent-2: #FFFFFF;
@@ -54,4 +57,8 @@
   --piece-3: var(--d7);
   --piece-4: var(--d5);
   --piece-5: var(--d8);
+}
+
+@media (max-width: 600px) {
+  [data-map="classic"] { --px: 2px; }
 }

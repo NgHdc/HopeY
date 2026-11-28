@@ -2,7 +2,7 @@
 
 ## 2026-11-27 · C1
 - Đã đồng bộ `codex/art-pipeline` với `dev`, đọc skill và mã nguồn sprite stacking tại commit `0cce02e`.
-- Đã đưa skill và giấy phép MIT vào `.agents/skills/sprite-stacking/`, `.claude/skills/sprite-stacking/`; ghi tham số tại `tools/art/THIRD_PARTY.md`.
+- Đã đưa skill và giấy phép MIT vào `.agents/skills/sprite-stacking/`; ghi tham số tại `tools/art/THIRD_PARTY.md`.
 - Kiểm chứng: `python -I tests/check.py` trong bản nguồn in `ok`; `tools/art/fixtures/car-views.png` cắt thành 36 lát và `car-check.png` đã được xem trực quan.
 - Vướng: chưa có ba asset G1 từ Agy; C2 sẽ dùng fixture trong `tools/art/` để kiểm tra trước.
 
@@ -43,3 +43,9 @@
 - Đã thêm `tests/render/avatar.test.mjs` cho manifest hợp lệ, JSON thiếu/sai và chỉ số ngoài miền; lab có bộ chọn sáu avatar, portrait ở ghế/cột người chơi và token trên bàn, lựa chọn đồng bộ sang khung 390px.
 - Kiểm chứng: `node --test tests/*.test.mjs` (29/29), `node --test tests/render/*.test.mjs` (6/6), HTTP 200 cho lab và hai manifest avatar.
 - Tiếp theo: cập nhật BOARD và nhắn Claude mở cổng duyệt 2. Vướng: chưa chụp được màn hình desktop/390px vì CUA/native pipe không khả dụng.
+
+## 2026-11-28 · U0/U4
+- Sửa nhật ký C1 để chỉ ghi skill tại `.agents/skills/sprite-stacking/`; không còn nhắc bản `.claude/skills/` đã xóa.
+- Thêm lab `design/lab/fonts.html`, so sánh Pixelify Sans, Tiny5, Jersey 10, Silkscreen, VT323, Press Start 2P và Inter ở 12/16/24px bằng câu thử tiếng Việt.
+- Chọn Tiny5 cho tiêu đề/tiền/nhãn ngắn, Inter cho nội dung dài; thêm `--px`, font, bóng pixel và góc vuông vào cả hai theme. Metadata Google Fonts xác nhận Tiny5/VT323 có subset Việt.
+- Kiểm chứng: 29/29 test game, 6/6 test renderer, `node --check` cho script lab, HTTP 200 và `git diff --check`; chụp trực quan chưa làm được do CUA/native pipe lỗi. Tiếp theo: U3p.
