@@ -102,6 +102,16 @@ export function lobbyHtml({ room, url, seats, me, isHost, canStart, status, stat
   const taken = new Set(seats.map(x => x.piece));
   const mine = seats[me];
   const offline = seats.filter(x => x.online === false).map(x => x.name);
+  // Khách chưa nhận được danh sách ghế = chưa nối được với chủ phòng: đừng vẽ sảnh rỗng như thể đã vào.
+  if (!isHost && !seats.length) return `<main class="page">
+    <div class="topline"><span class="t">Phố Giấy / Phòng ${esc(room)}</span><div class="r">${btn('exit', 'Rời phòng', 'xs')}</div></div>
+    <section class="card connecting" aria-live="polite">
+      <span class="kicker">Chưa vào được phòng</span>
+      <h2 class="h3">Đang nối với chủ phòng ${esc(room)}…</h2>
+      <p class="human">${esc(status)}</p>
+      <p class="label">Chủ phòng chỉ thấy bạn khi nối xong. Quá 20 giây chưa được thì thường do mạng (4G, wifi công ty) chặn kết nối trực tiếp: thử cho hai máy dùng chung một wifi.</p>
+    </section>
+  </main>`;
   return `<main class="page">
     <div class="topline">
       <span class="t">Phố Giấy / Sảnh chờ</span>

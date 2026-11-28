@@ -7,6 +7,7 @@ Quy trình phát hành và rollback: [`docs/RELEASE.md`](docs/RELEASE.md).
 
 ### Sửa
 - **Online: khách bấm link mà chủ phòng không thấy ai vào.** Khi hai máy ở hai mạng khác nhau (4G, wifi công ty), mạng chặn kết nối trực tiếp và trước đây cả hai bên chỉ chờ im lặng. Giờ sau 20 giây cả khách và chủ phòng đều được báo rõ "mạng chặn kết nối trực tiếp", kèm gợi ý dùng chung wifi. Thêm STUN của Cloudflare.
+- Khách bấm link phòng mà chưa nối được thì thấy màn hình "Chưa vào được phòng" kèm lý do, thay cho sảnh "0 / 6" ghế trông như đã vào.
 - Chuẩn bị máy chủ chuyển tiếp TURN (`src/net/ice.js`): điền khóa Metered Open Relay là chơi được qua 4G.
 
 ## [0.6.0] — 2026-11-28 · Pixel

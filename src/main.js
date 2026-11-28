@@ -348,7 +348,7 @@ function renderLobby(root) {
   const url = roomUrl(app.room), isHost = app.mode === 'host';
   const seats = app.seats.map(x => ({ ...x, piece: x.piece ?? 0 }));
   root.innerHTML = V.lobbyHtml({ room: app.room, url, seats, me: app.me, isHost, canStart: isHost && app.seats.length >= 2 && app.net && app.net.isOpen(), status: app.status || 'đang kết nối…', statusOk: app.statusOk, mapId: isHost ? app.mapId : app.lobbyMap || DEFAULT_MAP });
-  $('#copy').onclick = () => {
+  if ($('#copy')) $('#copy').onclick = () => {
     $('#roomlink').select();
     (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).catch(() => document.execCommand('copy'));
     $('#copy').textContent = 'Đã chép';

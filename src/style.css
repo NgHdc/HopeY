@@ -288,3 +288,4 @@ a:hover { color: var(--accent); }
 .pieces-layer .pc.moving { z-index: 1; }
 .pieces-layer .pc svg { display: block; }
 .fps { position: fixed; right: 8px; bottom: 8px; z-index: 30; background: var(--ink); color: var(--paper); font: 12px var(--font-mono); padding: 4px 8px; pointer-events: none; }
+.connecting { max-width: 560px; margin: var(--s7) auto; padding: var(--s6); display: flex; flex-direction: column; gap: var(--s3); }
