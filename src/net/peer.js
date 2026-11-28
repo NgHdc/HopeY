@@ -2,7 +2,14 @@
 import { PROTOCOL_VERSION } from '../core/version.js';
 
 export const PEER_PREFIX = `phogiay-p${PROTOCOL_VERSION}-`;
-const PEER_OPTS = { config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' }] } };
+import { iceServers } from './ice.js';
+
+const STUN = [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun.cloudflare.com:3478' }];
+// STUN chỉ giúp hai máy tìm địa chỉ của nhau. Mạng 4G / wifi công ty (NAT chặt) chặn kết nối trực tiếp:
+// khi đó cần máy chủ TURN chuyển tiếp (ice.js). Không có TURN thì báo rõ cho người chơi thay vì im lặng.
+const peerOpts = async () => ({ config: { iceServers: [...STUN, ...(await iceServers())] } });
+export const BLOCKED = 'mạng chặn kết nối trực tiếp giữa hai máy';
+const JOIN_TIMEOUT = 20000;
 
 export const peerAvailable = () => typeof window !== 'undefined' && typeof window.Peer === 'function';
 export const makeRoomCode = () => { const A = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; return Array.from({ length: 5 }, () => A[Math.floor(Math.random() * A.length)]).join(''); };
@@ -13,13 +20,20 @@ export const makeRoomCode = () => { const A = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
  */
 export function openHost(room, cb) {
   const conns = new Map();
+  const failed = new Set(); // máy khách đã nối hỏng: thử lại thì giữ lời báo mạng chặn
   let peer = null, dead = false;
-  function start(attempt) {
+  async function start(attempt) {
     cb.onStatus('đang mở phòng…');
-    peer = new window.Peer(PEER_PREFIX + room, PEER_OPTS);
+    const opts = await peerOpts();
+    if (dead) return;
+    peer = new window.Peer(PEER_PREFIX + room, opts);
     peer.on('open', () => { cb.onStatus('phòng đã mở'); cb.onOpen(); });
     peer.on('connection', conn => {
-      conn.on('open', () => conns.set(conn.peer, conn));
+      if (!failed.has(conn.peer)) cb.onStatus('có người đang vào phòng…');
+      const fail = () => { if (!conn.open) failed.add(conn.peer), cb.onStatus(`một người đang cố vào nhưng không nối được: ${BLOCKED}`); };
+      const slow = setTimeout(fail, JOIN_TIMEOUT);
+      conn.on('iceStateChanged', st => { if (st === 'failed') fail(); });
+      conn.on('open', () => { clearTimeout(slow); failed.delete(conn.peer); conns.set(conn.peer, conn); cb.onStatus('phòng đã mở'); });
       conn.on('data', d => cb.onData(conn.peer, d));
       const close = () => { if (conns.get(conn.peer) === conn) { conns.delete(conn.peer); cb.onClose(conn.peer); } };
       conn.on('close', close);
@@ -45,26 +59,37 @@ export function openHost(room, cb) {
  * Tự nối lại mỗi 3 giây khi mất kết nối. Trả về { send(msg), destroy() }
  */
 export function joinHost(room, hello, cb) {
-  let conn = null, timer = null, dead = false;
-  const peer = new window.Peer(PEER_OPTS);
-  const retry = () => { if (timer || dead) return; timer = setTimeout(() => { timer = null; if (peer.open && !dead) connect(); }, 3000); };
+  let conn = null, timer = null, dead = false, peer = null, slow = null, failed = false;
+  const blocked = () => (failed = true) && cb.onStatus(`không nối được với chủ phòng: ${BLOCKED} (thường gặp khi một máy dùng 4G). Thử cho hai máy cùng một wifi. Đang thử lại…`);
+  const retry = () => { if (timer || dead) return; timer = setTimeout(() => { timer = null; if (peer && peer.open && !dead) connect(); }, 3000); };
   function connect() {
     if (conn && conn.open) return;
-    cb.onStatus('đang vào phòng…');
+    if (!failed) cb.onStatus('đang vào phòng…'); // đã báo mạng chặn thì giữ nguyên lời báo khi thử lại
     const c = peer.connect(PEER_PREFIX + room, { reliable: true });
     conn = c;
-    c.on('open', () => { c.send({ ...hello, protocol: PROTOCOL_VERSION }); cb.onStatus('đã vào phòng'); });
+    clearTimeout(slow);
+    slow = setTimeout(() => { if (conn === c && !c.open && !dead) { blocked(); conn = null; c.close(); retry(); } }, JOIN_TIMEOUT);
+    c.on('iceStateChanged', st => { if (st === 'failed' && conn === c && !dead) { clearTimeout(slow); blocked(); conn = null; c.close(); retry(); } });
+    c.on('open', () => { clearTimeout(slow); failed = false; c.send({ ...hello, protocol: PROTOCOL_VERSION }); cb.onStatus('đã vào phòng'); });
     c.on('data', d => cb.onData(d));
     c.on('close', () => { if (conn === c && !dead) { conn = null; cb.onStatus('mất kết nối với chủ phòng, đang thử lại…'); retry(); } });
   }
-  peer.on('open', connect);
+  (async () => {
+    const opts = await peerOpts();
+    if (dead) return;
+    peer = new window.Peer(opts);
+    peer.on('open', connect);
+    wire();
+  })();
+  function wire() {
   peer.on('disconnected', () => { if (!peer.destroyed && !dead) try { peer.reconnect(); } catch { /* bỏ qua */ } });
   peer.on('error', err => {
     if (err.type === 'peer-unavailable') { cb.onStatus(`chưa thấy phòng ${room}: chủ phòng còn mở trang không? đang thử lại…`); retry(); }
     else cb.onStatus('lỗi kết nối: ' + err.type);
   });
+  }
   return {
     send(msg) { if (conn && conn.open) conn.send(msg); },
-    destroy() { dead = true; clearTimeout(timer); peer.destroy(); },
+    destroy() { dead = true; clearTimeout(timer); clearTimeout(slow); if (peer) peer.destroy(); },
   };
 }
