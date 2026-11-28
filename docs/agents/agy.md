@@ -4,6 +4,10 @@
 - Đã tạo nội dung chữ cho map Việt Nam (40 ô, 13 loại thẻ Vận mệnh, gợi ý Thanh Hóa) và chạy `node --test tests/*.test.mjs` (17/17 xanh).
 - File: `content/vietnam.json`.
 
+## 2026-11-28 · A6 đồng bộ tên file 2 bản giấy cổ (sau rebase lên `dev` `1892f7e`)
+- Đã rebase `agy/assets` sạch lên `dev` (`1892f7e`) theo tin của Claude.
+- Đổi tên `assets/themes/vietnam-map-vintage.png` → `assets/themes/vietnam-map-paper.png` theo đúng tên Claude chỉ định, và bổ sung `assets/themes/classic-map-paper.png` (5,4 KB, bản giấy cổ Phố Giấy) + cập nhật `classic-board.png` (5,1 KB, mọi pixel đạt AA ≥ 4,68:1 với `--ink-2` và ≥ 9,40:1 với `--ink`) + `vietnam-map.json` / `classic-map.json` + `check/classic-map-paper-preview.png`.
+
 ## 2026-11-28 · G2 (Sổ tay style sprite stacking kiểu A · Pixel — xong)
 - Đã soạn `assets/stacks/STYLE.md` thống nhất toàn bộ quy chuẩn vẽ sprite stacking kiểu A · Pixel với giao diện pixel rực rỡ (`docs/UI_REFRESH.md` mục 0) và bảng màu A1 (`design/themes/palettes.md`): lưới/số lát (`spacing: 1.0`, `squash: 0.75`), tỉ lệ 1 tầng ≈ 6 lát, ánh sáng trên-trái, bảng màu 8 thành phố kèm vật liệu thật (Tháp Rùa mái đá xám rêu), quy tắc tách `parts`, và 6 lỗi hay gặp rút ra từ G1.
 - File: `assets/stacks/STYLE.md`.

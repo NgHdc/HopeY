@@ -71,6 +71,6 @@
   ],
   "variants": {
     "default": "vietnam-map.png",
-    "vintage": "vietnam-map-vintage.png"
+    "paper": "vietnam-map-paper.png"
   }
 }
