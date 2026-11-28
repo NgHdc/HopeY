@@ -57,6 +57,7 @@ Trả lời bằng tiếng Việt. Đọc file này trước, **chỉ mở thêm
 - `docs/DECISIONS.md`: lý do các quyết định kỹ thuật (#1–#12).
 - `docs/STYLE_GUIDE.md`: style Swiss Paper.
 - `docs/HOSTING.md`: kế hoạch hoạt ảnh mượt + rời GitHub Pages sang Cloudflare (chờ duyệt).
+- `docs/LE_LANG.md`: bản nháp chế độ "Lệ làng" (luật ngầm, đoán lệ, thắng bằng uy tín). Chưa code.
 - `docs/MAP_VIETNAM.md`: thiết kế map Việt Nam và bộ thẻ Vận mệnh (đã code ở 0.5.0).
 - `CHANGELOG.md`.
 

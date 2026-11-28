@@ -152,7 +152,7 @@ Kế hoạch art: `docs/ART_PIPELINE.md`. Hoạt ảnh: `docs/HOSTING.md` mục 
 
 ## 0.7.0 — Phòng bền (đang làm, kế hoạch 2026-11-28)
 
-**Mục tiêu:** chơi online với bạn bè không mất ván, thấy rõ ai đang ở đâu, nói chuyện được trong ván. Art tiếp tục song song: biểu cảm pixel và địa danh đợt 1.
+**Mục tiêu:** chơi online với bạn bè không mất ván, thấy rõ ai đang ở đâu, **chat và mở mic** nói chuyện trong ván. Chuẩn bị cho chế độ "Lệ làng" (`docs/LE_LANG.md`, bản nháp): gửi mỗi máy một bản trạng thái đã cắt phần bí mật. Art tiếp tục song song: biểu cảm pixel và địa danh đợt 1.
 
 **Xong khi:**
 - ván 4 người, 45 phút, trên 2 mạng wifi khác nhau không mất ván;
@@ -171,6 +171,7 @@ Kế hoạch art: `docs/ART_PIPELINE.md`. Hoạt ảnh: `docs/HOSTING.md` mục 
 | P5 | **Chat ngắn + biểu cảm** (vẫy tay, cười, "đắt quá!"…): biểu cảm hiện thành bong bóng trên đầu nhân vật | tăng `PROTOCOL_VERSION` lên 5 |
 | P6 | Thông báo rõ: đang nối lại, chủ phòng vắng, phòng đã đóng, mạng chặn | phần mạng chặn đã xong trên `dev` |
 | K2 | Ghép UI của Codex (U6–U8) và art của Agy (A7, A8, G3 đợt 1) vào game | sau cổng duyệt 3 |
+| P8 | **Mở mic (nói chuyện bằng giọng)**: mỗi cặp máy một kênh âm thanh WebRTC (≤ 6 người = 15 kênh, nhẹ); mic **tắt mặc định**, bấm để bật, có chế độ giữ-để-nói; vòng sáng quanh nhân vật đang nói | cùng đợt đổi định dạng tin nhắn với P5; qua 4G cũng cần TURN (P7) |
 | ⏸ P7 | **TURN** (chơi qua 4G): `src/net/ice.js` đã sẵn chỗ cắm | **PENDING**: chờ người dùng tạo khóa Metered Open Relay |
 
 ### Codex (giao diện, `design/`, `src/render/`)
@@ -190,7 +191,7 @@ Kế hoạch art: `docs/ART_PIPELINE.md`. Hoạt ảnh: `docs/HOSTING.md` mục 
 
 ### Thứ tự và cổng duyệt
 ```
-Claude: P0 ─► P1 ─► P6 ─► P4 ─► P3 ─► P2 ─────────────► K2 ─► P5 ─► phát hành 0.7.0
+Claude: P0 ─► P1 ─► P6 ─► P4 ─► P3 ─► P2 ─────────────► K2 ─► P5 ─► P8 ─► phát hành 0.7.0
 Codex:  U5 ─► U7 (Claude cần cho P0) ─► U6 ─► U8 ─┐
 Agy:    A8 ─► A7 ─────────────────────────────────┼─► (cổng duyệt 3: người dùng xem lab xã hội + địa danh)
         G3a ──────────────────────────────────────┘
