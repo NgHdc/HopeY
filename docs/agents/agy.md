@@ -4,6 +4,16 @@
 - Đã tạo nội dung chữ cho map Việt Nam (40 ô, 13 loại thẻ Vận mệnh, gợi ý Thanh Hóa) và chạy `node --test tests/*.test.mjs` (17/17 xanh).
 - File: `content/vietnam.json`.
 
+## 2026-11-28 · A6 (Hoàn chỉnh bản đồ pixel 2 vùng đất + bản nhạt giữa bàn — chờ duyệt)
+- Người dùng thích cả 2 bản phác Dải đất (muốn giữ nhiều lựa chọn), nên đã xuất đủ cả 2 bản ở khổ gốc `160×240`: `assets/themes/vietnam-map.png` (A · biển xanh RPG, 7,1 KB) và `assets/themes/vietnam-map-vintage.png` (B · giấy cổ vàng kem, 7,4 KB), khai báo trong `vietnam-map.json` (`variants`).
+- Đã vẽ `assets/themes/classic-map.png` (`160×240`, 4,8 KB — Phố Giấy nhìn chéo từ trên xuống, dòng sông liền mạch, 2 cầu, 8 khu đúng màu A1, ao sen, hải đăng, thuyền, người nhỏ) + `classic-map.json` + ảnh xem trước `check/classic-map-preview.png`.
+- Đã tạo 2 bản nhạt cho giữa bàn: `assets/themes/vietnam-board.png` (7,2 KB, mọi pixel đạt AA ≥ 8,96:1 với `--ink` và ≥ 4,65:1 với `--ink-2`) và `assets/themes/classic-board.png` (4,7 KB, mọi pixel đạt AA ≥ 9,45:1 với `--ink` và ≥ 4,70:1 với `--ink-2`), kèm ảnh kiểm tra `check/boards-preview.png`.
+- Việc tiếp theo: làm **A3p** (6 sprite Phố Giấy có hoạt ảnh + xóa avatar vector cũ) → **A4p** → **G2**. Đang vướng: không.
+
+| Phố Giấy (`classic-map.png` ×3) | Kiểm tra chữ trên 2 bản nhạt giữa bàn |
+|---|---|
+| ![Phố Giấy pixel](../../assets/themes/check/classic-map-preview.png) | ![Bản nhạt giữa bàn](../../assets/themes/check/boards-preview.png) |
+
 ## 2026-11-28 · A2p (6 sprite pixel Dải đất có hoạt ảnh — chờ duyệt)
 - Đã vẽ 6 sprite sheet pixel chibi 32×32 (128×128, 4 hàng `idle`/`walk`/`happy`/`sad`, mỗi sheet 2,0–2,6 KB < 20 KB) + 6 chân dung nửa người 48×48 + cập nhật `assets/avatars/vietnam/avatars.json` theo đúng schema `docs/UI_REFRESH.md` mục 0.4.
 - Đã sửa triệt để mọi góp ý từ bản vector: **Cô Hai** (`non-la`) có quai nón dưới cằm không vắt ngang mặt + quang gánh; **Minh Thư** (`ao-dai`) mặc áo dài hồng sen thật tà dài tới gối xẻ hai bên lộ quần dài trắng và tà bay khi `walk`; 6 màu áo chính khác nhau hoàn toàn ở 32px (đỏ son, vàng mai, hồng sen, xanh ngọc, sọc xanh biển, xanh lá mạ).
