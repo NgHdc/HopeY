@@ -4,6 +4,14 @@
 - Đã tạo nội dung chữ cho map Việt Nam (40 ô, 13 loại thẻ Vận mệnh, gợi ý Thanh Hóa) và chạy `node --test tests/*.test.mjs` (17/17 xanh).
 - File: `content/vietnam.json`.
 
+## 2026-11-28 · A3p (6 sprite Phố Giấy có hoạt ảnh + bỏ avatar vector — chờ duyệt)
+- Đã vẽ 6 sprite sheet pixel chibi 32×32 (128×128, mỗi sheet ~2,0–2,1 KB < 20 KB) + 6 chân dung 48×48 + cập nhật `assets/avatars/classic/avatars.json` đúng schema mục 0.4 `UI_REFRESH.md`.
+- Đã tách hẳn màu giữa 6 nhân vật: **Bác Hải Đăng** (`hai-dang`) chuyển sang áo sọc **đỏ – trắng ngọn hải đăng (`#C73236`)** thay vì xanh dương để không trùng **Ông Lái Đò** (`#1E74BA`).
+- Đã xóa toàn bộ 24 file SVG avatar cũ trong `assets/avatars/vietnam/`, `assets/avatars/classic/` và 2 ảnh `check/*-sheet.png` cũ (`git rm`), cập nhật `assets/avatars/SOURCES.md` và xuất `check/classic-sprites.png` (×4) & `classic-sprites.gif`.
+- Việc tiếp theo: làm **A4p** (nền lặp pixel 32×32 + bỏ SVG cũ + sửa `palettes.md`) rồi **G2** (`assets/stacks/STYLE.md`). Đang vướng: không.
+
+![6 sprite pixel Phố Giấy A3p](../../assets/avatars/check/classic-sprites.png)
+
 ## 2026-11-28 · A6 (Hoàn chỉnh bản đồ pixel 2 vùng đất + bản nhạt giữa bàn — chờ duyệt)
 - Người dùng thích cả 2 bản phác Dải đất (muốn giữ nhiều lựa chọn), nên đã xuất đủ cả 2 bản ở khổ gốc `160×240`: `assets/themes/vietnam-map.png` (A · biển xanh RPG, 7,1 KB) và `assets/themes/vietnam-map-vintage.png` (B · giấy cổ vàng kem, 7,4 KB), khai báo trong `vietnam-map.json` (`variants`).
 - Đã vẽ `assets/themes/classic-map.png` (`160×240`, 4,8 KB — Phố Giấy nhìn chéo từ trên xuống, dòng sông liền mạch, 2 cầu, 8 khu đúng màu A1, ao sen, hải đăng, thuyền, người nhỏ) + `classic-map.json` + ảnh xem trước `check/classic-map-preview.png`.
