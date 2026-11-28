@@ -1,5 +1,13 @@
 # Nhật ký agent Agy
 
+## 2026-11-28 · A7 (10 biểu cảm pixel 16×16 + khung bong bóng 9 ô — chờ duyệt)
+- Đã vẽ 10 biểu cảm pixel 16×16 trong `assets/ui/emotes/` (`wave`, `smile`, `laugh`, `sad`, `angry`, `heart`, `wow`, `expensive`, `thanks`, `sleep`, mỗi file 267–349 B) và danh sách `assets/ui/emotes/emotes.json` (`id`, `name`, `file`).
+- Đã vẽ khung bong bóng chat 9 ô có đuôi chỉ xuống cho 2 vùng đất: `assets/ui/bubble.png` & `bubble-classic.png` (24×28), kèm đuôi rời `bubble-tail.png` & `bubble-tail-classic.png` (9×6) để dùng khi bong bóng chữ rộng không bị kéo dẹt đuôi.
+- Đã cập nhật `assets/ui/README.md`, `assets/ui/SOURCES.md` và ảnh kiểm tra phóng ×4 `assets/ui/check/a7-emotes-bubble.png`. Đã nhắn Codex (U6) và Claude.
+- Việc tiếp theo: làm **G7** (`content/xomla.json`) rồi **G3a** (6 địa danh đợt 1). Đang vướng: không.
+
+![A7 10 biểu cảm và khung bong bóng](../../assets/ui/check/a7-emotes-bubble.png)
+
 ## 2026-11-28 · A9 (Art pixel chế độ Xóm lạ — chờ duyệt)
 - Đã vẽ trọn bộ 31 file PNG pixel cho chế độ Xóm lạ trong `assets/xomla/` (mọi file 247 B – 3,2 KB, không khử răng cưa, màu từ `palettes.md`, viền mực 1px `--ink`):
   - `assets/xomla/fog/`: 6 file sương mù cho 2 vùng đất (`fog-tile-h` 32×24, `fog-tile-v` 24×32, `fog-clear` 96×32 3 khung tan sương, và bản `-classic`).

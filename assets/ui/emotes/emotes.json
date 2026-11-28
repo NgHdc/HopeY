@@ -1,0 +1,52 @@
+[
+  {
+    "id": "wave",
+    "name": "Vẫy tay",
+    "file": "wave.png"
+  },
+  {
+    "id": "smile",
+    "name": "Cười",
+    "file": "smile.png"
+  },
+  {
+    "id": "laugh",
+    "name": "Cười lớn",
+    "file": "laugh.png"
+  },
+  {
+    "id": "sad",
+    "name": "Buồn",
+    "file": "sad.png"
+  },
+  {
+    "id": "angry",
+    "name": "Giận",
+    "file": "angry.png"
+  },
+  {
+    "id": "heart",
+    "name": "Tim",
+    "file": "heart.png"
+  },
+  {
+    "id": "wow",
+    "name": "Ngạc nhiên",
+    "file": "wow.png"
+  },
+  {
+    "id": "expensive",
+    "name": "Đắt quá!",
+    "file": "expensive.png"
+  },
+  {
+    "id": "thanks",
+    "name": "Cảm ơn",
+    "file": "thanks.png"
+  },
+  {
+    "id": "sleep",
+    "name": "Ngủ",
+    "file": "sleep.png"
+  }
+]

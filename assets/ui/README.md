@@ -17,6 +17,7 @@ Mặc định (không hậu tố) dùng bảng màu **Dải đất (`vietnam`)**
 | `btn-primary.png` / `btn-primary-classic.png` | 24×24 | `6 6 8 6 fill` | `calc(6*var(--px)) calc(6*var(--px)) calc(8*var(--px)) calc(6*var(--px))` | Nút chính CTA (`--accent`), chữ `#FFFFFF` |
 | `btn-primary-press.png` / `btn-primary-press-classic.png` | 24×24 | `6 6 8 6 fill` | `calc(6*var(--px)) calc(6*var(--px)) calc(8*var(--px)) calc(6*var(--px))` | Trạng thái nhấn của `btn-primary` (lún xuống 2px gốc) |
 | `input.png` / `input-classic.png` | 24×24 | `5 fill` | `calc(5 * var(--px))` | Ô nhập chữ chìm nhẹ, ruột `#FFFFFF` |
+| `bubble.png` / `bubble-classic.png` | 24×28 | `6 6 10 6 fill` | `calc(6*var(--px)) calc(6*var(--px)) calc(10*var(--px)) calc(6*var(--px))` | Khung bong bóng chat 9 ô có đuôi chỉ xuống (A7); kèm đuôi rời `bubble-tail.png` / `bubble-tail-classic.png` (`9×6`) nếu muốn đuôi giữ nguyên kích thước khi bong bóng rộng |
 
 ### Mẫu CSS dùng nhanh trong `components.css` (U3p)
 
@@ -53,6 +54,11 @@ Các icon hoạt ảnh 2 khung (`net-wait.png`, `speaking.png`) có kích thư�
 
 - `assets/ui/favicon-32.png` (32×32) và `assets/ui/favicon-16.png` (16×16, vẽ tay riêng từng pixel, không thu nhỏ từ 32×32): huy hiệu ngôi nhà Phố Giấy mái đỏ son `--accent`, cửa sổ vàng `--accent-2`, viền mực `--ink`, đọc rõ cả nền tab sáng lẫn tối.
 
+## 2c. 10 Biểu cảm chat 16×16 (`assets/ui/emotes/` — A7)
+
+Danh sách đầy đủ khai báo trong `assets/ui/emotes/emotes.json` (`id`, `name`, `file`):
+`wave.png` (Vẫy tay), `smile.png` (Cười), `laugh.png` (Cười lớn), `sad.png` (Buồn), `angry.png` (Giận), `heart.png` (Tim), `wow.png` (Ngạc nhiên), `expensive.png` (Đắt quá!), `thanks.png` (Cảm ơn), `sleep.png` (Ngủ).
+
 ## 3. Bảng màu sử dụng (trích `design/themes/palettes.md`)
 
 - **Dải đất (`vietnam`, mặc định):** mực `#1F1A2E`, nền thẻ `#FFFFFF`, nền bảng `#FFE8B0` (sáng `#FFF6DC`, bóng `#E5C272`), nút chính `#C93420` (sáng `#F0664A`, bóng `#8F1D10`), nút phụ `#F5B71A` (sáng `#FFE066`, bóng `#C48708`).
@@ -64,3 +70,5 @@ Các icon hoạt ảnh 2 khung (`net-wait.png`, `speaking.png`) có kích thư�
 ![Tổng hợp UI kit pixel phóng ×4](check/ui-kit.png)
 
 ![Icon trạng thái, mic và favicon A8 phóng ×4](check/a8-status-mic-favicon.png)
+
+![10 biểu cảm và khung bong bóng A7 phóng ×4](check/a7-emotes-bubble.png)
