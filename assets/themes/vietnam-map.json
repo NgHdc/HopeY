@@ -1,0 +1,76 @@
+{
+  "w": 160,
+  "h": 240,
+  "cities": [
+    {
+      "district": 1,
+      "name": "Hưng Yên",
+      "x": 64,
+      "y": 48
+    },
+    {
+      "district": 2,
+      "name": "Thanh Hóa",
+      "x": 60,
+      "y": 61
+    },
+    {
+      "district": 3,
+      "name": "Cần Thơ",
+      "x": 59,
+      "y": 207
+    },
+    {
+      "district": 4,
+      "name": "Huế",
+      "x": 86,
+      "y": 111
+    },
+    {
+      "district": 5,
+      "name": "Hải Phòng",
+      "x": 73,
+      "y": 46
+    },
+    {
+      "district": 6,
+      "name": "Đà Nẵng",
+      "x": 95,
+      "y": 117
+    },
+    {
+      "district": 7,
+      "name": "TP.HCM",
+      "x": 73,
+      "y": 196
+    },
+    {
+      "district": 8,
+      "name": "Hà Nội",
+      "x": 61,
+      "y": 43
+    }
+  ],
+  "islands": [
+    {
+      "name": "Quần đảo Hoàng Sa",
+      "x": 145,
+      "y": 110
+    },
+    {
+      "name": "Quần đảo Trường Sa",
+      "x": 135,
+      "y": 212,
+      "inset": [
+        114,
+        190,
+        41,
+        44
+      ]
+    }
+  ],
+  "variants": {
+    "default": "vietnam-map.png",
+    "paper": "vietnam-map-paper.png"
+  }
+}

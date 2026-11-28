@@ -7,6 +7,8 @@ import { createGame, applyAction, setOnline } from './core/rules.js';
 import { groupOf } from './core/board.js';
 import { MAPS, DEFAULT_MAP, mapOf } from './core/maps/index.js';
 import * as V from './ui/view.js';
+import { createPieces, fpsMeter } from './ui/pieces.js';
+import { loadAvatars, spriteHtml, setAnim } from './render/sprite.js';
 import { openHost, joinHost, makeRoomCode, peerAvailable } from './net/peer.js';
 
 const $ = s => document.querySelector(s);
@@ -16,6 +18,11 @@ const SESSION_KEY = 'phogiay-session-v2', LOCAL_KEY = 'phogiay-local', NAME_KEY 
 const DEFAULT_NAMES = ['Lan', 'Minh', 'Hoa', 'Tuấn', 'Mai', 'Nam'];
 const params = new URLSearchParams(location.search);
 const isLocalhost = ['localhost', '127.0.0.1', ''].includes(location.hostname);
+// Nhân vật pixel theo map: nạp avatars.json một lần mỗi map, rồi vẽ lại.
+const cast = new Map(); // mapId → list (đã nạp) | 'loading'
+const sprite = () => ({ list: V.avatars(), html: (list, k) => spriteHtml(list, k, { label: false }), setAnim });
+const pieces = createPieces({ pieceSvg: V.pieceSvg, sprite });
+if (params.has('fps')) fpsMeter();
 
 const app = {
   mode: null,            // 'local' | 'host' | 'guest'
@@ -55,11 +62,27 @@ function ctx() {
   return {
     me, mine: S.winner == null && me === S.turn, mode: app.mode, room: app.room, status: app.status,
     dev: app.mode === 'local', version: APP_VERSION, viewOverride: app.viewOverride, pos: app.pos, busy: app.animating,
-    tab: app.tab, banner: lost ? 'Mất kết nối với chủ phòng.' : '', bet: app.bet,
+    tab: app.tab, layer: true, banner: lost ? 'Mất kết nối với chủ phòng.' : '', bet: app.bet,
   };
+}
+/** Map đang hiện trên màn hình: ván đang chơi, map ở sảnh, hoặc map chọn ở trang đầu. */
+function viewMapId() {
+  if (app.screen === 'game' && app.S) return mapOf(app.S).id;
+  if (app.screen === 'lobby') return app.mode === 'host' ? app.mapId : app.lobbyMap || DEFAULT_MAP;
+  return app.mapId;
+}
+function useMap(id) {
+  document.body.dataset.map = id;
+  const got = cast.get(id);
+  if (Array.isArray(got)) { V.setAvatars(got); return; }
+  V.setAvatars([]);
+  if (got === 'loading') return;
+  cast.set(id, 'loading');
+  loadAvatars(id).then(list => { cast.set(id, list); if (viewMapId() === id) render(); });
 }
 function render() {
   const root = $('#root');
+  useMap(viewMapId());
   // giữ chữ đang gõ ở trang đầu khi vẽ lại
   if ($('#nm')) app.homeDraft = { name: $('#nm').value, code: $('#code') ? $('#code').value : '' };
   if (app.screen === 'game' && app.S) {
@@ -68,8 +91,11 @@ function render() {
   } else if (app.screen === 'error') root.innerHTML = V.errorHtml(app.error);
   else if (app.screen === 'lobby') renderLobby(root);
   else renderHome(root);
+  syncPieces();
   $('#modal').innerHTML = app.modal ? V.modalHtml(app.modal) : '';
 }
+/** Đặt quân đúng ô (lớp quân nằm ngoài #root nên render() không xóa nó). */
+function syncPieces() { pieces.sync(app.screen === 'game' ? app.S : null, app.pos); }
 function setStatus(s, ok = false) { app.status = s; app.statusOk = ok; if (app.screen !== 'home') render(); }
 
 /** Hiện trạng thái mới, chạy hiệu ứng đi từng ô theo các sự kiện. */
@@ -81,13 +107,16 @@ function show(next, events = []) {
       app.animating = true;
       app.pos = prev.players.map(p => p.pos);
       app.S = next;
+      render(); // một lần: khóa nút, hiện số tiền mới; quân vẫn đứng chỗ cũ
       for (const e of events) {
-        if (e.type === 'move') for (const p of e.path) { app.pos[e.seat] = p; render(); await sleep(STEP_MS); }
-        else if (e.type === 'jump') { app.pos[e.seat] = e.to; render(); await sleep(250); }
+        // quân trượt trên lớp riêng, không vẽ lại trang ở mỗi bước
+        if (e.type === 'move' && e.path.length) { await pieces.walk(next, app.pos, e.seat, e.path, STEP_MS); app.pos[e.seat] = e.path[e.path.length - 1]; }
+        else if (e.type === 'jump') { await pieces.jump(next, app.pos, e.seat, e.to); app.pos[e.seat] = e.to; }
         else if (e.type === 'card') { render(); await sleep(700); }
       }
       app.pos = null; app.animating = false;
     }
+    if (prev && app.screen === 'game') emotes(next, events);
     if (next.winner != null && (!prev || prev.winner == null)) app.review = false;
     app.S = next;
     render();
@@ -98,6 +127,18 @@ function show(next, events = []) {
     }
   });
   return app.queue;
+}
+
+/** Nhận tiền thì vui, mất tiền (thuê, thuế, phạt) hoặc vào Tù thì buồn. */
+function emotes(S, events) {
+  const mood = new Map();
+  for (const e of events) {
+    if (e.type === 'money' && e.amt > 0) {
+      if (e.to != null) mood.set(e.to, 'happy');
+      if (e.from != null) mood.set(e.from, 'sad');
+    } else if (e.type === 'jump' && e.to === S.players[e.seat]?.pos && S.players[e.seat]?.jail) mood.set(e.seat, 'sad');
+  }
+  for (const [seat, anim] of mood) pieces.emote(seat, anim);
 }
 
 // ---------- hộp thoại ----------
@@ -259,6 +300,7 @@ function goHome() {
   store.del(SESSION_KEY, sessionStorage);
   Object.assign(app, { mode: null, screen: 'home', truth: null, S: null, net: null, room: '', status: '', started: false, seats: [], me: -1, viewOverride: null, pos: null, animating: false, modal: null, review: false });
   app.queue = Promise.resolve();
+  pieces.clear();
   setUrl('');
   render();
 }
@@ -387,6 +429,10 @@ else if (ses && ses.mode === 'guest' && peerAvailable()) startGuest(ses.name, se
 else if (ses && ses.mode === 'local' && resumeLocal()) { /* đã mở lại ván thử */ }
 else if (params.has('local')) startLocal(Math.min(6, Math.max(2, +params.get('local') || 3)), isLocalhost || params.has('dev'));
 else render();
+
+addEventListener('resize', syncPieces);
+if (typeof ResizeObserver === 'function') new ResizeObserver(syncPieces).observe($('#root'));
+if (document.fonts) document.fonts.ready.then(syncPieces);
 
 // cho script kiểm thử
 window.__phogiay = { app, act, startHost, startGuest, startOnlineGame, startLocal, version: APP_VERSION };

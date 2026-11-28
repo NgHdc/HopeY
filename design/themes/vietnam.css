@@ -1,0 +1,85 @@
+/* Dải đất · màu A1 của Agy. Chỉ khai báo biến theo map. */
+[data-map="vietnam"] {
+  --bg: #FFF6DC;
+  --bg-pattern: url("../../assets/themes/vietnam-tile.png");
+  --surface: #FFFFFF;
+  --surface-2: #FFE8B0;
+  --ink: #1F1A2E;
+  --ink-2: #504664;
+  --accent: #C93420;
+  --accent-2: #F5B71A;
+  --good: #1A7D43;
+  --bad: #C42838;
+  --d1: #945228;
+  --d2: #1D73B2;
+  --d3: #B84C10;
+  --d4: #7F38AD;
+  --d5: #C72E3E;
+  --d6: #F0B016;
+  --d7: #157B52;
+  --d8: #22509E;
+  --station: #344678;
+  --util: #177D8C;
+  --tax: #B83B64;
+  --card: #B05206;
+  --px: 3px;
+  --ui-frame-panel: url("../../assets/ui/frame-panel.png");
+  --ui-frame-card: url("../../assets/ui/frame-card.png");
+  --ui-frame-tile: url("../../assets/ui/frame-tile.png");
+  --ui-btn: url("../../assets/ui/btn.png");
+  --ui-btn-press: url("../../assets/ui/btn-press.png");
+  --ui-btn-primary: url("../../assets/ui/btn-primary.png");
+  --ui-btn-primary-press: url("../../assets/ui/btn-primary-press.png");
+  --ui-input: url("../../assets/ui/input.png");
+  --icon-station: url("../../assets/ui/icons/station.png");
+  --icon-util-power: url("../../assets/ui/icons/util-power.png");
+  --icon-util-water: url("../../assets/ui/icons/util-water.png");
+  --icon-tax: url("../../assets/ui/icons/tax.png");
+  --icon-card-v: url("../../assets/ui/icons/card-v.png");
+  --icon-card-q: url("../../assets/ui/icons/card-q.png");
+  --icon-card-h: url("../../assets/ui/icons/card-h.png");
+  --icon-start: url("../../assets/ui/icons/start.png");
+  --icon-jail: url("../../assets/ui/icons/jail.png");
+  --icon-go-jail: url("../../assets/ui/icons/go-jail.png");
+  --icon-park: url("../../assets/ui/icons/park.png");
+  --bg-tile: var(--bg-pattern);
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --border: var(--px) solid var(--ink);
+  --shadow: calc(var(--px) * 2) calc(var(--px) * 2) 0 var(--ink);
+  --shadow-press: var(--px) 0 0 var(--ink);
+  --font-pixel: "VT323", monospace;
+  --font-text: "Inter", Arial, "Helvetica Neue", sans-serif;
+  --font-display: var(--font-pixel);
+  --board-art: url("../../assets/themes/vietnam-board.png");
+  --home-map: url("../../assets/themes/vietnam-map.png");
+  --on-accent: #FFFFFF;
+  --on-accent-2: var(--ink);
+  --on-d6: var(--ink);
+
+  /* Bí danh cho view.js/style.css hiện tại; Claude sẽ thay ở K1. */
+  --paper: var(--bg);
+  --panel: var(--surface-2);
+  --accent-hover: var(--accent);
+  --cool-1: var(--station);
+  --cool-1-l: var(--surface-2);
+  --cool-2: var(--util);
+  --cool-2-l: var(--surface-2);
+  --neutral: var(--surface-2);
+  --grey: var(--ink-2);
+  --radius: var(--radius-sm);
+  --line: 2px;
+  --hair: 1px;
+  --mark: 2px;
+  --piece-0: var(--accent);
+  --piece-1: var(--d2);
+  --piece-2: var(--d4);
+  --piece-3: var(--d7);
+  --piece-4: var(--d5);
+  --piece-5: var(--d8);
+}
+
+@media (max-width: 600px) {
+  [data-map="vietnam"] { --px: 2px; }
+}

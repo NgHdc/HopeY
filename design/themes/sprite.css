@@ -1,0 +1,14 @@
+.sprite { display: inline-block; width: var(--frame); height: var(--frame); vertical-align: middle; overflow: hidden; image-rendering: pixelated; }
+.sprite-frames {
+  display: block; width: var(--frame); height: var(--frame);
+  background-image: var(--sprite-image);
+  background-size: var(--sheet-width) var(--sheet-height);
+  background-position: 0 calc(-1 * var(--row) * var(--frame));
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  transform: scaleX(var(--flip, 1));
+  animation: sprite-step var(--duration) steps(var(--frames)) infinite;
+}
+.sprite-portrait { image-rendering: pixelated; object-fit: contain; vertical-align: middle; }
+@keyframes sprite-step { to { background-position-x: calc(-1 * var(--frames) * var(--frame)); } }
+@media (prefers-reduced-motion: reduce) { .sprite-frames { animation: none; } }

@@ -1,0 +1,29 @@
+# Nguồn tài nguyên vùng đất (`assets/themes/`)
+
+Mọi ảnh trong thư mục này do dự án tự vẽ hoặc dựng từ dữ liệu địa lý công khai thuộc phạm vi công cộng (public domain).
+
+## A1 · Bảng màu & hoa văn (2026-11-27)
+- `vietnam-swatch.png`, `classic-swatch.png`: dựng bằng Python + Pillow từ bảng màu `design/themes/palettes.md` (kiểm chứng WCAG 2.1 AA ≥ 4,5:1).
+- `vietnam-pattern.svg`, `classic-pattern.svg`, `vietnam-board.svg`, `classic-board.svg`: SVG tự vẽ (sẽ thay bằng bản pixel ở A4p và A6).
+
+## A6 · Bản đồ vùng đất kiểu pixel (2026-11-28)
+- **Nguồn đường bờ biển Việt Nam và biên giới láng giềng:** Natural Earth (`ne_50m_admin_0_countries.geojson`, tỉ lệ 1:50m, phạm vi công cộng / Public Domain — https://www.naturalearthdata.com/), chiếu đẳng cự có hệ số `cos(16°)` và đưa về lưới pixel gốc `160×240`.
+- **Quần đảo:** Hoàng Sa vẽ đúng vị trí trên Biển Đông và Trường Sa đặt trong khung góc chuẩn bản đồ Việt Nam; Phú Quốc và Côn Đảo giữ đúng vị trí địa lý.
+- **Công cụ vẽ:** Python 3 + Pillow + NumPy, vẽ pixel không khử răng cưa, màu lấy từ `design/themes/palettes.md`, 8 địa danh pixel nhỏ 11–15px tự vẽ.
+- **Bản phác duyệt sớm (phóng ×3 nearest-neighbor = 480×720):**
+  - `check/vietnam-map-draft-a.png` (A: biển xanh đậm kiểu bản đồ game RPG).
+  - `check/vietnam-map-draft-b.png` (B: bản đồ giấy cổ vàng kem nắng).
+- **Tọa độ pixel gốc:** `vietnam-map.json` (không vẽ chữ lên ảnh).
+- **Bản hoàn chỉnh A6 (gốc 160×240, mỗi PNG < 8 KB < 40 KB, mỗi map đủ 2 bản rực rỡ + giấy cổ):**
+  - `vietnam-map.png` (bản A: biển xanh RPG rực rỡ, cho trang đầu).
+  - `vietnam-map-paper.png` (bản B: giấy cổ vàng kem nắng, khai báo trong `vietnam-map.json` mục `variants`).
+  - `vietnam-board.png` (bản nhạt cho giữa bàn từ `vietnam-map-paper.png`, kiểm chứng AA ≥ 4,65:1 mọi pixel với `--ink-2` và ≥ 8,96:1 với `--ink`).
+  - `classic-map.png` (Phố Giấy rực rỡ nhìn chéo từ trên xuống, dòng sông uốn lượn, 2 cầu, 8 khu đúng màu A1, hải đăng, thuyền, người que nhỏ) + `classic-map-paper.png` (bản giấy cổ Phố Giấy) + `classic-map.json`.
+  - `classic-board.png` (bản nhạt cho giữa bàn Phố Giấy từ `classic-map-paper.png`, kiểm chứng AA ≥ 4,68:1 mọi pixel với `--ink-2` và ≥ 9,40:1 với `--ink`).
+  - Ảnh kiểm tra: `check/classic-map-preview.png` (×3), `check/classic-map-paper-preview.png` (×3), `check/boards-preview.png`.
+
+## A4p · Nền lặp kiểu pixel 32×32 (2026-11-28)
+- `vietnam-tile.png` (279 B): ô lặp 32×32 nối liền không đường ghép, sóng nước chu kỳ 16px, mây nhỏ & chấm hoa mai trên nền trong suốt.
+- `classic-tile.png` (209 B): ô lặp 32×32 nối liền không đường ghép, lưới chấm giấy thủ công & nếp gấp tam giác trên nền trong suốt.
+- Ảnh kiểm tra lát 4×4 phóng ×3: `check/tiles-preview.png`.
+- Đã gỡ bỏ 4 file SVG cũ (`*-pattern.svg`, `*-board.svg`) và cập nhật `design/themes/palettes.md` trỏ sang PNG.

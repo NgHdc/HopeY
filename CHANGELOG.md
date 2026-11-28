@@ -5,6 +5,15 @@ Quy trình phát hành và rollback: [`docs/RELEASE.md`](docs/RELEASE.md).
 
 ## [Chưa phát hành]
 
+## [0.6.0] — 2026-11-28 · Pixel
+
+Art: Agy (bản đồ, nhân vật, UI kit). Theme và sprite: Codex. Ghép vào game: Claude.
+
+### Đổi
+- **Giao diện pixel** (K1): mỗi map có bảng màu, nền hoa văn, khung 9 ô và icon ô riêng. Trang đầu hiện bản đồ pixel của map đang chọn (Dải đất biển xanh, Phố Giấy dòng sông), giữa bàn cờ là bản đồ giấy cổ nhạt. Tiêu đề dùng font pixel VT323 (đủ dấu tiếng Việt; Tiny5 mất móc ư/ơ nên bỏ).
+- **Quân cờ là nhân vật pixel** của từng map (6 người mỗi map): đi bộ khi di chuyển, quay mặt theo hướng đi, vui khi nhận tiền, buồn khi mất tiền hoặc vào Tù.
+- **Quân cờ trượt mượt** giữa các ô (nhảy nhẹ mỗi bước, bay vòng cung khi dùng máy bay hoặc vào Tù), thay cho kiểu nhảy cóc. Trang không còn bị vẽ lại ở mỗi ô quân đi qua. Thêm `?fps` để đo độ mượt.
+
 ## [0.5.0] — 2026-11-28 · Dải đất
 
 Thiết kế ở [`docs/MAP_VIETNAM.md`](docs/MAP_VIETNAM.md).
@@ -94,7 +103,8 @@ Thiết kế ở [`docs/MAP_VIETNAM.md`](docs/MAP_VIETNAM.md).
 ### Đổi
 - Chữ nghiêng dùng Noto Serif thay Georgia (Georgia trên Windows lỗi dấu tiếng Việt)
 
-[Chưa phát hành]: https://github.com/NgHdc/HopeY/compare/v0.5.0...HEAD
+[Chưa phát hành]: https://github.com/NgHdc/HopeY/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/NgHdc/HopeY/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/NgHdc/HopeY/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/NgHdc/HopeY/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/NgHdc/HopeY/compare/v0.2.0...v0.3.0

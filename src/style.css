@@ -58,7 +58,10 @@ a:hover { color: var(--accent); }
 .home { min-height: 100vh; display: flex; flex-wrap: wrap; }
 .home-art { flex: 1 1 560px; min-width: 0; min-height: 480px; background: var(--panel); border-right: var(--line) solid var(--ink); padding: var(--s6) var(--s7); display: flex; flex-direction: column; justify-content: space-between; gap: var(--s4); }
 .home-art .strip { border-bottom: 0; padding: 0; }
-.home-art svg { width: 100%; max-width: 640px; height: auto; align-self: center; }
+.home-map { flex: 1 1 auto; min-height: 320px; width: 100%; background: var(--home-map) center / contain no-repeat; image-rendering: pixelated; }
+.home-cast { display: flex; justify-content: center; gap: var(--s2); flex-wrap: wrap; }
+.home-cast .piece { image-rendering: pixelated; }
+.pc .sprite { display: block; }
 .home-form { flex: 1 1 480px; min-width: 0; max-width: 720px; padding: var(--s6) var(--s8) var(--s7); display: flex; flex-direction: column; gap: var(--s5); }
 .home-head { display: flex; flex-direction: column; gap: var(--s2); }
 .field { display: flex; flex-direction: column; gap: var(--s1); border-bottom: var(--line) solid var(--ink); padding-bottom: 6px; }
@@ -252,7 +255,8 @@ a:hover { color: var(--accent); }
 /* ============ ĐIỆN THOẠI ============ */
 @media (max-width: 760px) {
   .home-art { min-height: 220px; padding: var(--s4); border-right: 0; border-bottom: var(--line) solid var(--ink); }
-  .home-art .strip, .home-art .human { display: none; }
+  .home-art .strip, .home-art .human, .home-cast { display: none; }
+  .home-map { min-height: 200px; }
   .home-form { padding: var(--s5) 20px; }
   .h1 { font-size: 40px; }
   .join-grid { grid-template-columns: 1fr; }
@@ -277,3 +281,10 @@ a:hover { color: var(--accent); }
   .end-hero .h1 { font-size: 48px; }
   .stat b { font-size: 32px; }
 }
+
+/* Lớp quân cờ (src/ui/pieces.js): nằm ngoài #root, trượt bằng transform */
+.pieces-layer { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 4; pointer-events: none; }
+.pieces-layer .pc { position: absolute; left: 0; top: 0; will-change: transform; line-height: 0; }
+.pieces-layer .pc.moving { z-index: 1; }
+.pieces-layer .pc svg { display: block; }
+.fps { position: fixed; right: 8px; bottom: 8px; z-index: 30; background: var(--ink); color: var(--paper); font: 12px var(--font-mono); padding: 4px 8px; pointer-events: none; }

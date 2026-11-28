@@ -1,5 +1,5 @@
 // Số phiên bản. Quy tắc tăng số: docs/RELEASE.md mục 1.
-export const APP_VERSION = '0.5.0';
+export const APP_VERSION = '0.6.0';
 // Tăng khi đổi định dạng tin nhắn giữa các máy → khác số thì không vào chung phòng.
 export const PROTOCOL_VERSION = 4;
 // Tăng khi đổi cấu trúc trạng thái ván đã lưu → viết thêm bước trong migrate().

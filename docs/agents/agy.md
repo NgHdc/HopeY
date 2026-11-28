@@ -4,6 +4,72 @@
 - Đã tạo nội dung chữ cho map Việt Nam (40 ô, 13 loại thẻ Vận mệnh, gợi ý Thanh Hóa) và chạy `node --test tests/*.test.mjs` (17/17 xanh).
 - File: `content/vietnam.json`.
 
+## 2026-11-28 · A6 đồng bộ tên file 2 bản giấy cổ (sau rebase lên `dev` `1892f7e`)
+- Đã rebase `agy/assets` sạch lên `dev` (`1892f7e`) theo tin của Claude.
+- Đổi tên `assets/themes/vietnam-map-vintage.png` → `assets/themes/vietnam-map-paper.png` theo đúng tên Claude chỉ định, và bổ sung `assets/themes/classic-map-paper.png` (5,4 KB, bản giấy cổ Phố Giấy) + cập nhật `classic-board.png` (5,1 KB, mọi pixel đạt AA ≥ 4,68:1 với `--ink-2` và ≥ 9,40:1 với `--ink`) + `vietnam-map.json` / `classic-map.json` + `check/classic-map-paper-preview.png`.
+
+## 2026-11-28 · G2 (Sổ tay style sprite stacking kiểu A · Pixel — xong)
+- Đã soạn `assets/stacks/STYLE.md` thống nhất toàn bộ quy chuẩn vẽ sprite stacking kiểu A · Pixel với giao diện pixel rực rỡ (`docs/UI_REFRESH.md` mục 0) và bảng màu A1 (`design/themes/palettes.md`): lưới/số lát (`spacing: 1.0`, `squash: 0.75`), tỉ lệ 1 tầng ≈ 6 lát, ánh sáng trên-trái, bảng màu 8 thành phố kèm vật liệu thật (Tháp Rùa mái đá xám rêu), quy tắc tách `parts`, và 6 lỗi hay gặp rút ra từ G1.
+- File: `assets/stacks/STYLE.md`.
+- Việc tiếp theo: tạm dừng **G3** (22 địa danh còn lại) chờ **Cổng duyệt 2** theo đúng kế hoạch trong `agents-hub/tasks/agy.md`. Đang vướng: không.
+
+## 2026-11-28 · A4p (Nền lặp pixel 32×32 + bỏ SVG cũ — chờ duyệt)
+- Đã vẽ 2 nền lặp pixel 32×32 nối liền không thấy đường ghép: `assets/themes/vietnam-tile.png` (279 B — sóng nước & mây) và `assets/themes/classic-tile.png` (209 B — lưới chấm & góc giấy gấp), kèm ảnh kiểm tra lát 4×4 phóng ×3 `assets/themes/check/tiles-preview.png`.
+- Đã xóa 4 file SVG cũ (`vietnam-pattern.svg`, `classic-pattern.svg`, `vietnam-board.svg`, `classic-board.svg`) và cập nhật `--bg-pattern`, `--board-art` trong `design/themes/palettes.md` trỏ sang các file PNG pixel mới.
+- Việc tiếp theo: làm **G2** (`assets/stacks/STYLE.md`) rồi dừng chờ Cổng duyệt 2 trước khi làm G3. Đang vướng: không.
+
+![Kiểm tra nền lặp 32x32 A4p](../../assets/themes/check/tiles-preview.png)
+
+## 2026-11-28 · A3p (6 sprite Phố Giấy có hoạt ảnh + bỏ avatar vector — chờ duyệt)
+- Đã vẽ 6 sprite sheet pixel chibi 32×32 (128×128, mỗi sheet ~2,0–2,1 KB < 20 KB) + 6 chân dung 48×48 + cập nhật `assets/avatars/classic/avatars.json` đúng schema mục 0.4 `UI_REFRESH.md`.
+- Đã tách hẳn màu giữa 6 nhân vật: **Bác Hải Đăng** (`hai-dang`) chuyển sang áo sọc **đỏ – trắng ngọn hải đăng (`#C73236`)** thay vì xanh dương để không trùng **Ông Lái Đò** (`#1E74BA`).
+- Đã xóa toàn bộ 24 file SVG avatar cũ trong `assets/avatars/vietnam/`, `assets/avatars/classic/` và 2 ảnh `check/*-sheet.png` cũ (`git rm`), cập nhật `assets/avatars/SOURCES.md` và xuất `check/classic-sprites.png` (×4) & `classic-sprites.gif`.
+- Việc tiếp theo: làm **A4p** (nền lặp pixel 32×32 + bỏ SVG cũ + sửa `palettes.md`) rồi **G2** (`assets/stacks/STYLE.md`). Đang vướng: không.
+
+![6 sprite pixel Phố Giấy A3p](../../assets/avatars/check/classic-sprites.png)
+
+## 2026-11-28 · A6 (Hoàn chỉnh bản đồ pixel 2 vùng đất + bản nhạt giữa bàn — chờ duyệt)
+- Người dùng thích cả 2 bản phác Dải đất (muốn giữ nhiều lựa chọn), nên đã xuất đủ cả 2 bản ở khổ gốc `160×240`: `assets/themes/vietnam-map.png` (A · biển xanh RPG, 7,1 KB) và `assets/themes/vietnam-map-vintage.png` (B · giấy cổ vàng kem, 7,4 KB), khai báo trong `vietnam-map.json` (`variants`).
+- Đã vẽ `assets/themes/classic-map.png` (`160×240`, 4,8 KB — Phố Giấy nhìn chéo từ trên xuống, dòng sông liền mạch, 2 cầu, 8 khu đúng màu A1, ao sen, hải đăng, thuyền, người nhỏ) + `classic-map.json` + ảnh xem trước `check/classic-map-preview.png`.
+- Đã tạo 2 bản nhạt cho giữa bàn: `assets/themes/vietnam-board.png` (7,2 KB, mọi pixel đạt AA ≥ 8,96:1 với `--ink` và ≥ 4,65:1 với `--ink-2`) và `assets/themes/classic-board.png` (4,7 KB, mọi pixel đạt AA ≥ 9,45:1 với `--ink` và ≥ 4,70:1 với `--ink-2`), kèm ảnh kiểm tra `check/boards-preview.png`.
+- Việc tiếp theo: làm **A3p** (6 sprite Phố Giấy có hoạt ảnh + xóa avatar vector cũ) → **A4p** → **G2**. Đang vướng: không.
+
+| Phố Giấy (`classic-map.png` ×3) | Kiểm tra chữ trên 2 bản nhạt giữa bàn |
+|---|---|
+| ![Phố Giấy pixel](../../assets/themes/check/classic-map-preview.png) | ![Bản nhạt giữa bàn](../../assets/themes/check/boards-preview.png) |
+
+## 2026-11-28 · A2p (6 sprite pixel Dải đất có hoạt ảnh — chờ duyệt)
+- Đã vẽ 6 sprite sheet pixel chibi 32×32 (128×128, 4 hàng `idle`/`walk`/`happy`/`sad`, mỗi sheet 2,0–2,6 KB < 20 KB) + 6 chân dung nửa người 48×48 + cập nhật `assets/avatars/vietnam/avatars.json` theo đúng schema `docs/UI_REFRESH.md` mục 0.4.
+- Đã sửa triệt để mọi góp ý từ bản vector: **Cô Hai** (`non-la`) có quai nón dưới cằm không vắt ngang mặt + quang gánh; **Minh Thư** (`ao-dai`) mặc áo dài hồng sen thật tà dài tới gối xẻ hai bên lộ quần dài trắng và tà bay khi `walk`; 6 màu áo chính khác nhau hoàn toàn ở 32px (đỏ son, vàng mai, hồng sen, xanh ngọc, sọc xanh biển, xanh lá mạ).
+- File: `assets/avatars/vietnam/*.png`, `assets/avatars/vietnam/avatars.json`, `assets/avatars/SOURCES.md`, `assets/avatars/check/vietnam-sprites.png`, `assets/avatars/check/vietnam-sprites.gif`.
+- Việc tiếp theo: chờ người dùng duyệt **A6 phác** (chọn A hay B để hoàn thiện cả 2 map) và **A2p**; sau đó làm **A3p** (6 sprite Phố Giấy + dọn SVG cũ) → **A4p** → **G2**. Đang vướng: không.
+
+![6 sprite pixel Dải đất A2p](../../assets/avatars/check/vietnam-sprites.png)
+
+## 2026-11-28 · A6 phác (2 bản phác bản đồ Dải đất kiểu pixel — chờ duyệt)
+- Đã dựng 2 bản phác bản đồ Dải đất (gốc `160×240`, phóng ×3 = `480×720`, không chữ) từ đường bờ Natural Earth 50m (public domain): đủ địa hình Bắc–Trung–Nam, ruộng bậc thang Tây Bắc, Trường Sơn, sông Hồng, sông Mê Kông, đường sắt Thống Nhất, 8 chấm màu quận kèm 8 địa danh pixel 11–15px (Tháp Rùa mái đá xám, cần cẩu Hải Phòng, cây nhãn Hưng Yên, cổng Thành Nhà Hồ, Ngọ Môn, Cầu Rồng, Chợ Bến Thành, chợ nổi), Phú Quốc, Côn Đảo, **Quần đảo Hoàng Sa** và khung **Quần đảo Trường Sa**.
+- File: `assets/themes/check/vietnam-map-draft-a.png` (A · biển xanh RPG rực rỡ, 11,4 KB), `assets/themes/check/vietnam-map-draft-b.png` (B · bản đồ giấy cổ vàng kem nắng, 12,2 KB), `assets/themes/vietnam-map.json`, `assets/themes/SOURCES.md`.
+- Việc tiếp theo: chờ người dùng chọn bản A hay B ở A6; trong lúc chờ chuyển sang làm **A2p** (6 sprite Dải đất có hoạt ảnh). Đang vướng: chờ người dùng duyệt A6 phác.
+
+| A · Biển xanh đậm RPG | B · Bản đồ giấy cổ vàng kem |
+|---|---|
+| ![A6 phác A](../../assets/themes/check/vietnam-map-draft-a.png) | ![A6 phác B](../../assets/themes/check/vietnam-map-draft-b.png) |
+
+## 2026-11-28 · A5 (UI kit pixel — chờ duyệt)
+- Đã vẽ trọn bộ UI kit pixel ở độ phân giải gốc (không khử răng cưa, nền trong suốt, mọi file ≤ 275 byte < 20 KB) theo đúng bảng màu A1 (`design/themes/palettes.md`):
+  - 16 khung 9 ô (`border-image`): 8 khung Dải đất mặc định (`frame-panel`, `frame-card`, `frame-tile`, `btn`, `btn-press`, `btn-primary`, `btn-primary-press`, `input`) và 8 bản `-classic.png` cho Phố Giấy.
+  - 23 icon 16×16 trong `assets/ui/icons/` (đủ ga, điện, nước, thuế, 3 loại thẻ, 4 ô góc, nhà, khách sạn, xu, xúc xắc 1–6, vé, máy bay, cảnh báo).
+  - Tài liệu `assets/ui/README.md` (đầy đủ `border-image-slice` & mẫu CSS), `assets/ui/SOURCES.md` và ảnh kiểm tra phóng ×4 `assets/ui/check/ui-kit.png`.
+- Việc tiếp theo: làm **A2p** (6 sprite pixel 32×32 có hoạt ảnh `idle`/`walk`/`happy`/`sad` + chân dung 48×48 cho Dải đất). Đang vướng: không.
+
+![Tổng hợp UI kit pixel A5](../../assets/ui/check/ui-kit.png)
+
+## 2026-11-28 · A4 (Minh họa giữa bàn 2 vùng đất — chờ duyệt)
+- Đã vẽ `assets/themes/vietnam-board.svg` (4,9 KB — dải đất chữ S cách điệu, đường nối và điểm đánh dấu 8 thành phố theo bảng màu A1, mây sóng & la bàn) và `assets/themes/classic-board.svg` (3,8 KB — sông giấy, đồi nắng gấp giấy và 8 biểu tượng khu phố), đều xa dưới ngưỡng 80 KB.
+- Đã kiểm tra trực quan khi đặt chữ tiêu đề, mô tả và nút giữa bàn đè lên trên: độ mờ được hạ dịu (`0,22–0,45`) để mọi chữ đọc sắc nét, cập nhật `--board-art` trong `design/themes/palettes.md`.
+- File: `assets/themes/vietnam-board.svg`, `assets/themes/classic-board.svg`, `design/themes/palettes.md`.
+- Việc tiếp theo: chờ **Cổng duyệt 2** (người dùng xem lab theme + avatar), có thể làm **G2** (`assets/stacks/STYLE.md`) trong lúc chờ. Đang vướng: không.
+
 ## 2026-11-28 · A3 (6 avatar cư dân Phố Giấy — chờ duyệt)
 - Đã vẽ đủ 6 cư dân Phố Giấy (`chu-do`, `co-hoa`, `tho-gom`, `be-den-long`, `co-vuon`, `hai-dang`) cùng hệ nét viền sticker dày với A2: mỗi nhân vật có portrait SVG 256×256 + token 64×64 đọc rõ ở 24px, mọi file 1,0–2,6 KB (< 40 KB).
 - Đã tạo `assets/avatars/classic/avatars.json`, cập nhật `assets/avatars/SOURCES.md` và chụp bảng kiểm tra `assets/avatars/check/classic-sheet.png`.

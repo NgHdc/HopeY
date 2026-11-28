@@ -60,6 +60,22 @@ try {
   await L.ev(`document.getElementById('dv1').value='1'; document.getElementById('dv2').value='2'; document.querySelector('[data-act=dev-roll]').click()`);
   await until(() => L.ev(`!__phogiay.app.animating && __phogiay.app.truth.phase === 'buy'`), 5000);
   check(await L.ev(`__phogiay.app.truth.players[0].pos === 3`), 'ván thử: đặt xúc xắc 1+2 → ô 3');
+  // lớp quân (src/ui/pieces.js): quân đứng trong đúng ô, và #root không bị vẽ lại ở mỗi bước đi
+  const inTile = `(() => { const t = document.querySelector('.board [data-tile="' + __phogiay.app.S.players[0].pos + '"]').getBoundingClientRect(); const e = document.querySelector('.pieces-layer .pc[data-seat="0"]').getBoundingClientRect(); const x = e.left + e.width / 2, y = e.top + e.height / 2; return x > t.left && x < t.right && y > t.top && y < t.bottom; })()`;
+  check(await L.ev(inTile), 'lớp quân: quân nằm trong ô 3');
+  await L.ev(`window.__rr = 0; new MutationObserver(l => { window.__rr += l.length; }).observe(document.getElementById('root'), { childList: true })`);
+  await L.ev(`document.querySelector('[data-act=skip]').click()`); await sleep(150);
+  await L.ev(`document.querySelector('[data-act=end]').click()`);
+  await until(() => L.ev(`__phogiay.app.truth.phase === 'roll' && !__phogiay.app.animating`), 5000);
+  await L.ev(`window.__rr = 0; document.getElementById('dv1').value='5'; document.getElementById('dv2').value='6'; document.querySelector('[data-act=dev-roll]').click()`);
+  await until(() => L.ev(`!__phogiay.app.animating && __phogiay.app.truth.players[1].pos === 11`), 6000);
+  check(await L.ev(`window.__rr <= 4`), 'lớp quân: đi 11 ô mà trang chỉ vẽ lại ≤ 2 lần');
+  check(await L.ev(inTile.replaceAll('players[0]', 'players[1]').replace('seat="0"', 'seat="1"')), 'lớp quân: quân người 2 tới đúng ô 11');
+  await L.ev(`if (__phogiay.app.truth.phase === 'buy') document.querySelector('[data-act=skip]').click()`); await sleep(150);
+  await L.ev(`document.querySelector('[data-act=end]').click()`);
+  await until(() => L.ev(`__phogiay.app.truth.phase === 'roll' && !__phogiay.app.animating`), 5000);
+  await L.ev(`document.getElementById('dv1').value='1'; document.getElementById('dv2').value='2'; document.querySelector('[data-act=dev-roll]').click()`);
+  await until(() => L.ev(`!__phogiay.app.animating`), 5000);
   await L.shot('local-game.png');
   // thẻ Vận mệnh qua giao diện (map Việt Nam là mặc định)
   check(await L.ev(`__phogiay.app.truth.map === 'vietnam'`), 'ván thử: mặc định là map Việt Nam');

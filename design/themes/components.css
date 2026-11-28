@@ -1,0 +1,100 @@
+/* Khung pixel từ UI kit A5; màu và ảnh chọn qua biến của map. */
+body[data-map] { background-color: var(--bg); background-image: var(--bg-tile); background-size: calc(32 * var(--px)); background-repeat: repeat; image-rendering: pixelated; }
+body[data-map], button, input, select { font-family: var(--font-text); }
+body[data-map] img, body[data-map] .avatar { image-rendering: pixelated; }
+.h1, .h2, .h3, h1, h2, h3, .brand, .kicker, .label, .strip,
+.nm, .money, .dice-sum, .rank-title { font-family: var(--font-pixel); }
+/* VT323 có chiều cao chữ thường nhỏ: chữ nhỏ phóng theo x-height để đọc được dấu tiếng Việt. */
+.label, .kicker, .strip, .nm, .money { font-size-adjust: 0.52; }
+/* Ô bàn cờ quá nhỏ cho font pixel: tên và giá dùng font chữ thường. Số to ở ô góc bỏ đi (đã có icon). */
+.tile .t-name, .tile .t-bot { font-family: var(--font-text); }
+body[data-map] .corner .big { display: none; }
+.human, .note, .log, .meta, .t-note { font-family: var(--font-text); }
+
+.btn, .pick button, .seg button {
+  box-sizing: border-box; min-height: 44px;
+  border: calc(6 * var(--px)) solid transparent;
+  border-bottom-width: calc(8 * var(--px));
+  border-image: var(--ui-btn) 6 6 8 6 fill / 1 / 0 stretch;
+  background: var(--accent-2); color: var(--on-accent-2);
+  font-family: var(--font-pixel); box-shadow: var(--shadow);
+  image-rendering: pixelated; cursor: pointer; transition: none;
+}
+.btn.primary, .seg button.on { border-image-source: var(--ui-btn-primary); background: var(--accent); color: var(--on-accent); }
+.btn:active:not(:disabled), .pick button:active:not(:disabled), .seg button:active:not(:disabled) {
+  transform: translate(var(--px), var(--px)); border-image-source: var(--ui-btn-press); box-shadow: none;
+}
+.btn.primary:active:not(:disabled), .seg button.on:active:not(:disabled) { border-image-source: var(--ui-btn-primary-press); }
+.btn:hover:not(:disabled), .btn.primary:hover:not(:disabled) { filter: none; transform: none; }
+.btn:hover:active:not(:disabled), .btn.primary:hover:active:not(:disabled) { transform: translate(var(--px), var(--px)); }
+.btn:disabled, .pick button:disabled { opacity: .72; cursor: default; box-shadow: none; }
+.btn.ghost { border-image: none; border: var(--border); background: var(--surface); box-shadow: none; }
+.btn.dark { border-image: none; border: var(--border); background: var(--ink); color: var(--bg); }
+.btn.sm, .btn.xs { min-height: 40px; }
+.btn.lg { min-height: 56px; }
+
+.card, .event-card, .modal, .dock, .side, .seat, .stat, .join-grid,
+.side .turn, .side .players, .side .lands, .lobby .rules-box,
+.local-box, .center, .home-form {
+  border: calc(6 * var(--px)) solid transparent;
+  border-bottom-width: calc(8 * var(--px));
+  border-image: var(--ui-frame-card) 6 6 8 6 fill / 1 / 0 stretch;
+  background-color: var(--surface);
+  box-shadow: var(--shadow); image-rendering: pixelated;
+}
+.side, .side .turn, .side .players, .side .lands, .center, .lobby .rules-box {
+  border-image-source: var(--ui-frame-panel); background-color: var(--surface-2);
+}
+.side .players { overflow: hidden; }
+.pl { border-bottom: var(--px) solid var(--ink); }
+.pl.cur { outline: var(--px) solid var(--accent); outline-offset: calc(-1 * var(--px)); }
+.pl .money.neg { color: var(--bad); }
+.seat.empty { background: var(--surface-2); }
+.pick button[aria-checked="true"] { outline: var(--px) solid var(--accent); }
+.card .kicker { color: var(--accent); }
+.card .foot2, .card .act { border-color: var(--ink); }
+
+.board { gap: var(--px); padding: var(--px); border: var(--border); background: var(--ink); box-shadow: var(--shadow); }
+.tile {
+  position: relative; border: calc(4 * var(--px)) solid transparent;
+  border-image: var(--ui-frame-tile) 4 fill / 1 / 0 stretch;
+  background: var(--surface); color: var(--ink); image-rendering: pixelated;
+}
+.tile.sel { outline: var(--px) solid var(--accent); outline-offset: calc(-1 * var(--px)); }
+.tile.can-pick { outline: var(--px) solid var(--accent-2); }
+.tile.corner { background: var(--surface-2); }
+.tile .t-bot, .tile .t-num { color: var(--ink); }
+.tile:has(.sw.st)::before, .tile:has(.sw.ut)::before, .tile:has(.sw.tx)::before,
+.tile:has(.sw.cv)::before, .tile:has(.sw.cq)::before, .tile:has(.sw.ch)::before, .tile.corner::before {
+  content: ""; display: block; width: 32px; height: 32px; max-width: 100%;
+  flex: 0 0 auto; background-position: center; background-repeat: no-repeat;
+  background-size: contain; image-rendering: pixelated;
+}
+.tile:has(.sw.st)::before { background-image: var(--icon-station); }
+.tile:has(.sw.ut)::before { background-image: var(--icon-util-power); }
+.tile:has(.sw.tx)::before { background-image: var(--icon-tax); }
+.tile:has(.sw.cv)::before { background-image: var(--icon-card-v); }
+.tile:has(.sw.cq)::before { background-image: var(--icon-card-q); }
+.tile:has(.sw.ch)::before { background-image: var(--icon-card-h); }
+.tile[data-tile="0"]::before { background-image: var(--icon-start); }
+.tile[data-tile="10"]::before { background-image: var(--icon-jail); }
+.tile[data-tile="20"]::before { background-image: var(--icon-park); }
+.tile[data-tile="30"]::before { background-image: var(--icon-go-jail); }
+.sw { outline: var(--px) solid var(--ink); }
+.field input, .code-in, .copy-row input {
+  border: calc(5 * var(--px)) solid transparent;
+  border-image: var(--ui-input) 5 fill / 1 / 0 stretch;
+  background: var(--surface); color: var(--ink);
+}
+.home-art { background-color: var(--surface-2); background-image: var(--bg-tile); background-size: calc(32 * var(--px)); background-repeat: repeat; }
+.home-map { background-image: var(--home-map); }
+/* Giữa bàn: khung không `fill` để thấy bản đồ nhạt (bản giấy cổ) phía sau chữ. */
+.center { border-image: var(--ui-frame-panel) 6 6 8 6 / 1 / 0 stretch; background-image: var(--board-art), var(--bg-tile); background-size: auto 100%, calc(32 * var(--px)); background-position: center; background-repeat: no-repeat, repeat; }
+.topbar { border-color: var(--ink); background: var(--surface); }
+.rank .r.first { border-color: var(--ink); }
+@media (max-width: 600px) {
+  .board { gap: var(--px); padding: var(--px); }
+  .tile:has(.sw.st)::before, .tile:has(.sw.ut)::before, .tile:has(.sw.tx)::before,
+  .tile:has(.sw.cv)::before, .tile:has(.sw.cq)::before, .tile:has(.sw.ch)::before, .tile.corner::before { width: 16px; height: 16px; }
+  .btn, .pick button, .seg button { min-height: 40px; }
+}
