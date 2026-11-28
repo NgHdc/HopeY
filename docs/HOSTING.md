@@ -1,6 +1,6 @@
 # Rời GitHub Pages? Kế hoạch hoạt ảnh và nơi chạy game
 
-> **Bản nháp 1, 2026-11-28. Chỉ là kế hoạch, CHƯA làm.** Người dùng duyệt từng giai đoạn rồi mới thực hiện.
+> **Bản nháp 2, 2026-11-28.** Người dùng chốt: **làm Giai đoạn A trước** (đã làm phần lõi, xem mục 2). **Giai đoạn B (đổi host/server) để PENDING**, tiếp tục tìm hiểu (mục 3b).
 > Lý do: người dùng thấy game chạy hoạt ảnh yếu và muốn bỏ GitHub Pages.
 
 ---
@@ -36,7 +36,27 @@ Những thứ GitHub Pages **thật sự** yếu (không liên quan tới độ 
 
 ## 2. Giai đoạn A: lớp hoạt ảnh mới (BẮT BUỘC, ở host nào cũng phải làm)
 
-Làm trong **K1 (0.6.0)**, trước khi gắn sprite. Claude làm (sửa `main.js`, `view.js`, `style.css`).
+### Đã làm (2026-11-28, trên `dev`)
+- `src/ui/pieces.js`: lớp quân nằm ngoài `#root`, mỗi quân là một phần tử sống suốt ván.
+  - `walk()`: đi từng ô, mỗi bước nhảy nhẹ, bằng `transform`.
+  - `jump()`: bay vòng cung (máy bay, vào Tù).
+  - Tôn trọng `prefers-reduced-motion`.
+- `main.js`:
+  - `show()` chỉ vẽ lại trang **1 lần** khi bắt đầu đi (trước đây 1 lần cho **mỗi** ô);
+  - đặt lại quân sau mỗi `render()`, khi đổi cỡ cửa sổ và khi font tải xong.
+- `view.js`: `ctx.layer` thì ô không vẽ quân nữa.
+- `?fps` hiện số khung hình mỗi giây khi thử.
+- Đo bằng Edge headless, đi 11 ô:
+  - `#root` chỉ bị thay **2 lần** (code cũ: mỗi ô một lần, tức khoảng 12 lần);
+  - quân đứng đúng ô trên desktop 1440px và điện thoại 390px (CPU chậm ×4).
+- E2E thêm 3 kiểm tra (quân đúng ô, không vẽ lại mỗi bước): 27/27 xanh.
+
+### Còn lại, làm trong K1 khi có sprite
+- Thay `pieceSvg` bằng sprite của Codex (`spriteHtml`). Lớp quân giữ phần tử nên `steps()` không bị khởi động lại.
+- `walk` khi di chuyển và lật hướng ở góc; `happy`/`sad` theo sự kiện.
+- Vẽ lại có chọn lọc phần cột bên (mục 3 dưới) nếu đo thấy còn giật.
+
+### Thiết kế ban đầu
 
 1. **Tách lớp quân khỏi bàn cờ.**
    - Bàn cờ (40 ô) vẫn dựng bằng HTML như cũ.
@@ -83,6 +103,31 @@ Tra cứu ngày 2026-11-28 (nguồn ở cuối file). Số liệu gói miễn ph
 
 ---
 
+## 3b. Tìm hiểu thêm (Giai đoạn B đang PENDING)
+
+### Đã tìm thêm (2026-11-28)
+- **GitHub Pages:**
+  - đặt cứng `Cache-Control: max-age=600` cho mọi file, không cho đổi header;
+  - cách thường dùng là đặt Cloudflare phía trước hoặc chuyển host.
+- **Máy chủ PeerJS công cộng (`0.peerjs.com`):**
+  - dịch vụ miễn phí do cộng đồng góp tiền, không cam kết thời gian hoạt động;
+  - có báo cáo nối chậm tới 6 phút;
+  - chạy ở cổng 443, mạng chặn cổng này thì không vào được;
+  - PeerJS khuyên app thật nên tự chạy PeerServer.
+  - Đây là **rủi ro lớn nhất hiện tại** của chế độ online, lớn hơn chuyện host trang.
+- **PartyKit / PartyServer:**
+  - Cloudflare mua PartyKit (4/2024);
+  - PartyServer là lớp mỏng trên Durable Objects: phòng, WebSocket, phát tin cho cả phòng;
+  - giấy phép MIT, không thu thêm phí ngoài phí Workers.
+  - Có thể dùng để viết máy chủ phòng (B2) nhanh hơn.
+
+### Cần tìm hiểu tiếp trước khi quyết
+1. Hạn mức gói Free của Workers: CPU mỗi request, số request/ngày. Ước tính 1 ván 4 người, 45 phút, dùng bao nhiêu request (WebSocket tính 20 tin = 1 request).
+2. Độ trễ từ Việt Nam tới Cloudflare (có điểm ở Hà Nội, TP.HCM?) so với PeerJS P2P.
+3. Phương án ở giữa, không đổi host: tự chạy PeerServer (Docker) hoặc đổi sang PartyServer chỉ cho phần online, trang vẫn ở GitHub Pages.
+4. Tên miền: `*.workers.dev` có bị chặn ở mạng nào tại Việt Nam không.
+5. Đo thật: tốc độ tải trang lần đầu trên 4G (GitHub Pages so với Cloudflare) khi đã có sprite và font pixel (khoảng 300–500 KB ảnh).
+
 ## 4. Lộ trình thực hiện (chờ duyệt)
 
 | Bước | Việc | Bản | Ai | Rollback |
@@ -114,3 +159,6 @@ Tra cứu ngày 2026-11-28 (nguồn ở cuối file). Số liệu gói miễn ph
 - Chuyển từ Pages sang Workers: https://developers.cloudflare.com/workers/static-assets/migrate-from-pages/
 - Vercel Hobby chỉ phi thương mại: https://vercel.com/docs/plans/hobby
 - So sánh gói miễn phí (2026-09): https://flaviocopes.com/hosting-free-tiers/
+- Cloudflare mua PartyKit: https://blog.cloudflare.com/cloudflare-acquires-partykit , PartyServer: https://github.com/cloudflare/partykit
+- PeerJS cloud server và FAQ: https://peerjs.com/server/cloud , https://peerjs.com/client/faq
+- GitHub Pages không cho đặt header: https://github.com/orgs/community/discussions/54257

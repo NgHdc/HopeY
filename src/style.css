@@ -277,3 +277,10 @@ a:hover { color: var(--accent); }
   .end-hero .h1 { font-size: 48px; }
   .stat b { font-size: 32px; }
 }
+
+/* Lớp quân cờ (src/ui/pieces.js): nằm ngoài #root, trượt bằng transform */
+.pieces-layer { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 4; pointer-events: none; }
+.pieces-layer .pc { position: absolute; left: 0; top: 0; will-change: transform; line-height: 0; }
+.pieces-layer .pc.moving { z-index: 1; }
+.pieces-layer .pc svg { display: block; }
+.fps { position: fixed; right: 8px; bottom: 8px; z-index: 30; background: var(--ink); color: var(--paper); font: 12px var(--font-mono); padding: 4px 8px; pointer-events: none; }

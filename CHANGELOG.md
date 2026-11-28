@@ -5,6 +5,9 @@ Quy trình phát hành và rollback: [`docs/RELEASE.md`](docs/RELEASE.md).
 
 ## [Chưa phát hành]
 
+### Đổi
+- **Quân cờ trượt mượt** giữa các ô (nhảy nhẹ mỗi bước, bay vòng cung khi dùng máy bay hoặc vào Tù), thay cho kiểu nhảy cóc. Trang không còn bị vẽ lại ở mỗi ô quân đi qua. Thêm `?fps` để đo độ mượt.
+
 ## [0.5.0] — 2026-11-28 · Dải đất
 
 Thiết kế ở [`docs/MAP_VIETNAM.md`](docs/MAP_VIETNAM.md).

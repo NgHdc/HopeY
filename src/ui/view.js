@@ -179,7 +179,8 @@ export function lobbyHtml({ room, url, seats, me, isHost, canStart, status, stat
 function tileHtml(S, ctx, t, i, sel, picks) {
   const [r, c] = cell(i);
   const pos = k => (ctx.pos && ctx.pos[k] != null ? ctx.pos[k] : S.players[k].pos);
-  const here = S.players.map((p, k) => (!p.out && pos(k) === i ? pieceSvg(p.piece, 15) : '')).join('');
+  // ctx.layer: quân vẽ ở lớp riêng (src/ui/pieces.js), ô chỉ còn chỗ trống
+  const here = ctx.layer ? '' : S.players.map((p, k) => (!p.out && pos(k) === i ? pieceSvg(p.piece, 15) : '')).join('');
   const o = S.owner[i], h = S.houses[i] || 0;
   const cls = ['tile', t.type === 'corner' ? 'corner' : '', i === sel ? 'sel' : '', S.mort[i] ? 'mort' : '', picks && picks.has(i) ? 'can-pick' : ''].join(' ');
   const label = `${t.name}${o != null ? ', của ' + S.players[o].name : ''}`;
