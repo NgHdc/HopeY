@@ -49,3 +49,9 @@
 - Thêm lab `design/lab/fonts.html`, so sánh Pixelify Sans, Tiny5, Jersey 10, Silkscreen, VT323, Press Start 2P và Inter ở 12/16/24px bằng câu thử tiếng Việt.
 - Chọn Tiny5 cho tiêu đề/tiền/nhãn ngắn, Inter cho nội dung dài; thêm `--px`, font, bóng pixel và góc vuông vào cả hai theme. Metadata Google Fonts xác nhận Tiny5/VT323 có subset Việt.
 - Kiểm chứng: 29/29 test game, 6/6 test renderer, `node --check` cho script lab, HTTP 200 và `git diff --check`; chụp trực quan chưa làm được do CUA/native pipe lỗi. Tiếp theo: U3p.
+
+## 2026-11-28 · U3p
+- Viết lại `design/themes/components.css` theo UI kit A5: border-image 9 ô cho nút, thẻ, cột bên và ô bàn cờ; icon đặc biệt lấy từ `assets/ui/icons/`.
+- Hai theme khai báo URL ảnh qua biến; nút lún theo `--px`, dùng Tiny5 và màu chữ theo nền, không có bo góc/blur/gradient. Sửa mẫu font trong `design/lab/fonts.html` để dấu nháy không cắt thuộc tính style.
+- Lab theme nạp Tiny5/VT323, giữ khung điện thoại có chiều rộng nội dung 390px. Nền pixel A4p chưa có nên `--bg-tile` đang dùng hoa văn hiện tại.
+- Kiểm chứng: 29/29 test game, 6/6 test renderer; chưa chụp 8 tổ hợp màn hình do CUA/native pipe lỗi. Tiếp theo: U2p.

@@ -62,13 +62,13 @@
   <script type="module">
     const phrase = 'Hồ Hoàn Kiếm – Tháp Rùa · Đà Nẵng · Thừa Thiên Huế · ỹ ữ ặ ỡ ợ · 1 500 ₫g';
     const fonts = [
-      { name: 'Tiny5', family: '"Tiny5", monospace', vi: true, info: '5-pixel display · có subset Vietnamese (Google Fonts)' },
-      { name: 'VT323', family: '"VT323", monospace', vi: true, info: 'Terminal pixel · có subset Vietnamese (Google Fonts)' },
-      { name: 'Pixelify Sans', family: '"Pixelify Sans", monospace', vi: false, info: 'Display pixel · metadata chỉ liệt kê latin/latin-ext' },
-      { name: 'Jersey 10', family: '"Jersey 10", monospace', vi: false, info: 'Display thể thao · metadata chỉ liệt kê latin/latin-ext' },
-      { name: 'Silkscreen', family: '"Silkscreen", monospace', vi: false, info: 'Pixel vuông · metadata chỉ liệt kê latin/latin-ext' },
-      { name: 'Press Start 2P', family: '"Press Start 2P", monospace', vi: false, info: 'Pixel arcade · metadata chỉ liệt kê latin/latin-ext' },
-      { name: 'Inter (đối chiếu)', family: '"Inter", sans-serif', vi: true, info: 'Font văn bản · đối chiếu dấu và độ đọc' },
+      { name: 'Tiny5', family: "'Tiny5', monospace", vi: true, info: '5-pixel display · có subset Vietnamese (Google Fonts)' },
+      { name: 'VT323', family: "'VT323', monospace", vi: true, info: 'Terminal pixel · có subset Vietnamese (Google Fonts)' },
+      { name: 'Pixelify Sans', family: "'Pixelify Sans', monospace", vi: false, info: 'Display pixel · metadata chỉ liệt kê latin/latin-ext' },
+      { name: 'Jersey 10', family: "'Jersey 10', monospace", vi: false, info: 'Display thể thao · metadata chỉ liệt kê latin/latin-ext' },
+      { name: 'Silkscreen', family: "'Silkscreen', monospace", vi: false, info: 'Pixel vuông · metadata chỉ liệt kê latin/latin-ext' },
+      { name: 'Press Start 2P', family: "'Press Start 2P', monospace", vi: false, info: 'Pixel arcade · metadata chỉ liệt kê latin/latin-ext' },
+      { name: 'Inter (đối chiếu)', family: "'Inter', sans-serif", vi: true, info: 'Font văn bản · đối chiếu dấu và độ đọc' },
     ];
     const grid = document.getElementById('fontGrid');
     grid.innerHTML = fonts.map(font => `<article class="font-card" style="--font-sample:${font.family}">
