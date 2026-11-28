@@ -4,6 +4,15 @@
 - Đã tạo nội dung chữ cho map Việt Nam (40 ô, 13 loại thẻ Vận mệnh, gợi ý Thanh Hóa) và chạy `node --test tests/*.test.mjs` (17/17 xanh).
 - File: `content/vietnam.json`.
 
+## 2026-11-28 · A5 (UI kit pixel — chờ duyệt)
+- Đã vẽ trọn bộ UI kit pixel ở độ phân giải gốc (không khử răng cưa, nền trong suốt, mọi file ≤ 275 byte < 20 KB) theo đúng bảng màu A1 (`design/themes/palettes.md`):
+  - 16 khung 9 ô (`border-image`): 8 khung Dải đất mặc định (`frame-panel`, `frame-card`, `frame-tile`, `btn`, `btn-press`, `btn-primary`, `btn-primary-press`, `input`) và 8 bản `-classic.png` cho Phố Giấy.
+  - 23 icon 16×16 trong `assets/ui/icons/` (đủ ga, điện, nước, thuế, 3 loại thẻ, 4 ô góc, nhà, khách sạn, xu, xúc xắc 1–6, vé, máy bay, cảnh báo).
+  - Tài liệu `assets/ui/README.md` (đầy đủ `border-image-slice` & mẫu CSS), `assets/ui/SOURCES.md` và ảnh kiểm tra phóng ×4 `assets/ui/check/ui-kit.png`.
+- Việc tiếp theo: làm **A2p** (6 sprite pixel 32×32 có hoạt ảnh `idle`/`walk`/`happy`/`sad` + chân dung 48×48 cho Dải đất). Đang vướng: không.
+
+![Tổng hợp UI kit pixel A5](../../assets/ui/check/ui-kit.png)
+
 ## 2026-11-28 · A4 (Minh họa giữa bàn 2 vùng đất — chờ duyệt)
 - Đã vẽ `assets/themes/vietnam-board.svg` (4,9 KB — dải đất chữ S cách điệu, đường nối và điểm đánh dấu 8 thành phố theo bảng màu A1, mây sóng & la bàn) và `assets/themes/classic-board.svg` (3,8 KB — sông giấy, đồi nắng gấp giấy và 8 biểu tượng khu phố), đều xa dưới ngưỡng 80 KB.
 - Đã kiểm tra trực quan khi đặt chữ tiêu đề, mô tả và nút giữa bàn đè lên trên: độ mờ được hạ dịu (`0,22–0,45`) để mọi chữ đọc sắc nét, cập nhật `--board-art` trong `design/themes/palettes.md`.
