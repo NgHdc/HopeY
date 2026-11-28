@@ -37,3 +37,9 @@
 - Màu sắc, bo góc, bóng và font lấy từ biến theme; nút có bóng cứng và trạng thái nhấn lún. Lab nạp CSS thành phần sau hai theme.
 - Kiểm tra mã CSS và link lab; chưa kiểm tra trực quan 390px do CUA/native pipe không kết nối được.
 - Tiếp theo: U2 avatar renderer và bộ chọn trong lab. Vướng: cần cập nhật trạng thái BOARD ngoài worktree.
+
+## 2026-11-28 · U2
+- Đã thêm `src/render/avatar.js`: tải manifest sáu nhân vật mỗi map, dựng portrait/token đồng bộ và giữ quân hình học khi JSON/ảnh không có; chỉ số ghế ngoài 0–5 được chuẩn hóa an toàn.
+- Đã thêm `tests/render/avatar.test.mjs` cho manifest hợp lệ, JSON thiếu/sai và chỉ số ngoài miền; lab có bộ chọn sáu avatar, portrait ở ghế/cột người chơi và token trên bàn, lựa chọn đồng bộ sang khung 390px.
+- Kiểm chứng: `node --test tests/*.test.mjs` (29/29), `node --test tests/render/*.test.mjs` (6/6), HTTP 200 cho lab và hai manifest avatar.
+- Tiếp theo: cập nhật BOARD và nhắn Claude mở cổng duyệt 2. Vướng: chưa chụp được màn hình desktop/390px vì CUA/native pipe không khả dụng.
