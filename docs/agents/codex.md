@@ -25,3 +25,9 @@
 - Lab đọc manifest G1 của Agy qua URL `manifest`; sau khi merge sẽ tự đọc `assets/stacks/manifest.json`. Mặc định mở Tháp Rùa kiểu A · Pixel theo lựa chọn của người dùng.
 - Kiểm chứng HTTP 200 cho lab, renderer, manifest và PNG G1; đã xem ảnh chụp Agy: [desktop](../../assets/stacks/check/g1-lab-desktop.png), [mobile 390px](../../assets/stacks/check/g1-lab-mobile.png), [so sánh sau sửa mái](../../assets/stacks/check/g1-lab-compare.png).
 - Tiếp theo: Claude merge và mở lab. Vướng: ảnh desktop/mobile trên được chụp trước bản sửa căn giữa C3; công cụ trình duyệt Codex không khả dụng để chụp lại.
+
+## 2026-11-28 · U1
+- Đã thêm `design/themes/vietnam.css`, `classic.css` và `README.md`; palette/họa tiết lấy từ A1, có bí danh biến để tương thích `view.js` hiện hành.
+- Đã tạo `design/lab/theme.html`, dùng trực tiếp `homeHtml`, `lobbyHtml`, `gameHtml`, `endHtml` và `createGame`; có nút đổi hai map, bốn màn hình và iframe 390×844.
+- Kiểm chứng HTTP 200 cho trang, view, rules và hai SVG hoa văn; gọi thử renderer Node cho đủ 8 kết hợp map/màn hình thành công.
+- Vướng: không chụp được desktop/mobile vì CUA báo `native pipe unavailable`; trang sẵn sàng xem tại `/design/lab/theme.html`.

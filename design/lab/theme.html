@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Phố Giấy · Lab theme</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif:ital,wght@1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tokens.css">
+  <link rel="stylesheet" href="../../src/style.css">
+  <link rel="stylesheet" href="../themes/vietnam.css">
+  <link rel="stylesheet" href="../themes/classic.css">
+  <style>
+    body { min-width: 320px; background-color: var(--bg); background-image: var(--bg-pattern); }
+    .lab-shell { max-width: 1600px; margin: 0 auto; padding: 24px clamp(16px, 3vw, 48px) 56px; }
+    .lab-head { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; margin-bottom: 22px; }
+    .lab-kicker { color: var(--ink-2); font: 12px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; }
+    .lab-title { color: var(--ink); font: 700 clamp(32px, 4vw, 54px)/1 var(--font-display); margin: 4px 0 0; }
+    .lab-description { max-width: 440px; margin: 0; color: var(--ink-2); }
+    .lab-toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; border-block: var(--border); padding: 14px 0; margin-bottom: 20px; }
+    .lab-toolbar .lab-label { color: var(--ink-2); font: 12px var(--font-mono); margin-right: 3px; }
+    .lab-toolbar button { min-height: 42px; padding: 7px 14px; border: var(--border); border-radius: var(--radius-lg); background: var(--surface); color: var(--ink); font-weight: 700; cursor: pointer; }
+    .lab-toolbar button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); box-shadow: var(--shadow); }
+    .lab-toolbar select { min-height: 42px; border: var(--border); border-radius: var(--radius-md); padding: 6px 10px; background: var(--surface); color: var(--ink); }
+    .lab-toolbar .spacer { flex: 1; }
+    .lab-layout { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 24px; align-items: start; }
+    .desktop-panel, .phone-panel { min-width: 0; }
+    .panel-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 0 10px; color: var(--ink); font: 700 20px var(--font-display); }
+    .panel-heading small { color: var(--ink-2); font: 11px var(--font-mono); }
+    .desktop-stage { min-height: 720px; overflow: hidden; border: var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow); background-color: var(--bg); background-image: var(--bg-pattern); }
+    .desktop-stage > #screenRoot { min-height: 720px; }
+    .phone-frame { width: min(390px, 100%); height: 844px; padding: 10px; overflow: hidden; border: 3px solid var(--ink); border-radius: 34px; background: var(--ink); box-shadow: var(--shadow); margin-inline: auto; }
+    .phone-frame iframe { width: 100%; height: 100%; display: block; border: 0; border-radius: 24px; background: var(--bg); }
+    .map-note { margin-top: 14px; padding: 12px 14px; border: var(--border); border-radius: var(--radius-md); background: var(--surface); color: var(--ink-2); font-size: 13px; }
+    .map-note b { color: var(--ink); }
+    [data-map] { color: var(--ink); }
+    [data-map] .primary { color: var(--on-accent); }
+    [data-map] .dice-sum, [data-map] .card .mark { color: var(--on-accent-2); }
+    [data-map] .sw.d6 { color: var(--on-d6); }
+    body.phone-view { min-height: 100%; }
+    body.phone-view #screenRoot { min-height: 100vh; }
+    body.phone-view .home-art { background-color: var(--surface-2); }
+    @media (max-width: 1040px) {
+      .lab-layout { grid-template-columns: minmax(0, 1fr); }
+      .phone-panel { display: none; }
+    }
+    @media (max-width: 760px) {
+      .lab-shell { padding: 16px 12px 32px; }
+      .lab-description { font-size: 13px; }
+      .lab-toolbar { gap: 7px; }
+      .lab-toolbar button { min-height: 40px; padding-inline: 11px; }
+      .desktop-stage, .desktop-stage > #screenRoot { min-height: 640px; }
+    }
+  </style>
+</head>
+<body data-map="vietnam">
+  <div id="labShell" class="lab-shell">
+    <header class="lab-head">
+      <div><div class="lab-kicker">Design lab / Rực rỡ / U1</div><h1 class="lab-title">Hai vùng đất, một bàn cờ</h1></div>
+      <p class="lab-description">Các màn hình bên dưới dùng trực tiếp hàm dựng HTML và trạng thái game hiện tại. Chuyển map để so bảng màu, hoa văn và cách chúng phủ lên giao diện.</p>
+    </header>
+    <nav class="lab-toolbar" aria-label="Tùy chọn xem thử">
+      <span class="lab-label">VÙNG ĐẤT</span>
+      <button type="button" data-map-choice="vietnam" aria-pressed="true">Dải đất</button>
+      <button type="button" data-map-choice="classic" aria-pressed="false">Phố Giấy</button>
+      <span class="spacer"></span>
+      <span class="lab-label">MÀN HÌNH</span>
+      <select id="screenChoice" aria-label="Chọn màn hình">
+        <option value="home">Trang đầu</option><option value="lobby">Sảnh chờ</option>
+        <option value="game">Bàn cờ đang chơi</option><option value="end">Kết thúc ván</option>
+      </select>
+    </nav>
+    <main class="lab-layout">
+      <section class="desktop-panel" aria-label="Xem trên màn hình lớn">
+        <h2 class="panel-heading">Màn hình thật <small id="desktopCaption">1280 px · trang đầu</small></h2>
+        <div class="desktop-stage"><div id="screenRoot"></div></div>
+        <p class="map-note" id="mapNote"></p>
+      </section>
+      <section class="phone-panel" aria-label="Xem trên điện thoại">
+        <h2 class="panel-heading">Khung điện thoại <small>390 × 844 px</small></h2>
+        <div class="phone-frame"><iframe id="phonePreview" title="Màn hình ở độ rộng điện thoại 390 pixel"></iframe></div>
+      </section>
+    </main>
+  </div>
+  <div id="screenRootPhone" hidden></div>
+  <script type="module">
+    import * as View from '../../src/ui/view.js';
+    import { createGame } from '../../src/core/rules.js';
+    import { MAPS } from '../../src/core/maps/index.js';
+
+    const params = new URLSearchParams(location.search);
+    const embedded = params.get('frame') === 'phone';
+    let mapId = MAPS[params.get('map')] ? params.get('map') : 'vietnam';
+    let screen = ['home', 'lobby', 'game', 'end'].includes(params.get('screen')) ? params.get('screen') : 'home';
+    const root = document.getElementById('screenRoot');
+    const labels = { vietnam: 'Dải đất', classic: 'Phố Giấy' };
+    const screenLabels = { home: 'trang đầu', lobby: 'sảnh chờ', game: 'bàn cờ', end: 'kết thúc' };
+    const sampleNames = ['Cô Hai', 'Bác Tư', 'Bé Na'];
+
+    function gameState(id) {
+      const state = createGame(sampleNames, { map: id, seed: 20261128 });
+      state.view = { kind: 'tile', i: 14 };
+      state.players[0].pos = 14;
+      state.players[1].pos = 23;
+      state.players[2].pos = 6;
+      state.owner[14] = 0;
+      state.houses[14] = 2;
+      state.owner[23] = 1;
+      state.money = undefined;
+      return state;
+    }
+
+    function renderCurrent() {
+      document.body.dataset.map = mapId;
+      const game = gameState(mapId);
+      const ctx = { mode: 'local', room: 'LAB01', me: 0, mine: true, busy: false,
+        tab: 'land', version: '0.6.0', dev: false, bet: 50, pos: null,
+        banner: '', viewOverride: null };
+      let html;
+      if (screen === 'home') {
+        html = View.homeHtml({ name: 'Cô Hai', code: '', online: true, hasLocalSave: false,
+          devDefault: false, version: '0.6.0', mapId });
+      } else if (screen === 'lobby') {
+        const seats = sampleNames.map((name, piece) => ({ name, piece, online: true }));
+        html = View.lobbyHtml({ room: 'LAB01', url: 'http://127.0.0.1:5173/lab01', seats,
+          me: 0, isHost: true, canStart: true, status: 'đã kết nối', statusOk: true, mapId });
+      } else if (screen === 'game') {
+        html = View.gameHtml(game, ctx);
+      } else {
+        game.winner = 0;
+        game.round = 8;
+        game.stats.rent[0] = 420;
+        game.stats.rent[1] = 230;
+        game.stats.lands[14] = 4;
+        game.stats.jails[2] = 1;
+        game.stats.worth = [[1500,1500,1500],[1820,1470,1310],[2240,1590,990]];
+        game.stats.outRound[1] = 7;
+        game.stats.outRound[2] = 6;
+        html = View.endHtml(game, ctx);
+      }
+      root.innerHTML = html;
+      if (!embedded) {
+        document.getElementById('desktopCaption').textContent = `1280 px · ${screenLabels[screen]}`;
+        document.getElementById('mapNote').innerHTML = `<b>${labels[mapId]}</b> · ${mapId === 'vietnam' ? 'nền vàng kem, sóng nước và mây; màu quận theo bảng A1.' : 'nền xanh trời, giấy gấp và chấm lưới; màu quận theo bảng A1.'}`;
+        const phone = document.getElementById('phonePreview');
+        phone.src = `${location.pathname}?frame=phone&map=${mapId}&screen=${screen}`;
+      }
+    }
+
+    if (embedded) {
+      document.body.classList.add('phone-view');
+      document.getElementById('labShell').remove();
+      renderCurrent();
+    } else {
+      renderCurrent();
+      document.querySelectorAll('[data-map-choice]').forEach(button => button.addEventListener('click', () => {
+        mapId = button.dataset.mapChoice;
+        document.querySelectorAll('[data-map-choice]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        renderCurrent();
+      }));
+      document.getElementById('screenChoice').addEventListener('change', event => {
+        screen = event.target.value;
+        renderCurrent();
+      });
+    }
+  </script>
+</body>
+</html>
