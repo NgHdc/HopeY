@@ -4,6 +4,11 @@
 - Đã tạo nội dung chữ cho map Việt Nam (40 ô, 13 loại thẻ Vận mệnh, gợi ý Thanh Hóa) và chạy `node --test tests/*.test.mjs` (17/17 xanh).
 - File: `content/vietnam.json`.
 
+## 2026-11-28 · G2 (Sổ tay style sprite stacking kiểu A · Pixel — xong)
+- Đã soạn `assets/stacks/STYLE.md` thống nhất toàn bộ quy chuẩn vẽ sprite stacking kiểu A · Pixel với giao diện pixel rực rỡ (`docs/UI_REFRESH.md` mục 0) và bảng màu A1 (`design/themes/palettes.md`): lưới/số lát (`spacing: 1.0`, `squash: 0.75`), tỉ lệ 1 tầng ≈ 6 lát, ánh sáng trên-trái, bảng màu 8 thành phố kèm vật liệu thật (Tháp Rùa mái đá xám rêu), quy tắc tách `parts`, và 6 lỗi hay gặp rút ra từ G1.
+- File: `assets/stacks/STYLE.md`.
+- Việc tiếp theo: tạm dừng **G3** (22 địa danh còn lại) chờ **Cổng duyệt 2** theo đúng kế hoạch trong `agents-hub/tasks/agy.md`. Đang vướng: không.
+
 ## 2026-11-28 · A4p (Nền lặp pixel 32×32 + bỏ SVG cũ — chờ duyệt)
 - Đã vẽ 2 nền lặp pixel 32×32 nối liền không thấy đường ghép: `assets/themes/vietnam-tile.png` (279 B — sóng nước & mây) và `assets/themes/classic-tile.png` (209 B — lưới chấm & góc giấy gấp), kèm ảnh kiểm tra lát 4×4 phóng ×3 `assets/themes/check/tiles-preview.png`.
 - Đã xóa 4 file SVG cũ (`vietnam-pattern.svg`, `classic-pattern.svg`, `vietnam-board.svg`, `classic-board.svg`) và cập nhật `--bg-pattern`, `--board-art` trong `design/themes/palettes.md` trỏ sang các file PNG pixel mới.
