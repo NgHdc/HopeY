@@ -14,13 +14,13 @@ Mọi ảnh trong thư mục này do dự án tự vẽ hoặc dựng từ dữ 
   - `check/vietnam-map-draft-a.png` (A: biển xanh đậm kiểu bản đồ game RPG).
   - `check/vietnam-map-draft-b.png` (B: bản đồ giấy cổ vàng kem nắng).
 - **Tọa độ pixel gốc:** `vietnam-map.json` (không vẽ chữ lên ảnh).
-- **Bản hoàn chỉnh A6 (gốc 160×240, mỗi PNG < 8 KB < 40 KB):**
-  - `vietnam-map.png` (bản A: biển xanh RPG rực rỡ, mặc định).
-  - `vietnam-map-vintage.png` (bản B: bản đồ giấy cổ vàng kem nắng — giữ cả 2 làm tùy chọn theo yêu cầu người dùng, ghi trong `vietnam-map.json`).
-  - `vietnam-board.png` (bản nhạt cho giữa bàn, kiểm chứng AA ≥ 4,65:1 mọi pixel với `--ink-2` và ≥ 8,96:1 với `--ink`).
-  - `classic-map.png` (Phố Giấy nhìn chéo từ trên xuống, dòng sông uốn lượn, 2 cầu, 8 khu đúng màu A1, hải đăng, thuyền, người que nhỏ) + `classic-map.json`.
-  - `classic-board.png` (bản nhạt cho giữa bàn Phố Giấy, kiểm chứng AA ≥ 4,70:1 mọi pixel).
-  - Ảnh kiểm tra: `check/classic-map-preview.png` (×3), `check/boards-preview.png`.
+- **Bản hoàn chỉnh A6 (gốc 160×240, mỗi PNG < 8 KB < 40 KB, mỗi map đủ 2 bản rực rỡ + giấy cổ):**
+  - `vietnam-map.png` (bản A: biển xanh RPG rực rỡ, cho trang đầu).
+  - `vietnam-map-paper.png` (bản B: giấy cổ vàng kem nắng, khai báo trong `vietnam-map.json` mục `variants`).
+  - `vietnam-board.png` (bản nhạt cho giữa bàn từ `vietnam-map-paper.png`, kiểm chứng AA ≥ 4,65:1 mọi pixel với `--ink-2` và ≥ 8,96:1 với `--ink`).
+  - `classic-map.png` (Phố Giấy rực rỡ nhìn chéo từ trên xuống, dòng sông uốn lượn, 2 cầu, 8 khu đúng màu A1, hải đăng, thuyền, người que nhỏ) + `classic-map-paper.png` (bản giấy cổ Phố Giấy) + `classic-map.json`.
+  - `classic-board.png` (bản nhạt cho giữa bàn Phố Giấy từ `classic-map-paper.png`, kiểm chứng AA ≥ 4,68:1 mọi pixel với `--ink-2` và ≥ 9,40:1 với `--ink`).
+  - Ảnh kiểm tra: `check/classic-map-preview.png` (×3), `check/classic-map-paper-preview.png` (×3), `check/boards-preview.png`.
 
 ## A4p · Nền lặp kiểu pixel 32×32 (2026-11-28)
 - `vietnam-tile.png` (279 B): ô lặp 32×32 nối liền không đường ghép, sóng nước chu kỳ 16px, mây nhỏ & chấm hoa mai trên nền trong suốt.
