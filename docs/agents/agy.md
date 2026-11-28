@@ -1,5 +1,24 @@
 # Nhật ký agent Agy
 
+## 2026-11-28 · G3a (6 địa danh đợt 1 kiểu A · Pixel — chờ duyệt, dừng chờ Cổng duyệt 3)
+- Đã dựng đủ 6 địa danh đợt 1 theo đúng `assets/stacks/STYLE.md` (kiểu A · Pixel, `spacing=1.0`, `squash=0.75`), chạy `python -I tools/art/build_stacks.py --only <id> --bake16`, kiểm tra trực quan cả 6 check sheet 4 góc + tách lớp và sửa triệt để gầm cầu & vòm rỗng của Cầu Hàm Rồng và Cầu Cần Thơ:
+  - Ô 1 · `hy-lang-nom` (Làng Nôm, 21 lát `32×44`, 3 parts)
+  - Ô 3 · `hy-pho-hien-chua-chuong` (Phố Hiến – Chùa Chuông, 26 lát `36×32`, 2 parts)
+  - Ô 6 · `th-cau-ham-rong` (Cầu Hàm Rồng, 23 lát `18×52`, 5 parts, vòm & gầm rỗng)
+  - Ô 8 · `th-sam-son-hon-trong-mai` (Sầm Sơn – Hòn Trống Mái, 26 lát `36×38`, 3 parts)
+  - Ô 9 · `th-thanh-nha-ho` (Thành Nhà Hồ, 25 lát `44×28`, 2 parts, 3 vòm cổng rỗng xuyên suốt)
+  - Ô 11 · `ct-cau-can-tho` (Cầu Cần Thơ, 31 lát `18×56`, 5 parts, tháp chữ A + dây văng + gầm rỗng có ghe gỗ)
+- Đã thêm trường `"tile"` vào `assets/stacks/manifest.json` (ô 1, 3, 6, 8, 9, 11 và 3 địa danh pixel G1: 27, 32, 39), ghi nguồn vào `assets/stacks/SOURCES.md`; mọi dải lát cắt và `.16.png` đều < 23 KB (< 60 KB), mọi ảnh gốc < 5 KB (< 400 KB).
+- Việc tiếp theo: dừng tại đây chờ **Cổng duyệt 3** (D3). Đang vướng: không.
+
+| Làng Nôm (ô 1) | Phố Hiến – Chùa Chuông (ô 3) |
+|---|---|
+| ![Làng Nôm](../../assets/stacks/check/hy-lang-nom.png) | ![Chùa Chuông](../../assets/stacks/check/hy-pho-hien-chua-chuong.png) |
+| Cầu Hàm Rồng (ô 6) | Sầm Sơn – Hòn Trống Mái (ô 8) |
+| ![Cầu Hàm Rồng](../../assets/stacks/check/th-cau-ham-rong.png) | ![Hòn Trống Mái](../../assets/stacks/check/th-sam-son-hon-trong-mai.png) |
+| Thành Nhà Hồ (ô 9) | Cầu Cần Thơ (ô 11) |
+| ![Thành Nhà Hồ](../../assets/stacks/check/th-thanh-nha-ho.png) | ![Cầu Cần Thơ](../../assets/stacks/check/ct-cau-can-tho.png) |
+
 ## 2026-11-28 · G7 (Nội dung chữ chế độ Xóm lạ — chờ duyệt)
 - Đã viết `content/xomla.json` cùng giọng văn nhẹ nhàng, giàu hình ảnh như `content/vietnam.json` (G6):
   - `festivals` (3 trò: `auction` Đấu giá kín, `baucua` Bầu cua, `market` Đoán giá chợ): mỗi trò có câu mở đầu (`intro`) và 3 câu kết quả (`win`/`lose`/`draw`).

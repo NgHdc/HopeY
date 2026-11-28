@@ -1,0 +1,41 @@
+{
+  "style": "pixel",
+  "side_nose": "left",
+  "top_nose": "down",
+  "order": "reading",
+  "colours": 24,
+  "shade": 0.16,
+  "bg_tol": 20,
+  "dark_thresh": 0,
+  "spacing": 1.0,
+  "squash": 0.75,
+  "parts": [
+    {
+      "file": "th-sam-son-hon-trong-mai-base.png",
+      "slices": 11,
+      "offset": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "th-sam-son-hon-trong-mai-trong.png",
+      "slices": 16,
+      "offset": [
+        -5,
+        -1,
+        10
+      ]
+    },
+    {
+      "file": "th-sam-son-hon-trong-mai-mai.png",
+      "slices": 12,
+      "offset": [
+        7,
+        2,
+        10
+      ]
+    }
+  ]
+}

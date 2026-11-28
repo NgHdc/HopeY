@@ -1,0 +1,59 @@
+{
+  "style": "pixel",
+  "side_nose": "left",
+  "top_nose": "down",
+  "order": "reading",
+  "colours": 24,
+  "shade": 0.14,
+  "bg_tol": 12,
+  "dark_thresh": 0,
+  "spacing": 1.0,
+  "squash": 0.75,
+  "parts": [
+    {
+      "file": "ct-cau-can-tho-river.png",
+      "slices": 9,
+      "offset": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "ct-cau-can-tho-deck1.png",
+      "slices": 5,
+      "offset": [
+        0,
+        -14,
+        7
+      ]
+    },
+    {
+      "file": "ct-cau-can-tho-deck2.png",
+      "slices": 5,
+      "offset": [
+        0,
+        14,
+        7
+      ]
+    },
+    {
+      "file": "ct-cau-can-tho-pylon1.png",
+      "slices": 20,
+      "offset": [
+        0,
+        -10,
+        11
+      ]
+    },
+    {
+      "file": "ct-cau-can-tho-pylon2.png",
+      "slices": 20,
+      "offset": [
+        0,
+        10,
+        11
+      ]
+    }
+  ]
+}
