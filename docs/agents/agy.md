@@ -1,5 +1,13 @@
 # Nhật ký agent Agy
 
+## 2026-11-28 · G7 (Nội dung chữ chế độ Xóm lạ — chờ duyệt)
+- Đã viết `content/xomla.json` cùng giọng văn nhẹ nhàng, giàu hình ảnh như `content/vietnam.json` (G6):
+  - `festivals` (3 trò: `auction` Đấu giá kín, `baucua` Bầu cua, `market` Đoán giá chợ): mỗi trò có câu mở đầu (`intro`) và 3 câu kết quả (`win`/`lose`/`draw`).
+  - `reveals`: 12 câu mở ô ngẫu nhiên khi sương tan.
+  - `titles`: 4 danh hiệu cuối ván (`landlord` Địa chủ, `detective` Thám tử, `gambler` Liều ăn nhiều, `trapper` Kẻ gài bẫy).
+  - `customs`: 8 mẫu lệ trong `docs/XOM_LA.md` mục C2 kèm câu gợi ý không lộ điều kiện.
+- Việc tiếp theo: làm **G3a** (6 địa danh đợt 1 theo `assets/stacks/STYLE.md`), rồi dừng chờ Cổng duyệt 3. Đang vướng: không.
+
 ## 2026-11-28 · A7 (10 biểu cảm pixel 16×16 + khung bong bóng 9 ô — chờ duyệt)
 - Đã vẽ 10 biểu cảm pixel 16×16 trong `assets/ui/emotes/` (`wave`, `smile`, `laugh`, `sad`, `angry`, `heart`, `wow`, `expensive`, `thanks`, `sleep`, mỗi file 267–349 B) và danh sách `assets/ui/emotes/emotes.json` (`id`, `name`, `file`).
 - Đã vẽ khung bong bóng chat 9 ô có đuôi chỉ xuống cho 2 vùng đất: `assets/ui/bubble.png` & `bubble-classic.png` (24×28), kèm đuôi rời `bubble-tail.png` & `bubble-tail-classic.png` (9×6) để dùng khi bong bóng chữ rộng không bị kéo dẹt đuôi.
