@@ -1,6 +1,6 @@
 # Chế độ "Xóm lạ": bàn cờ ẩn, hội làng, lệ làng (bản nháp thiết kế)
 
-> **Bản nháp 3, 2026-11-28. Chưa code.** Đã áp các sửa đổi từ phân tích lý thuyết trò chơi (Phần I). Người dùng đã chốt: **thắng bằng uy tín sau 12 vòng**; chủ đề có thể đổi theo lối chơi.
+> **Bản nháp 3, 2026-11-28. Chưa code. Các quyết định của người dùng: mục "Đã chốt" ở cuối.** Đã áp các sửa đổi từ phân tích lý thuyết trò chơi (Phần I). Người dùng đã chốt: **thắng bằng uy tín sau 12 vòng**; chủ đề có thể đổi theo lối chơi.
 > Gốc: cơ chế ẩn Vương quốc Thanh Hóa (0.5.0) và ý tưởng "Luật ngầm xóm cũ".
 
 ## 0. Ý chính
@@ -293,9 +293,12 @@ Những chỗ cần sửa được gom ở **I.10**.
 | 11 | Hiện bảng uy tín suốt ván | giảm "chọn vua", ai cũng biết mình còn cơ hội |
 | 12 | Chủ phòng biết hết: bước 1–2 tin nhau, phát hành rộng thì chuyển máy chủ phòng lên Cloudflare | thông tin ẩn là cốt lõi của chế độ |
 
+## Đã chốt (2026-11-28)
+1. **Đi ngang qua không làm ô mở**, chỉ dừng chân mới mở.
+2. **Xáo vị trí ô mỗi ván** theo seed (thứ tự Bắc → Nam của Dải đất không giữ trong chế độ này; chế độ cổ điển vẫn giữ).
+3. **Thắng bằng uy tín sau 12 vòng.**
+4. **Ba trò hội làng làm trước:** đấu giá kín, bầu cua, đoán giá chợ.
+5. **Chơi thử với bạn bè chấp nhận "chủ phòng biết hết"** (I.9). Trước khi mở cho người lạ thì chuyển máy chủ phòng lên Cloudflare (Giai đoạn B, `docs/HOSTING.md`).
+
 ## Câu hỏi còn mở
-1. Ô có mở khi **đi ngang qua** không? (Bản nháp: không, chỉ khi dừng chân. Đi ngang mà mở thì sương tan rất nhanh: khoảng 3 vòng là lộ hết.)
-2. Bàn ẩn **xáo vị trí** mỗi ván, hay giữ vị trí cố định của map và chỉ che đi? (Bản nháp: xáo, để chơi lại vẫn lạ. Nhưng Dải đất hiện xếp Bắc → Nam có ý nghĩa.)
-3. Tên chế độ: "Xóm lạ", "Người mới đến", "Hội làng"…?
-4. Trò hội làng nào làm trước? (Bản nháp: đấu giá kín, bầu cua, đoán giá chợ.)
-5. Chơi với bạn bè thì chấp nhận "chủ phòng biết hết" (I.9) được không, hay phải có máy chủ phòng trên Cloudflare trước?
+1. Tên chế độ: "Xóm lạ", "Người mới đến", "Hội làng"…?

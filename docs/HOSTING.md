@@ -121,6 +121,9 @@ Tra cứu ngày 2026-11-28 (nguồn ở cuối file). Số liệu gói miễn ph
   - giấy phép MIT, không thu thêm phí ngoài phí Workers.
   - Có thể dùng để viết máy chủ phòng (B2) nhanh hơn.
 
+### Lý do mới (2026-11-28): chế độ "Xóm lạ" cần giữ bí mật
+Ô trong sương và lệ ẩn phải nằm ở nơi người chơi không đọc được. Máy chủ phòng P2P thì chủ phòng luôn đọc được. Người dùng chốt: chơi thử với bạn bè thì chấp nhận; **mở cho người lạ thì phải có máy chủ phòng (B2) trước**. Xem `docs/XOM_LA.md` mục I.9.
+
 ### Cần tìm hiểu tiếp trước khi quyết
 1. Hạn mức gói Free của Workers: CPU mỗi request, số request/ngày. Ước tính 1 ván 4 người, 45 phút, dùng bao nhiêu request (WebSocket tính 20 tin = 1 request).
 2. Độ trễ từ Việt Nam tới Cloudflare (có điểm ở Hà Nội, TP.HCM?) so với PeerJS P2P.
