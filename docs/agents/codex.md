@@ -71,3 +71,8 @@
 - Lab có vòng sáng người đang nói trên bàn/danh sách, huy hiệu vai trò, trạng thái mạng, chế độ khán giả và bố cục 390px thu chat thành nút.
 - Icon A7/A8 chưa có trong nhánh hiện tại nên dùng ký hiệu tạm; cần thay khi Agy bàn giao. Chưa chụp được ảnh tự động, Claude sẽ chụp khi duyệt.
 - Tiếp theo: U9; không vướng file trong phạm vi Codex.
+## 2026-11-29 · U9
+- Thêm `design/lab/xomla.html` và `design/themes/xomla.css`: 40 ô sương, lật mở 520ms, địa danh bằng `drawStack`, ba lựa chọn đi và ô đích sáng.
+- Lab có bảng uy tín vòng 5/12, đấu giá kín, bầu cua, đoán giá chợ với trạng thái chờ kín và màn lật kết quả; thêm màn chuyền máy, công tắc sảnh và bảng kết thúc.
+- CSS đã tham chiếu bộ ảnh A9 trong `assets/xomla/` của Agy; cần merge ảnh vào dev để hiển thị. Chưa chụp được ảnh tự động vì cổng dev 5173 không chạy.
+- Tiếp theo: tích hợp A7/A8/A9 sau khi ảnh được merge, báo Claude mở cổng duyệt 3; vướng: ảnh còn ở nhánh Agy.
