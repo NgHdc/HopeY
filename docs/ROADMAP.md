@@ -18,8 +18,8 @@
 | 0.5.0 | Dải đất | Nhiều map, map Việt Nam, bộ thẻ Vận mệnh, cơ chế ẩn Thanh Hóa | ✅ phát hành 2026-11-28 |
 | 0.5.x | Luật đầy đủ | Trao đổi, đấu giá, tùy chỉnh luật | |
 | 0.6.0 | Pixel | Giao diện pixel theo map, bản đồ vùng đất, nhân vật biết đi, quân trượt mượt | ✅ phát hành 2026-11-28 |
-| 0.7.0 | Phòng bền | Kết nối ổn định, chuyển chủ phòng, chat, khán giả | 🔨 đang làm (TURN pending) |
-| 0.8.0 | Xóm lạ | Chế độ mới: bàn cờ ẩn (sương mù), trò chơi hội làng, lệ làng, thắng bằng uy tín sau 12 vòng | thiết kế nháp |
+| 0.7.0 | Phòng bền | Kết nối ổn định, chat + mic, mỗi máy chỉ thấy phần của mình, khán giả | 🔨 đang làm (TURN pending, chuyển chủ phòng hoãn) |
+| 0.8.0 | Xóm lạ | Chế độ mới: bàn cờ ẩn (sương mù), trò chơi hội làng, lệ làng, thắng bằng uy tín sau 12 vòng | 🔨 phần luật làm song song |
 | 0.9.0 | Mọi màn hình | Điện thoại, máy tính bảng, bàn phím, trợ năng | |
 | 0.10.0 | Có hồn | Chuyển động, âm thanh, cảm giác khi chơi | |
 | 0.11.0 | Beta | Cân bằng, chơi thử với người thật, sửa lỗi | |
@@ -151,66 +151,59 @@ Kế hoạch art: `docs/ART_PIPELINE.md`. Hoạt ảnh: `docs/HOSTING.md` mục 
 
 ---
 
-## 0.7.0 — Phòng bền (đang làm, kế hoạch 2026-11-28)
+## Đánh giá lại kế hoạch (2026-11-28, chiều)
 
-**Mục tiêu:** chơi online với bạn bè không mất ván, thấy rõ ai đang ở đâu, **chat và mở mic** nói chuyện trong ván. Chuẩn bị cho chế độ "Xóm lạ" ở 0.8.0 (`docs/XOM_LA.md`): gửi mỗi máy một bản trạng thái đã cắt phần bí mật. Art tiếp tục song song: biểu cảm pixel và địa danh đợt 1.
+Kế hoạch 0.7.0 ban đầu được viết **trước** khi có chế độ Xóm lạ. Xem lại thì có 5 điểm cần đổi:
+1. **Chuyển chủ phòng (P2) dễ thành việc bỏ đi.** Xóm lạ muốn mở cho người lạ thì phải chuyển máy chủ phòng lên Cloudflare (Giai đoạn B). Khi đó máy chủ không bao giờ "rời phòng", và toàn bộ code chuyển chủ phòng P2P thành thừa. P2 lại là việc khó nhất. → **Hoãn P2**, chờ quyết định Giai đoạn B. Thay bằng việc nhỏ: chủ phòng tải lại trang thì mở lại đúng ván (đã lưu sẵn), khách tự nối lại.
+2. **Thiếu hẳn việc "mỗi máy chỉ nhận phần được thấy"**, dù Xóm lạ cần nó. → thêm **P9**, làm chung đợt đổi định dạng tin nhắn với P1 và chat.
+3. **Phần luật của Xóm lạ không cần chờ mạng.** Đó là code luật thuần (`rules.js`), test và bot giả lập, chơi thử được ngay ở chế độ một máy. → **Làm song song từ bây giờ** (X1–X3), không đợi 0.7.0 phát hành.
+4. **Codex và Agy đang có việc không phục vụ hướng mới:** dọn lab (U5), địa danh trên thẻ đất (U8). → Đổi sang **giao diện và art cho Xóm lạ**. Địa danh giữ lại nhưng đổi vai trò: hình hiện ra **lúc mở ô trong sương**, đó là phần thưởng của việc khám phá.
+5. **Chơi một máy không giấu được lựa chọn kín** (đấu giá kín, đoán giá chợ). → cần màn hình **"chuyền máy"**: che màn hình, gọi tên người tiếp theo chọn.
 
-**Xong khi:**
-- ván 4 người, 45 phút, trên 2 mạng wifi khác nhau không mất ván;
-- chủ phòng tắt trình duyệt giữa ván thì ván vẫn tiếp tục ở máy khác;
-- người đến muộn xem được ván;
-- test luật + e2e online xanh, có e2e mới cho chuyển chủ phòng và khán giả.
-
-### Claude (engine, mạng, ghép vào game)
-| Mã | Việc | Ghi chú |
-|---|---|---|
-| P0 | Sửa từ 0.6.0: nhân vật không đè tên ô, ô đông người xếp gọn | `pieces.js`; dùng chỗ đứng U7 của Codex |
-| P1 | **Kiểm tra trạng thái:** chủ phòng gửi mã băm kèm mỗi lượt; khách lệch thì xin bản đầy đủ | không đổi luật |
-| P2 | **Chuyển chủ phòng:** chủ phòng mất > 15 giây thì khách có ghế nhỏ nhất đang online mở lại phòng (peer id theo `mã phòng + đời`), các máy khác tự nối sang | khó nhất; e2e riêng |
-| P3 | **Khán giả:** vào sau khi ván đã bắt đầu thì xem, không chơi; danh sách khán giả ở cột bên | |
-| P4 | **Sảnh:** chủ phòng đá người khỏi sảnh; khách đổi tên | |
-| P5 | **Chat ngắn + biểu cảm** (vẫy tay, cười, "đắt quá!"…): biểu cảm hiện thành bong bóng trên đầu nhân vật | tăng `PROTOCOL_VERSION` lên 5 |
-| P6 | Thông báo rõ: đang nối lại, chủ phòng vắng, phòng đã đóng, mạng chặn | phần mạng chặn đã xong trên `dev` |
-| K2 | Ghép UI của Codex (U6–U8) và art của Agy (A7, A8, G3 đợt 1) vào game | sau cổng duyệt 3 |
-| P8 | **Mở mic (nói chuyện bằng giọng)**: mỗi cặp máy một kênh âm thanh WebRTC (≤ 6 người = 15 kênh, nhẹ); mic **tắt mặc định**, bấm để bật, có chế độ giữ-để-nói; vòng sáng quanh nhân vật đang nói | cùng đợt đổi định dạng tin nhắn với P5; qua 4G cũng cần TURN (P7) |
-| ⏸ P7 | **TURN** (chơi qua 4G): `src/net/ice.js` đã sẵn chỗ cắm | **PENDING**: chờ người dùng tạo khóa Metered Open Relay |
-
-### Codex (giao diện, `design/`, `src/render/`)
-| Mã | Việc |
-|---|---|
-| U5 | Dọn lab: khung điện thoại trống, nút đổi bản đồ rực rỡ / giấy cổ, font VT323 |
-| U6 | Giao diện xã hội trong lab: khung chat, thanh biểu cảm, bong bóng trên đầu nhân vật, huy hiệu chủ phòng / khán giả, chip trạng thái mạng |
-| U7 | Chỗ đứng cho nhân vật trong ô: CSS ô chừa dải riêng cho quân, không che tên; thử 1–6 người một ô, desktop và 390px |
-| U8 | `src/render/landmark.js`: hình địa danh (sprite stacking) trên thẻ đất, có test + lab |
-
-### Agy (ảnh, `assets/`)
-| Mã | Việc |
-|---|---|
-| A7 | 10 biểu cảm pixel 16×16 + khung bong bóng 9 ô, cho 2 vùng đất |
-| A8 | Icon trạng thái mạng 16×16 (online, đang nối, mất kết nối, chủ phòng, khán giả) + favicon pixel cho trang |
-| G3a | Địa danh đợt 1: 6 địa danh Dải đất tiếp theo (quận 1–3 trừ 3 cái G1 đã có), kiểu A · Pixel theo `STYLE.md` |
-
-### Thứ tự và cổng duyệt
-```
-Claude: P0 ─► P1 ─► P6 ─► P4 ─► P3 ─► P2 ─────────────► K2 ─► P5 ─► P8 ─► phát hành 0.7.0
-Codex:  U5 ─► U7 (Claude cần cho P0) ─► U6 ─► U8 ─┐
-Agy:    A8 ─► A7 ─────────────────────────────────┼─► (cổng duyệt 3: người dùng xem lab xã hội + địa danh)
-        G3a ──────────────────────────────────────┘
-TURN (P7): cắm vào bất cứ lúc nào người dùng gửi khóa.
-```
-- **Cổng duyệt 3:** người dùng xem `design/lab/social.html` (chat, biểu cảm, bong bóng) và các địa danh G3a trên thẻ đất.
-- Trước khi phát hành: chơi thử thật trên 2 máy ở 2 mạng khác nhau.
+Rủi ro lớn nhất vẫn là **TURN đang pending**: chưa có TURN thì mọi buổi chơi thử online phải dùng chung wifi. Tạo khóa Metered mất khoảng 5 phút và mở khóa được mọi buổi chơi thử.
 
 ---
 
-## 0.8.0 — Xóm lạ (thiết kế nháp: `docs/XOM_LA.md`)
+## 0.7.0 — Phòng bền (đang làm)
 
-Chế độ chơi mới bên cạnh cờ tỷ phú cổ điển, bật/tắt từng phần trong sảnh. Làm theo 3 bước, mỗi bước chơi thử với người thật rồi mới làm tiếp:
-- [ ] Bước 1: bàn cờ ẩn (ô chỉ mở khi có người dừng chân, xếp theo seed) + 12 vòng uy tín + 2 trò hội làng (đấu giá kín, bầu cua)
-- [ ] Bước 2: lệ làng (3 lệ ẩn, trình làng, quỹ đình)
-- [ ] Bước 3: thêm trò hội làng, gài lệ mới
+**Mục tiêu:** chơi online với bạn bè ổn định, **chat và mở mic**, mỗi máy chỉ nhận phần được phép thấy (nền cho Xóm lạ).
 
-**Cần trước:** 0.7.0 (gửi mỗi máy bản trạng thái đã cắt phần bí mật, chat, mic).
+**Xong khi:** ván 4 người 45 phút không mất ván (chủ phòng tải lại trang vẫn tiếp tục); chat, biểu cảm, mic chạy trên 2 mạng wifi khác nhau; test luật + e2e online xanh.
+
+### Claude
+| Mã | Việc | Ghi chú |
+|---|---|---|
+| P0 | Nhân vật không đè tên ô, ô đông xếp gọn | cần U7 của Codex |
+| P9 | **Mỗi máy chỉ nhận phần được thấy**: chủ phòng gửi bản đã lọc cho từng ghế | mới; nền cho Xóm lạ |
+| P1 | Mã băm trạng thái, khách lệch thì xin lại | cùng đợt với P9 |
+| P5 | Chat ngắn + biểu cảm, bong bóng trên đầu nhân vật | `PROTOCOL_VERSION` 5 (P9, P1, P5, P8 đổi chung một lần) |
+| P8 | Mở mic: tắt mặc định, giữ-để-nói, vòng sáng người đang nói | |
+| P3 | Khán giả: xem bản công khai của ván | nhỏ, nhờ có P9 |
+| P4 | Sảnh: đá người, đổi tên | |
+| P6 | Thông báo trạng thái mạng | gần xong trên `dev` |
+| P10 | Chủ phòng tải lại trang thì mở lại đúng ván, khách tự nối lại | thay cho P2 |
+| K2 | Ghép giao diện xã hội (U6) và art (A7, A8) | sau cổng duyệt 3 |
+| ⏸ P2 | Chuyển chủ phòng P2P | **hoãn**: chờ quyết định Giai đoạn B |
+| ⏸ P7 | TURN | **pending**: chờ khóa Metered |
+
+---
+
+## 0.8.0 — Xóm lạ (thiết kế: `docs/XOM_LA.md`, đã chốt phần lớn)
+
+Chế độ mới bên cạnh cờ tỷ phú cổ điển. **Phần luật làm song song với 0.7.0**, chơi thử một máy trước; phát hành sau 0.7.0.
+
+### Claude (luật, bot, ghép vào game)
+| Mã | Việc |
+|---|---|
+| X1 | **Bàn ẩn:** xáo 36 ô theo seed (ràng buộc: cùng quận gần nhau, ô hội làng rải đều), 4–6 ô lạ mỗi ván, ô chỉ mở khi dừng chân, thưởng khai hoang + quyền mua trước |
+| X2 | **Chọn cách đi** (tổng hoặc một con xúc xắc) + **12 vòng, chấm uy tín**, không loại ai ("đi làm thuê"); nhà tính 1,2 lần |
+| X3 | **Hội làng**: phase lựa chọn kín cùng lúc (chung cho mọi trò) + 3 trò: đấu giá kín, bầu cua, đoán giá chợ |
+| X4 | **Bot theo 4 kiểu người chơi** (Địa chủ, Liều, Thám tử, ngẫu nhiên) + giả lập 1 000 ván: đo độ dài ván, tỉ lệ thắng mỗi kiểu, số ô mở mỗi ván |
+| X5 | Công tắc chế độ trong sảnh + màn hình chuyền máy (chơi một máy) |
+| K3 | Ghép giao diện Xóm lạ (U9) và art (A9) |
+| X6 | Lệ làng (bước 2) — sau buổi chơi thử đầu tiên |
+
+**Xong bước 1 khi:** ván 12 vòng 3–4 người dưới 40 phút; không kiểu bot nào thắng quá 40%; một buổi chơi thử thật với bạn bè có mic.
 
 ---
 
