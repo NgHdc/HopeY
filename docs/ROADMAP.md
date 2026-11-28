@@ -17,10 +17,11 @@
 | 0.4.x | Giấy mới (tiếp) | Đồ họa từng ô, chỉnh style theo ý bạn | ⏭ tiếp theo |
 | 0.5.0 | Dải đất | Nhiều map, map Việt Nam, bộ thẻ Vận mệnh, cơ chế ẩn Thanh Hóa | ✅ phát hành 2026-11-28 |
 | 0.5.x | Luật đầy đủ | Trao đổi, đấu giá, tùy chỉnh luật | |
-| 0.6.0 | Phòng bền | Kết nối ổn định, chuyển chủ phòng, chat, khán giả | |
-| 0.7.0 | Mọi màn hình | Điện thoại, máy tính bảng, bàn phím, trợ năng | |
-| 0.8.0 | Có hồn | Chuyển động, âm thanh, cảm giác khi chơi | |
-| 0.9.0 | Beta | Cân bằng, chơi thử với người thật, sửa lỗi | |
+| 0.6.0 | Pixel | Giao diện pixel theo map, bản đồ vùng đất, nhân vật biết đi, quân trượt mượt | ✅ phát hành 2026-11-28 |
+| 0.7.0 | Phòng bền | Kết nối ổn định, chuyển chủ phòng, chat, khán giả | |
+| 0.8.0 | Mọi màn hình | Điện thoại, máy tính bảng, bàn phím, trợ năng | |
+| 0.9.0 | Có hồn | Chuyển động, âm thanh, cảm giác khi chơi | |
+| 0.10.0 | Beta | Cân bằng, chơi thử với người thật, sửa lỗi | |
 | 1.0.0 | Phát hành | Trang giới thiệu, hướng dẫn, bản in giấy (print & play) | |
 
 Thứ tự này có chủ đích: **làm nền móng (0.3) trước khi thiết kế lại (0.4)**. Có test, có bản lưu từng phiên bản và có rollback thì việc đập đi làm lại UI mới an toàn.
@@ -137,7 +138,19 @@ Thiết kế: `docs/MAP_VIETNAM.md`.
 
 ---
 
-## 0.6.0 — Phòng bền
+## 0.6.0 — Pixel ✅ phát hành 2026-11-28
+
+Kế hoạch art: `docs/ART_PIPELINE.md`. Hoạt ảnh: `docs/HOSTING.md` mục 2.
+
+- [x] Lớp quân riêng, trượt bằng `transform` (Giai đoạn A)
+- [x] Theme pixel theo map: màu, nền lặp, khung 9 ô, icon ô, font VT323
+- [x] Bản đồ pixel 2 bản (rực rỡ ở trang đầu, giấy cổ nhạt giữa bàn) cho cả 2 map
+- [x] 12 nhân vật pixel: đứng, đi (quay mặt theo hướng), vui, buồn
+- [ ] Nhân vật đứng đè lên tên ô; ô có 4+ người hơi chật (sửa ở 0.6.x)
+
+---
+
+## 0.7.0 — Phòng bền
 
 - [ ] **TURN server** dự phòng (cho mạng chặn WebRTC), cấu hình được.
 - [ ] **Chuyển chủ phòng**: chủ phòng rời → máy khác nhận trạng thái và làm chủ.
@@ -151,7 +164,7 @@ Thiết kế: `docs/MAP_VIETNAM.md`.
 
 ---
 
-## 0.7.0 — Mọi màn hình
+## 0.8.0 — Mọi màn hình
 
 - [ ] Bố cục điện thoại dọc: bàn cờ phóng to / thu nhỏ, khay hành động dưới cùng.
 - [ ] Cử chỉ chạm: chụm để phóng to, chạm giữ để xem thẻ đất.
@@ -164,7 +177,7 @@ Thiết kế: `docs/MAP_VIETNAM.md`.
 
 ---
 
-## 0.8.0 — Có hồn
+## 0.9.0 — Có hồn
 
 - [ ] Xúc xắc lăn (lật mặt 2D, ≤ 600 ms), quân cờ nhảy từng ô.
 - [ ] Hiệu ứng tiền bay giữa người chơi khi trả tiền thuê.
@@ -176,7 +189,7 @@ Thiết kế: `docs/MAP_VIETNAM.md`.
 
 ---
 
-## 0.9.0 — Beta
+## 0.10.0 — Beta
 
 - [ ] Cân bằng giá và tiền thuê bằng giả lập 10 000 ván bot (độ dài ván, tỉ lệ thắng theo thứ tự đi).
 - [ ] 5 buổi chơi thử với người thật, ghi lại vấn đề.
