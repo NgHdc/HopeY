@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <clipPath id="c"><circle cx="128" cy="128" r="116"/></clipPath>
+  </defs>
+  <!-- Bong cung sticker -->
+  <circle cx="128" cy="134" r="116" fill="#1F1A2E"/>
+  <!-- Nen huy hieu tron -->
+  <circle cx="128" cy="126" r="116" fill="#F0A814" stroke="#1F1A2E" stroke-width="8"/>
+  <g clip-path="url(#c)">
+    <!-- Mang sang nen hoat hinh -->
+    <circle cx="96" cy="84" r="78" fill="#FFE073" opacity="0.45"/>
+    
+    
+    <!-- Ao so mi xanh duong nhat + khan trang vat vai -->
+    <path d="M54 250 C58 192 88 176 128 176 C168 176 198 192 202 250 Z" fill="#2A7AB8" stroke="#1F1A2E" stroke-width="7"/>
+    <path d="M90 180 L114 248 L82 248 L70 192 Z" fill="#FFFFFF" stroke="#1F1A2E" stroke-width="6" stroke-linejoin="round"/>
+    <path d="M84 198 L104 202 M88 214 L108 218" stroke="#2A7AB8" stroke-width="4"/>
+    <!-- Co & mat ram nang -->
+    <rect x="114" y="162" width="28" height="24" rx="10" fill="#F9C79B" stroke="#1F1A2E" stroke-width="6"/>
+    <circle cx="84" cy="138" r="10" fill="#F9C79B" stroke="#1F1A2E" stroke-width="6"/>
+    <circle cx="172" cy="138" r="10" fill="#F9C79B" stroke="#1F1A2E" stroke-width="6"/>
+    <circle cx="128" cy="134" r="42" fill="#F9C79B" stroke="#1F1A2E" stroke-width="7"/>
+    <!-- Long may & nu cuoi hien hau -->
+    <path d="M101 122 Q112 116 120 121" fill="none" stroke="#1F1A2E" stroke-width="5" stroke-linecap="round"/>
+    <path d="M136 121 Q144 116 155 122" fill="none" stroke="#1F1A2E" stroke-width="5" stroke-linecap="round"/>
+    <path d="M106 135 Q113 128 120 135" fill="none" stroke="#1F1A2E" stroke-width="5.5" stroke-linecap="round"/>
+    <path d="M136 135 Q143 128 150 135" fill="none" stroke="#1F1A2E" stroke-width="5.5" stroke-linecap="round"/>
+    <path d="M111 149 Q128 166 145 149 Z" fill="#FFFFFF" stroke="#1F1A2E" stroke-width="5" stroke-linejoin="round"/>
+    <!-- Mu coi xanh reu -->
+    <path d="M74 106 C76 58 180 58 182 106 Z" fill="#4D7A4E" stroke="#1F1A2E" stroke-width="7" stroke-linejoin="round"/>
+    <path d="M60 108 Q128 94 196 108 Q128 122 60 108 Z" fill="#639660" stroke="#1F1A2E" stroke-width="7" stroke-linejoin="round"/>
+    <path d="M84 102 Q128 92 172 102" fill="none" stroke="#2D4A2F" stroke-width="6"/>
+    
+  </g>
+  <!-- Vien ngoai sac net de len tren -->
+  <circle cx="128" cy="126" r="116" fill="none" stroke="#1F1A2E" stroke-width="8"/>
+</svg>

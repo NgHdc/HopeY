@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <clipPath id="tc"><circle cx="32" cy="31" r="27"/></clipPath>
+  </defs>
+  <circle cx="32" cy="34" r="27" fill="#1F1A2E"/>
+  <circle cx="32" cy="31" r="27" fill="#177D8C" stroke="#1F1A2E" stroke-width="4.5"/>
+  <g clip-path="url(#tc)">
+    <circle cx="24" cy="21" r="16" fill="#4FC4D4" opacity="0.35"/>
+    
+    <circle cx="32" cy="34" r="14" fill="#FFD6B0" stroke="#1F1A2E" stroke-width="3.8"/>
+    <!-- Khan dong den -->
+    <path d="M17 28 C17 12 47 12 47 28 Z" fill="#1D2233" stroke="#1F1A2E" stroke-width="3.8"/>
+    <path d="M20 24 L32 17 L44 24" fill="none" stroke="#5B698F" stroke-width="2.5"/>
+    <!-- Kinh tron -->
+    <circle cx="26" cy="34" r="4.8" fill="#FFFFFF" stroke="#1F1A2E" stroke-width="2.6"/>
+    <circle cx="38" cy="34" r="4.8" fill="#FFFFFF" stroke="#1F1A2E" stroke-width="2.6"/>
+    <!-- Rau bac trang noi bat o 24px -->
+    <path d="M19 41 C21 56 32 60 32 60 C32 60 43 56 45 41 Q32 45 19 41 Z" fill="#FFFFFF" stroke="#1F1A2E" stroke-width="3.8" stroke-linejoin="round"/>
+    
+  </g>
+  <circle cx="32" cy="31" r="27" fill="none" stroke="#1F1A2E" stroke-width="4.5"/>
+</svg>
