@@ -1,0 +1,11 @@
+{
+  "slices": 32,
+  "style": "pixel",
+  "side_nose": "left",
+  "top_nose": "down",
+  "order": "reading",
+  "colours": 24,
+  "shade": 0.16,
+  "spacing": 1.0,
+  "squash": 0.75
+}

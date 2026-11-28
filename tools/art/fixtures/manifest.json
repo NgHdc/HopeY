@@ -1,0 +1,43 @@
+{
+  "assets": [
+    {
+      "id": "demo-paper",
+      "w": 22,
+      "h": 42,
+      "count": 16,
+      "spacing": 1.0,
+      "squash": 0.75,
+      "style": "paper",
+      "strip": "out/demo-paper.png",
+      "baked": "out/demo-paper.16.png",
+      "frameW": 68,
+      "frameH": 73
+    },
+    {
+      "id": "demo-parts",
+      "w": 73,
+      "h": 32,
+      "count": 16,
+      "spacing": 1.0,
+      "squash": 0.75,
+      "style": "pixel",
+      "strip": "out/demo-parts.png",
+      "baked": "out/demo-parts.16.png",
+      "frameW": 100,
+      "frameH": 97
+    },
+    {
+      "id": "demo-pixel",
+      "w": 22,
+      "h": 42,
+      "count": 16,
+      "spacing": 1.0,
+      "squash": 0.75,
+      "style": "pixel",
+      "strip": "out/demo-pixel.png",
+      "baked": "out/demo-pixel.16.png",
+      "frameW": 68,
+      "frameH": 73
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "non-la",
+    "name": "Cô Hai",
+    "line": "Gánh hàng rong qua mọi con phố.",
+    "color": "#C93420",
+    "portrait": "non-la.svg",
+    "token": "non-la-token.svg"
+  },
+  {
+    "id": "xich-lo",
+    "name": "Bác Ba",
+    "line": "Đạp xích lô rành từng con hẻm nhỏ.",
+    "color": "#F0A814",
+    "portrait": "xich-lo.svg",
+    "token": "xich-lo-token.svg"
+  },
+  {
+    "id": "ao-dai",
+    "name": "Minh Thư",
+    "line": "Áo dài trắng tung bay nắng sân trường.",
+    "color": "#D43F84",
+    "portrait": "ao-dai.svg",
+    "token": "ao-dai-token.svg"
+  },
+  {
+    "id": "ong-do",
+    "name": "Ông Đồ",
+    "line": "Bút lông mực tàu, đi đâu cũng chậm rãi.",
+    "color": "#177D8C",
+    "portrait": "ong-do.svg",
+    "token": "ong-do-token.svg"
+  },
+  {
+    "id": "ngu-dan",
+    "name": "Anh Năm",
+    "line": "Quăng lưới bình minh, gió biển quen mặt.",
+    "color": "#1D73B2",
+    "portrait": "ngu-dan.svg",
+    "token": "ngu-dan-token.svg"
+  },
+  {
+    "id": "tha-dieu",
+    "name": "Bé Tí",
+    "line": "Chạy theo cánh diều khắp bãi cỏ chiều.",
+    "color": "#1A7D43",
+    "portrait": "tha-dieu.svg",
+    "token": "tha-dieu-token.svg"
+  }
+]

@@ -57,3 +57,9 @@
 **Quyết định:** chữ chính Inter, nhãn và số IBM Plex Mono, chữ nghiêng vẫn Noto Serif (#3).
 **Vì sao:** cả ba đủ dấu tiếng Việt, đều nét, đọc rõ ở cỡ 10–12 px trên màn hình. Courier New quá mảnh, Arial thiếu nhịp Swiss.
 **Đánh đổi:** cần tải font Google; không có mạng thì rơi về Arial / Courier New.
+
+### #12 — Nhiều map: dữ liệu + hook, engine chung · 2026-11-27 · v0.5.0
+**Quyết định:** mỗi map là một file dữ liệu trong `src/core/maps/` (ô, quận, bộ thẻ, tên gọi) cộng vài hook nhỏ (`afterStep`, `onPassStart`) cho luật riêng như Vương quốc Thanh Hóa. State ghi `map`; engine và UI luôn đọc bàn qua `mapOf(S)`.
+**Vì sao:** thêm vùng đất mới (Agnes…) chỉ cần thêm một file, không sửa engine. Hook chỉ được gọi qua một `api` hẹp (pay, log, group) nên luật riêng không phá được luật chung.
+**Đánh đổi:** vị trí ô đặc biệt (Xuất phát 0, Tù 10, Vào Tù 30) và bảng thuê vẫn chung cho mọi map. Map nào cần bố cục khác thì phải mở rộng sau.
+**Lệch so với thiết kế:** khung đặt cược Con bạc nằm ở cột hành động thay vì hộp thoại, để khách online không bị mất thanh cược khi màn hình vẽ lại.

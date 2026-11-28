@@ -2,7 +2,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createGame, applyAction, rentFor, canManage, setOnline } from '../src/core/rules.js';
-import { TILES, START_MONEY, SALARY, JAIL, BAIL } from '../src/core/board.js';
+import { START_MONEY, SALARY, JAIL, BAIL } from '../src/core/board.js';
+import { MAPS } from '../src/core/maps/index.js';
+
+const TILES = MAPS.classic.tiles;
 import { migrate, SCHEMA_VERSION } from '../src/core/version.js';
 
 const game = (n = 2) => createGame(['An', 'Bình', 'Chi', 'Dũng'].slice(0, n), { seed: 42, dev: true });

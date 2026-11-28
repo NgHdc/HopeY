@@ -1,0 +1,50 @@
+[
+  {
+    "id": "chu-do",
+    "name": "Ông Lái Đò",
+    "line": "Nhớ tên từng khách quen qua Bến Đò sớm.",
+    "color": "#1E74BA",
+    "portrait": "chu-do.svg",
+    "token": "chu-do-token.svg"
+  },
+  {
+    "id": "co-hoa",
+    "name": "Chị Hoa",
+    "line": "Gánh hoa giấy đỏ rực khắp mái ngói Chợ Hoa.",
+    "color": "#BD3E6D",
+    "portrait": "co-hoa.svg",
+    "token": "co-hoa-token.svg"
+  },
+  {
+    "id": "tho-gom",
+    "name": "Bác Thợ Gốm",
+    "line": "Bàn tay xoay đất thành chiếc bát đầu tiên trong ngày.",
+    "color": "#C7461E",
+    "portrait": "tho-gom.svg",
+    "token": "tho-gom-token.svg"
+  },
+  {
+    "id": "be-den-long",
+    "name": "Bé Lồng Đèn",
+    "line": "Mỗi tối treo một chiếc đèn, cả phố thành dải sáng.",
+    "color": "#F0B41C",
+    "portrait": "be-den-long.svg",
+    "token": "be-den-long-token.svg"
+  },
+  {
+    "id": "co-vuon",
+    "name": "Chị Vườn Sen",
+    "line": "Mỗi chậu cây con là một lời hứa nhỏ.",
+    "color": "#1B7D44",
+    "portrait": "co-vuon.svg",
+    "token": "co-vuon-token.svg"
+  },
+  {
+    "id": "hai-dang",
+    "name": "Bác Hải Đăng",
+    "line": "Ngọn đèn cuối phố, soi đường cho người đi biển.",
+    "color": "#24579E",
+    "portrait": "hai-dang.svg",
+    "token": "hai-dang-token.svg"
+  }
+]

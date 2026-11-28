@@ -15,7 +15,8 @@
 | 0.3.0 | Nền móng | Tách code, test, version, deploy có lưu trữ + rollback, chơi thử trên máy | ✅ đã phát hành |
 | 0.4.0 | Giấy mới | Thiết kế lại toàn bộ UI theo mockup | ✅ **đang chạy** |
 | 0.4.x | Giấy mới (tiếp) | Đồ họa từng ô, chỉnh style theo ý bạn | ⏭ tiếp theo |
-| 0.5.0 | Luật đầy đủ | Trao đổi, đấu giá, bộ thẻ đầy đủ, tùy chỉnh luật | |
+| 0.5.0 | Dải đất | Nhiều map, map Việt Nam, bộ thẻ Vận mệnh, cơ chế ẩn Thanh Hóa | ✅ phát hành 2026-11-28 |
+| 0.5.x | Luật đầy đủ | Trao đổi, đấu giá, tùy chỉnh luật | |
 | 0.6.0 | Phòng bền | Kết nối ổn định, chuyển chủ phòng, chat, khán giả | |
 | 0.7.0 | Mọi màn hình | Điện thoại, máy tính bảng, bàn phím, trợ năng | |
 | 0.8.0 | Có hồn | Chuyển động, âm thanh, cảm giác khi chơi | |
@@ -109,7 +110,19 @@ Thứ tự này có chủ đích: **làm nền móng (0.3) trước khi thiết 
 
 ---
 
-## 0.5.0 — Luật đầy đủ
+## 0.5.0 — Dải đất
+
+Thiết kế: `docs/MAP_VIETNAM.md`.
+
+- [x] Nhiều map (`src/core/maps/`), chọn ở trang đầu và sảnh
+- [x] Map Việt Nam: 8 thành phố, ô không phải đất đổi tên
+- [x] Bộ thẻ Vận mệnh 16 lá: Bán nhà ngẫu nhiên, Hạ cấp, Vé giảm 50%, Máy bay, Con bạc, Sinh nhật, Thu thuế…
+- [x] Cơ chế ẩn Vương quốc Thanh Hóa
+- [x] Test từng thẻ, bot giả lập trên cả hai map
+- [ ] Chơi thử trên `/next/` với 2 máy, rồi phát hành
+- [ ] Hình minh họa địa danh (theo hướng nghệ thuật, làm sau)
+
+## 0.5.x — Luật đầy đủ
 
 - [ ] **Trao đổi**: đề nghị đổi đất + tiền + vé giữa 2 người; người kia chấp nhận / từ chối / trả giá.
 - [ ] **Đấu giá** khi người dừng chân không mua: mọi người trả giá, có đồng hồ 10 giây.
