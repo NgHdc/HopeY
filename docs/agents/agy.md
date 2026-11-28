@@ -1,5 +1,16 @@
 # Nhật ký agent Agy
 
+## 2026-11-28 · A9 (Art pixel chế độ Xóm lạ — chờ duyệt)
+- Đã vẽ trọn bộ 31 file PNG pixel cho chế độ Xóm lạ trong `assets/xomla/` (mọi file 247 B – 3,2 KB, không khử răng cưa, màu từ `palettes.md`, viền mực 1px `--ink`):
+  - `assets/xomla/fog/`: 6 file sương mù cho 2 vùng đất (`fog-tile-h` 32×24, `fog-tile-v` 24×32, `fog-clear` 96×32 3 khung tan sương, và bản `-classic`).
+  - `assets/xomla/baucua/`: 6 linh vật 32×32 (`nai`, `bau`, `ga`, `ca`, `cua`, `tom`), 6 mặt hột xúc xắc 16×16 (`die-*`), và 4 chiếu 3×2 144×96 (`mat`, `mat-classic`, `mat-empty`, `mat-empty-classic`).
+  - `assets/xomla/`: `envelope-closed.png` (24×24), `envelope-open.png` (24×24), `market-scale.png` (32×32).
+  - `assets/xomla/icons/`: 6 icon 16×16 (`festival`, `prestige`, `fund`, `charter`, `explore`, `choose-move`).
+- Kèm `assets/xomla/README.md`, `assets/xomla/SOURCES.md` và ảnh kiểm tra phóng ×4 `assets/xomla/check/xomla-all.png`. Đã nhắn Codex (cho U9) và Claude.
+- Việc tiếp theo: làm **A7** (10 biểu cảm 16×16 + `emotes.json` + khung bong bóng 9 ô 2 vùng đất). Đang vướng: không.
+
+![A9 art chế độ Xóm lạ](../../assets/xomla/check/xomla-all.png)
+
 ## 2026-11-28 · A8 (Icon trạng thái + mic + favicon pixel — chờ duyệt)
 - Đã vẽ 8 icon 16×16 trong `assets/ui/icons/` (`net-ok.png`, `net-wait.png` 32×16 2 khung, `net-lost.png`, `host.png`, `watch.png`, `mic-on.png`, `mic-off.png`, `speaking.png` 32×16 2 khung) và 2 favicon pixel vẽ tay riêng ở kích thước gốc (`assets/ui/favicon-32.png`, `assets/ui/favicon-16.png`), mọi file ≤ 620 B, màu lấy từ `palettes.md`, viền mực 1px `--ink`.
 - Đã cập nhật `assets/ui/README.md`, `assets/ui/SOURCES.md` và xuất ảnh kiểm tra phóng ×4 `assets/ui/check/a8-status-mic-favicon.png`.
