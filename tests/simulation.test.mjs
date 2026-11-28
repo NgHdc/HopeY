@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createGame, applyAction, canManage, choiceTiles, betRange, gambleTarget, rentFor, CHOICE_PHASES } from '../src/core/rules.js';
 import { BAIL } from '../src/core/board.js';
-import { MAPS, MAP_IDS } from '../src/core/maps/index.js';
+import { MAPS, MAP_IDS, mapOf } from '../src/core/maps/index.js';
 
 const GAMES = Number(process.env.SIM_GAMES || 80); // mỗi map
 const MAX_ACTIONS = 3000;
@@ -20,6 +20,7 @@ export function botAction(S, r) {
     return { type: 'roll' };
   }
   if (S.phase === 'buy') return { type: r() < 0.75 ? 'buy' : 'skip' };
+  if (S.phase === 'move') return { type: 'move', n: S.choice.opts[Math.floor(r() * S.choice.opts.length)] };
   if (S.phase === 'downgrade' || S.phase === 'fly') { const opts = choiceTiles(S); return { type: S.phase, i: opts[Math.floor(r() * opts.length)] }; }
   if (S.phase === 'gamble') {
     // tiền thuê ở ô sẽ bị đưa tới càng lớn so với tiền mặt thì cược càng thấp
@@ -35,12 +36,13 @@ export function botAction(S, r) {
 }
 
 function checkInvariants(S) {
-  const T = MAPS[S.map].tiles;
+  const T = mapOf(S).tiles;
   for (const p of S.players) {
     assert.ok(Number.isFinite(p.money), 'tiền là số');
     assert.ok(p.pos >= 0 && p.pos < 40, 'vị trí hợp lệ');
     assert.ok(p.discount >= 0 && p.discount <= 2, 'vé giảm giá 0–2');
     if (p.out) assert.equal(p.money, 0);
+    if (S.xl) assert.ok(!p.out, 'Xóm lạ: không ai bị loại');
   }
   for (const [i, o] of Object.entries(S.owner)) {
     assert.ok(!S.players[o].out, `ô ${i} thuộc người đã bị loại`);
@@ -52,7 +54,7 @@ function checkInvariants(S) {
   }
   assert.ok(['roll', 'end', ...CHOICE_PHASES].includes(S.phase), `phase lạ: ${S.phase}`);
   if (S.phase === 'downgrade') assert.ok(choiceTiles(S).length > 0, 'phase hạ cấp phải có ô để chọn');
-  for (const d of Object.keys(MAPS[S.map].decks)) assert.ok(S.decks[d].length > 0, 'bộ thẻ không rỗng');
+  for (const d of Object.keys(mapOf(S).decks)) assert.ok(S.decks[d].length > 0, 'bộ thẻ không rỗng');
   assert.ok(!S.players[S.turn].out || S.winner != null, 'không tới lượt người đã bị loại');
 }
 
@@ -77,5 +79,32 @@ for (const map of MAP_IDS) {
     assert.ok(finished >= GAMES * 0.4, `ít nhất 40% số ván phải kết thúc (được ${finished}/${GAMES})`);
     if (map === 'vietnam' && GAMES >= 40) for (const ph of ['downgrade', 'fly', 'gamble', 'kingdom']) assert.ok(seen.has(ph), `giả lập phải gặp ${ph}`);
     console.log(`  ${map}: ${finished}/${GAMES} ván kết thúc, ${actions} thao tác`);
+  });
+}
+
+// Chế độ Xóm lạ: bàn xáo + sương, chọn cách đi, 12 vòng. Mọi ván phải kết thúc đúng vòng 12, không ai bị loại.
+for (const map of MAP_IDS) {
+  test(`${map} · Xóm lạ: ${Math.ceil(GAMES / 2)} ván bot kết thúc sau 12 vòng`, () => {
+    const n = Math.ceil(GAMES / 2);
+    let opened = 0, workers = 0;
+    for (let g = 0; g < n; g++) {
+      const r = rng(1000 + g);
+      let S = createGame(['A', 'B', 'C', 'D'].slice(0, 2 + (g % 3)), { seed: 1000 + g, map, xomla: true });
+      const base = MAPS[map].tiles;
+      assert.deepEqual([...S.layout].sort((a, b) => a - b), base.map((_, i) => i), 'layout là hoán vị của 40 ô');
+      for (let k = 0; k < MAX_ACTIONS * 2 && S.winner == null; k++) {
+        const a = botAction(S, r);
+        const res = applyAction(S, S.turn, a);
+        assert.ok(res.ok, `ván ${g}: thao tác không hợp lệ ${JSON.stringify(a)} ở phase ${S.phase}`);
+        S = res.state;
+        checkInvariants(S);
+      }
+      assert.ok(S.winner != null, `ván ${g} phải kết thúc`);
+      assert.equal(S.round, 12);
+      assert.ok(S.xl.final && S.xl.final[S.winner].total === Math.max(...S.xl.final.map(x => x.total)), 'người thắng có uy tín cao nhất');
+      opened += S.xl.seen.filter(Boolean).length;
+      workers += S.players.filter(p => p.worker).length;
+    }
+    console.log(`  ${map} · Xóm lạ: trung bình ${(opened / n).toFixed(1)}/40 ô đã mở cuối ván, ${workers} lần đi làm thuê`);
   });
 }

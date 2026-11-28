@@ -289,3 +289,7 @@ a:hover { color: var(--accent); }
 .pieces-layer .pc svg { display: block; }
 .fps { position: fixed; right: 8px; bottom: 8px; z-index: 30; background: var(--ink); color: var(--paper); font: 12px var(--font-mono); padding: 4px 8px; pointer-events: none; }
 .connecting { max-width: 560px; margin: var(--s7) auto; padding: var(--s6); display: flex; flex-direction: column; gap: var(--s3); }
+/* Xóm lạ: ô còn phủ sương (Codex làm bản pixel ở U9, Agy vẽ mây ở A9) */
+.tile.fog { background: repeating-linear-gradient(135deg, var(--surface-2) 0 6px, var(--surface) 6px 12px); display: flex; align-items: center; justify-content: center; position: relative; }
+.tile.fog .fog-q { font: 700 22px/1 var(--font-pixel, monospace); color: var(--ink-2); opacity: .7; }
+.tile.fog .pieces { position: absolute; left: 4px; right: 4px; top: 4px; }

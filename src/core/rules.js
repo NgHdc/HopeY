@@ -9,7 +9,10 @@ import { SCHEMA_VERSION } from './version.js';
 const LOG_MAX = 80;
 const MAX_DISCOUNT = 2, BET_MIN = 50, BET_MAX = 500;
 /** Phase chờ người chơi chọn giữa lượt. */
-export const CHOICE_PHASES = ['buy', 'downgrade', 'fly', 'gamble'];
+export const CHOICE_PHASES = ['buy', 'downgrade', 'fly', 'gamble', 'move'];
+// Chế độ Xóm lạ (docs/XOM_LA.md): bàn xáo + sương mù, chọn cách đi, 12 vòng chấm uy tín.
+export const XL_ROUNDS = 12, XL_EXPLORE = 10, XL_HOUSE_MULT = 1.2;
+const CORNERS = [0, 10, 20, 30];
 
 // ---------- số ngẫu nhiên (mulberry32) ----------
 function rand(S) {
@@ -45,9 +48,58 @@ export function createGame(names, opts = {}) {
     msg: `Quân cờ đặt ở ${mapOf({ map }).terms.start}. Người đầu tiên lăn xúc xắc.`,
     stats: newStats(names.length),
   };
+  if (opts.xomla) {
+    S.layout = makeLayout(S, mapOf(S).tiles);
+    S.xl = { rounds: XL_ROUNDS, choose: true, seen: Array.from({ length: 40 }, (_, i) => CORNERS.includes(i)), explored: Array(names.length).fill(0) };
+  }
   for (const [k, d] of Object.entries(mapOf(S).decks)) S.decks[k] = shuffle(S, [...d.cards.keys()]);
-  addLog(S, `Ván mới trên bàn ${mapOf(S).name}, ${names.length} người, mỗi người ${START_MONEY} ${CUR}.`);
+  addLog(S, `Ván mới trên bàn ${mapOf(S).name}${S.xl ? ' (Xóm lạ: bàn phủ sương, ' + XL_ROUNDS + ' vòng)' : ''}, ${names.length} người, mỗi người ${START_MONEY} ${CUR}.`);
   return S;
+}
+
+/**
+ * Xáo 36 ô (giữ 4 góc). Đất cùng quận đứng liền nhau thành một khối; không 2 ô thuế liền nhau.
+ * Trả về layout: layout[vị trí] = chỉ số ô gốc.
+ */
+function makeLayout(S, tiles) {
+  const blocks = [], byD = {};
+  tiles.forEach((t, i) => {
+    if (CORNERS.includes(i)) return;
+    if (t.type === 'prop') (byD[t.d] ||= []).push(i); else blocks.push([i]);
+  });
+  for (const d of Object.keys(byD)) blocks.push(shuffle(S, byD[d]));
+  let layout = null;
+  for (let tries = 0; tries < 50; tries++) {
+    const order = shuffle(S, blocks.slice()).flat();
+    let k = 0;
+    layout = Array.from({ length: 40 }, (_, pos) => (CORNERS.includes(pos) ? pos : order[k++]));
+    const tax = pos => tiles[layout[pos]].type === 'tax';
+    if (!layout.some((_, pos) => tax(pos) && tax((pos + 1) % 40))) break;
+  }
+  return layout;
+}
+/** Vị trí hiện tại của ô gốc `orig` (thẻ "đến ô X" của map). */
+const posOf = (S, orig) => (S.layout ? S.layout.indexOf(orig) : orig);
+
+/** Uy tín của người k (chỉ chế độ Xóm lạ): tài sản/100 (nhà ×1,2) + mỗi 5 ô khai hoang + lệ + trò hội làng. */
+export function prestige(S, k) {
+  if (!S.xl) return null;
+  const p = S.players[k], T = tilesOf(S);
+  let worth = p.out ? 0 : Math.max(0, p.money);
+  for (const i in S.owner) {
+    if (S.owner[i] !== k) continue;
+    const t = T[i];
+    worth += S.mort[i] ? t.price / 2 : t.price;
+    if (t.type === 'prop') worth += (S.houses[i] || 0) * houseCost(S, i) * XL_HOUSE_MULT;
+  }
+  const r = {
+    worth: Math.floor(worth / 100),
+    explore: Math.floor((S.xl.explored[k] || 0) / 5),
+    rules: 5 * ((S.xl.claims && S.xl.claims[k]) || 0),
+    games: (S.xl.wins && S.xl.wins[k]) || 0,
+  };
+  r.total = r.worth + r.explore + r.rules + r.games;
+  return r;
 }
 
 export function newStats(n) {
@@ -164,6 +216,12 @@ function step(G, seat, a) {
   const tileArg = Number.isInteger(a.i) && a.i >= 0 && a.i < T.length;
   switch (a.type) {
     case 'roll': return roll(G, a);
+    case 'move':
+      if (S.phase !== 'move' || !S.choice || !S.choice.opts.includes(a.n)) return false;
+      resume(S);
+      addLog(S, `${p.name} chọn đi ${a.n} ô.`);
+      moveBy(G, p, a.n);
+      return done(G);
     case 'buy': {
       if (S.phase !== 'buy') return false;
       const t = T[p.pos];
@@ -235,6 +293,13 @@ function roll(G, a) {
     return true;
   }
   if (dbl && ++S.doubles === 3) { addLog(S, 'Ba lần đôi liền.'); sendJail(G, p); S.phase = 'end'; return true; }
+  if (S.xl && S.xl.choose) {
+    // Xóm lạ: đi theo tổng hoặc theo một con xúc xắc
+    S.phase = 'move';
+    S.choice = { kind: 'move', opts: [...new Set([d1 + d2, d1, d2])] };
+    S.msg = `${p.name} chọn đi ${S.choice.opts.join(' hay ')} ô.`;
+    return true;
+  }
   moveBy(G, p, d1 + d2);
   return done(G);
 }
@@ -250,12 +315,30 @@ function afterLand(G) {
 function nextPlayer(G) {
   const S = G.S;
   let n = S.turn;
-  do { n = (n + 1) % S.players.length; if (n === 0) { S.round++; snapshotWorth(S); } } while (S.players[n].out);
+  do {
+    n = (n + 1) % S.players.length;
+    if (n === 0) {
+      S.round++; snapshotWorth(S);
+      if (S.xl && S.round > S.xl.rounds) { finishByPrestige(G); return; }
+    }
+  } while (S.players[n].out);
   S.turn = n; S.phase = 'roll'; S.doubles = 0; S.choice = null; S.gamble = null;
   const p = S.players[n];
   S.view = { kind: 'tile', i: p.pos };
   S.msg = p.jail ? `${p.name} đang ở ${mapOf(S).terms.jail}: lăn đôi, trả ${BAIL} ${CUR} hoặc dùng vé.` : `Đến lượt ${p.name}.`;
   if (p.money < 0) S.msg += ` Còn nợ ${-p.money} ${CUR}.`;
+}
+
+/** Hết vòng cuối: ai uy tín cao nhất thắng (hòa thì tài sản, rồi ghế nhỏ hơn). */
+function finishByPrestige(G) {
+  const S = G.S;
+  S.round = S.xl.rounds;
+  const sc = S.players.map((_, k) => prestige(S, k));
+  S.xl.final = sc;
+  let w = 0;
+  sc.forEach((r, k) => { if (r.total > sc[w].total || (r.total === sc[w].total && netWorth(S, k) > netWorth(S, w))) w = k; });
+  S.winner = w; S.phase = 'end';
+  say(G, `Hết ${S.xl.rounds} vòng. ${S.players[w].name} có uy tín cao nhất xóm: ${sc[w].total} điểm.`);
 }
 
 // ---------- tiền ----------
@@ -285,8 +368,9 @@ export function buildingValue(S, k) {
 // ---------- di chuyển ----------
 function passStart(G, p) {
   const S = G.S;
-  p.money += SALARY;
-  addLog(S, `${p.name} đi qua ${mapOf(S).terms.start}, nhận ${SALARY} ${CUR}.`);
+  const salary = p.worker ? SALARY / 2 : SALARY;
+  p.money += salary;
+  addLog(S, `${p.name} đi qua ${mapOf(S).terms.start}, nhận ${salary} ${CUR}${p.worker ? ' (lương làm thuê)' : ''}.`);
   hook(G, 'onPassStart', p);
 }
 function moveBy(G, p, steps) {
@@ -321,10 +405,19 @@ function land(G, p) {
   const S = G.S, i = p.pos, t = tilesOf(S)[i];
   S.view = { kind: 'tile', i };
   S.stats.lands[i] = (S.stats.lands[i] || 0) + 1;
+  if (S.xl && !S.xl.seen[i]) {
+    // Xóm lạ: sương tan ở ô có người dừng chân; người mở ô được thưởng khai hoang
+    const k = idx(S, p);
+    S.xl.seen[i] = true; S.xl.explored[k]++;
+    p.money += XL_EXPLORE;
+    G.ev.push({ type: 'reveal', i, seat: k });
+    addLog(S, `${p.name} khai hoang: sương tan, hiện ra ${t.name} (+${XL_EXPLORE} ${CUR}).`);
+  }
   if (buyable(t)) {
     const o = S.owner[i];
     if (o == null) {
-      if (p.money >= t.price) { S.phase = 'buy'; S.msg = `${t.name} chưa có ai ở. ${p.name} có muốn mua với giá ${t.price} ${CUR}?`; }
+      if (p.worker) say(G, `${p.name} đang đi làm thuê, chưa mua được ${t.name}.`);
+      else if (p.money >= t.price) { S.phase = 'buy'; S.msg = `${t.name} chưa có ai ở. ${p.name} có muốn mua với giá ${t.price} ${CUR}?`; }
       else say(G, `${p.name} chưa đủ tiền mua ${t.name}.`);
     } else if (o === idx(S, p)) say(G, `${p.name} về thăm ${t.name} của mình.`);
     else if (S.mort[i]) say(G, `${t.name} đang thế chấp, không thu tiền thuê.`);
@@ -357,7 +450,7 @@ function draw(G, p, deck) {
   const me = idx(S, p), T = tilesOf(S);
   if (fx.gain) gain(G, p, fx.gain);
   else if (fx.pay) pay(G, p, null, fx.pay, fx.why);
-  else if (fx.goto != null) moveTo(G, p, fx.goto);
+  else if (fx.goto != null) moveTo(G, p, posOf(S, fx.goto));
   else if (fx.nearest) moveTo(G, p, nearest(S, p.pos, fx.nearest));
   else if (fx.back) moveBy(G, p, -fx.back);
   else if (fx.repairs) repairs(G, p, ...fx.repairs);
@@ -429,6 +522,18 @@ function manage(G, type, i) {
 function bankrupt(G, forced) {
   const S = G.S, p = S.players[S.turn];
   const to = forced ? null : p.creditor;
+  if (S.xl && !forced) {
+    // Xóm lạ: không ai bị loại. Đất về chủ nợ (hoặc về phố), xóa nợ, đi làm thuê tới hết ván.
+    for (const i of Object.keys(S.owner)) {
+      if (S.owner[i] !== S.turn) continue;
+      delete S.houses[i];
+      if (to != null && !S.players[to].out) S.owner[i] = to; else { delete S.owner[i]; delete S.mort[i]; }
+    }
+    p.money = 0; p.creditor = null; p.worker = true;
+    say(G, `${p.name} trắng tay${to != null ? ', đất chuyển cho ' + S.players[to].name : ''}, đi làm thuê tới hết ván.`);
+    nextPlayer(G);
+    return true;
+  }
   for (const i of Object.keys(S.owner)) {
     if (S.owner[i] !== S.turn) continue;
     delete S.houses[i];

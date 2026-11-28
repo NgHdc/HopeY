@@ -2,7 +2,7 @@
 // Bố cục theo mockup 0.4 "Giấy mới". Màu/font: design/tokens.css (qua class trong style.css).
 import { CUR, BAIL, SALARY, START_MONEY, GO_JAIL, buyable, groupOf, unmortCost } from '../core/board.js';
 import { MAPS, mapOf } from '../core/maps/index.js';
-import { ownsGroup, ownedOfType, canManage, rentFor, netWorth, choiceTiles, betRange } from '../core/rules.js';
+import { ownsGroup, ownedOfType, canManage, rentFor, netWorth, choiceTiles, betRange, prestige } from '../core/rules.js';
 
 export const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export const pad = n => String(n + 1).padStart(2, '0');
@@ -49,7 +49,7 @@ const btn = (act, label, cls = '', { arg = '', disabled = false, id = '' } = {})
 /** Nút chọn map (trang đầu, sảnh). */
 export const mapSeg = cur => `<div class="seg" role="group" aria-label="Bàn cờ" id="maps">${Object.values(MAPS).map(m => `<button type="button" data-act="map" data-arg="${m.id}" class="${m.id === cur ? 'on' : ''}" aria-pressed="${m.id === cur}" title="${esc(m.blurb)}">${esc(m.name)}</button>`).join('')}</div>`;
 
-export function homeHtml({ name, code, online, hasLocalSave, devDefault, version, mapId }) {
+export function homeHtml({ name, code, online, hasLocalSave, devDefault, version, mapId, xomla }) {
   return `<main class="home">
     <section class="home-art" aria-label="Bản đồ ${esc(MAPS[mapId].name)}">
       <div class="strip"><span>${esc(MAPS[mapId].name)} / Bản đồ</span><span>8 quận · 40 ô</span></div>
@@ -86,6 +86,7 @@ export function homeHtml({ name, code, online, hasLocalSave, devDefault, version
         <div class="local-row">${mapSeg(mapId)}<span class="label">${esc(MAPS[mapId].blurb)}</span></div>
         <div class="local-row">
           <div class="seg" role="group" aria-label="Số người chơi" id="count">${[2, 3, 4, 5, 6].map(n => `<button type="button" data-n="${n}" class="${n === 3 ? 'on' : ''}" aria-pressed="${n === 3}">${n}</button>`).join('')}</div>
+          <label class="check" title="Bàn cờ phủ sương, xáo mỗi ván, chọn cách đi, 12 vòng tính uy tín"><input type="checkbox" id="xlchk" ${xomla ? 'checked' : ''}>Xóm lạ (thử)</label>
           <label class="check"><input type="checkbox" id="devchk" ${devDefault ? 'checked' : ''}>công cụ dev</label>
           <button type="button" class="btn sm" id="local">Chơi thử ngay</button>
           ${hasLocalSave ? '<button type="button" class="btn ghost sm" id="resume-local">Tiếp tục ván thử</button>' : ''}
@@ -152,6 +153,11 @@ export function lobbyHtml({ room, url, seats, me, isHost, canStart, status, stat
 }
 
 // ============ BÀN CỜ ============
+/** Xóm lạ: ô i còn phủ sương. */
+export const isFog = (S, i) => !!(S.xl && !S.xl.seen[i]);
+const roundLabel = S => (S.xl ? `vòng ${S.round}/${S.xl.rounds}` : `vòng ${S.round}`);
+const fogCardHtml = () => `<div class="card deed fog-card"><span class="kicker">Chưa ai tới đây</span><h3 class="h3">Sương còn phủ</h3><p class="human">Ai dừng chân ở ô này đầu tiên sẽ thấy ở đây có gì, được thưởng khai hoang và được mua trước.</p></div>`;
+
 function tileHtml(S, ctx, t, i, sel, picks) {
   const [r, c] = cell(i);
   const pos = k => (ctx.pos && ctx.pos[k] != null ? ctx.pos[k] : S.players[k].pos);
@@ -160,6 +166,10 @@ function tileHtml(S, ctx, t, i, sel, picks) {
   const o = S.owner[i], h = S.houses[i] || 0;
   const cls = ['tile', t.type === 'corner' ? 'corner' : '', i === sel ? 'sel' : '', S.mort[i] ? 'mort' : '', picks && picks.has(i) ? 'can-pick' : ''].join(' ');
   const label = `${t.name}${o != null ? ', của ' + S.players[o].name : ''}`;
+  if (isFog(S, i)) {
+    // Xóm lạ: ô chưa ai dừng chân. Không lộ gì: không tên, không giá, không màu quận.
+    return `<button type="button" class="tile fog ${i === sel ? 'sel' : ''} ${picks && picks.has(i) ? 'can-pick' : ''}" style="grid-row:${r};grid-column:${c}" data-tile="${i}" aria-label="Ô chưa ai tới"><span class="fog-q" aria-hidden="true">?</span><span class="pieces">${here}</span></button>`;
+  }
   const open = `<button type="button" class="${cls}" style="grid-row:${r};grid-column:${c}" data-tile="${i}" aria-label="${esc(label)}">`;
   if (t.type === 'corner') {
     return `${open}<span class="t-name">${t.name}</span><span class="t-note">${t.note || ''}</span><span class="big">${pad(i)}</span><span class="pieces">${here}</span></button>`;
@@ -194,14 +204,14 @@ function centerHtml(S, ctx) {
     <span class="reg tl"></span><span class="reg tr"></span><span class="reg bl"></span><span class="reg br"></span>
     <div class="c-left">
       <div style="display:flex;flex-direction:column;gap:6px">
-        <span class="label" style="text-transform:uppercase;letter-spacing:.12em;font-family:var(--font-sans);font-size:11px">Vòng ${S.round} · xúc xắc</span>
+        <span class="label" style="text-transform:uppercase;letter-spacing:.12em;font-family:var(--font-sans);font-size:11px">${roundLabel(S)} · xúc xắc</span>
         <div class="dice-row">${dieSvg(S.dice[0], 'xúc xắc')}${dieSvg(S.dice[1], 'xúc xắc')}<span class="dice-sum">${S.dice[0] + S.dice[1]}</span></div>
       </div>
       ${gambleResultHtml(S)}
       <p class="msg" aria-live="polite">${esc(S.msg)}</p>
       <div class="recent"><span class="label">vừa xảy ra</span>${S.log.slice(0, 2).map(l => `<span>${esc(l)}</span>`).join('')}</div>
     </div>
-    <div class="c-right">${v.kind === 'card' ? eventCardHtml(S, v) : deedHtml(S, v.i, last)}</div>
+    <div class="c-right">${v.kind === 'card' ? eventCardHtml(S, v) : isFog(S, v.i) ? fogCardHtml() : deedHtml(S, v.i, last)}</div>
   </div>`;
 }
 
@@ -273,13 +283,21 @@ function dockHtml(S, ctx) {
     return `<div class="dock">
       <div class="debt"><span style="font-weight:700">${p.creditor != null ? 'Bạn còn thiếu ' + esc(S.players[p.creditor].name) : 'Bạn đang nợ'}</span><b>${money(p.money)} ${CUR}</b></div>
       <span class="human" style="font-size:14px">Bán bớt nhà hoặc thế chấp đất ở tab "Đất của tôi". Chưa đủ thì đành rời phố.</span>
-      <div class="row">${btn('end', 'Kết thúc lượt', 'primary', { disabled: true })}${btn('bankrupt', 'Phá sản, rời ván', '', d)}</div>
+      <div class="row">${btn('end', 'Kết thúc lượt', 'primary', { disabled: true })}${btn('bankrupt', S.xl ? 'Trắng tay, đi làm thuê' : 'Phá sản, rời ván', '', d)}</div>
     </div>`;
   }
   if (S.phase === 'roll') {
     return `<div class="dock">
       <div class="row">${btn('roll', p.jail ? 'Lăn tìm đôi' : 'Lăn xúc xắc', 'primary', d)}${p.jail ? btn('bail', `Trả ${BAIL} ${CUR}`, '', { disabled: busy || p.money < BAIL }) + (p.cards ? btn('ticket', 'Dùng vé', '', d) : '') : ''}</div>
       <span class="label">${p.jail ? `đang ở ${esc(mapOf(S).terms.jail)} · lần thử ${p.jail}/3` : 'phím Space để lăn'}</span>
+    </div>`;
+  }
+  if (S.phase === 'move') {
+    const T = mapOf(S).tiles;
+    return `<div class="dock">
+      <span style="font-weight:700">Đi theo tổng, hay theo một con xúc xắc?</span>
+      <div class="row">${S.choice.opts.map((n, k) => { const to = (p.pos + n) % 40; return btn('move', `Đi ${n} ô · ${isFog(S, to) ? 'vào sương' : esc(T[to].short || T[to].name)}`, k === 0 ? 'primary' : '', { arg: n, disabled: busy }); }).join('')}</div>
+      <span class="label">ô chưa ai tới còn phủ sương · ai mở ô đầu tiên được thưởng khai hoang</span>
     </div>`;
   }
   if (S.phase === 'downgrade' || S.phase === 'fly') {
@@ -367,7 +385,7 @@ function sideHtml(S, ctx) {
     : !mine ? `Pha ấm trà, chờ ${esc(p.name)} lăn xúc xắc.`
     : p.money < 0 ? 'Túi rỗng rồi. Bán gì đó, hoặc nhờ hàng xóm.'
     : p.jail ? 'Ngồi ghế đá, ngắm người qua lại.'
-    : { roll: 'Xúc xắc đang chờ trong lòng bàn tay.', buy: 'Một mảnh phố đang chờ người đến ở.', end: 'Uống ngụm trà rồi chuyền xúc xắc.', fly: 'Vé đã trong tay, chỉ còn chọn nơi đến.', downgrade: 'Nhìn quanh bàn cờ, chọn một công trình.', gamble: 'Ván xúc xắc vỉa hè: cược bao nhiêu?' }[S.phase] || '';
+    : { move: 'Đi đường quen, hay liều vào sương?', roll: 'Xúc xắc đang chờ trong lòng bàn tay.', buy: 'Một mảnh phố đang chờ người đến ở.', end: 'Uống ngụm trà rồi chuyền xúc xắc.', fly: 'Vé đã trong tay, chỉ còn chọn nơi đến.', downgrade: 'Nhìn quanh bàn cờ, chọn một công trình.', gamble: 'Ván xúc xắc vỉa hè: cược bao nhiêu?' }[S.phase] || '';
   const title = local ? `Lượt của ${esc(p.name)}.` : mine ? 'Lượt của bạn.' : `Lượt của ${esc(p.name)}.`;
   const myCount = me >= 0 ? Object.values(S.owner).filter(o => o === me).length : 0;
   return `<aside class="side" aria-label="Lượt chơi">
@@ -379,7 +397,7 @@ function sideHtml(S, ctx) {
     ${dockHtml(S, ctx)}
     <div class="players">${S.players.map((x, k) => {
       const chips = Object.keys(S.owner).map(Number).filter(i => S.owner[i] === k).sort((a, b) => a - b).map(i => `<span class="sw ${swClass(TILES[i], M)}" title="${esc(TILES[i].name)}"></span>`).join('');
-      const tags = [k === me && !local ? '(bạn)' : '', x.online === false && !x.out ? 'mất kết nối' : '', king === k ? 'vua Thanh Hóa' : '', x.jail ? `${M.terms.jail.toLowerCase()} · thử ${x.jail}/3` : '', x.cards ? `vé ra ×${x.cards}` : '', x.discount ? `giảm 50% ×${x.discount}` : '', x.out ? 'đã rời phố' : ''].filter(Boolean).join(' · ');
+      const tags = [S.xl ? `uy tín ${prestige(S, k).total}` : '', x.worker ? 'làm thuê' : '', k === me && !local ? '(bạn)' : '', x.online === false && !x.out ? 'mất kết nối' : '', king === k ? 'vua Thanh Hóa' : '', x.jail ? `${M.terms.jail.toLowerCase()} · thử ${x.jail}/3` : '', x.cards ? `vé ra ×${x.cards}` : '', x.discount ? `giảm 50% ×${x.discount}` : '', x.out ? 'đã rời phố' : ''].filter(Boolean).join(' · ');
       return `<div class="pl ${k === S.turn ? 'cur' : ''} ${x.out ? 'out' : ''}">
         ${pieceSvg(x.piece, 20)}
         <div class="info"><span class="nm">${esc(x.name)} <small>${esc(tags)}</small></span><span class="chips">${chips}</span></div>
@@ -404,7 +422,7 @@ export function gameHtml(S, ctx) {
   const picks = picking ? new Set(choiceTiles(S)) : null;
   const where = ctx.mode === 'local' ? 'ván thử trên máy này' : `phòng ${esc(ctx.room)}`;
   return `<header class="topbar">
-      <div class="l"><span class="brand">Phố Giấy</span><span class="label">${esc(M.name)} · ${where} · vòng ${S.round} · ${S.players.length} người</span></div>
+      <div class="l"><span class="brand">Phố Giấy</span><span class="label">${esc(M.name)}${S.xl ? ' · Xóm lạ' : ''} · ${where} · ${roundLabel(S)} · ${S.players.length} người</span></div>
       <div class="r">${S.winner != null ? btn('review-end', 'Xem kết quả', 'xs') : ''}${btn('rules', 'Luật chơi', 'xs')}${btn('exit', ctx.mode === 'local' ? 'Thoát ván' : 'Rời phòng', 'xs')}</div>
     </header>
     ${ctx.banner ? `<div class="banner" role="status"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" aria-hidden="true"><path d="M3 12 a9 9 0 1 1 3 6.7"/><path d="M3 20 V13 H10"/></svg><b>${esc(ctx.banner)}</b><span class="human" style="font-size:14px">Bàn cờ vẫn ở đây. Đang thử nối lại mỗi 3 giây…</span></div>` : ''}
@@ -424,7 +442,11 @@ export function endHtml(S, ctx) {
   const landEntries = Object.entries(st.lands).filter(([i]) => TILES[i].type !== 'corner' || i !== '0');
   const topLand = landEntries.sort((a, b) => b[1] - a[1])[0];
   const jailK = argmax(st.jails);
-  const order = S.players.map((p, k) => k).sort((a, b) => (a === w ? -1 : b === w ? 1 : (st.outRound[b] ?? 1e9) - (st.outRound[a] ?? 1e9)));
+  const XL = S.xl && S.xl.final;
+  const order = XL
+    ? S.players.map((p, k) => k).sort((a, b) => XL[b].total - XL[a].total || (a === w ? -1 : b === w ? 1 : 0))
+    : S.players.map((p, k) => k).sort((a, b) => (a === w ? -1 : b === w ? 1 : (st.outRound[b] ?? 1e9) - (st.outRound[a] ?? 1e9)));
+  const xlRow = k => `uy tín ${XL[k].total} · tài sản ${XL[k].worth} · khai hoang ${XL[k].explore}${XL[k].rules ? ' · lệ ' + XL[k].rules : ''}${XL[k].games ? ' · hội ' + XL[k].games : ''}`;
   // biểu đồ tài sản
   const series = st.worth, maxV = Math.max(1, ...series.flat());
   const X = i => (series.length < 2 ? 0 : (i / (series.length - 1)) * 600), Y = v => 186 - (v / maxV) * 170;
@@ -434,9 +456,9 @@ export function endHtml(S, ctx) {
     <div class="topline"><span class="t">Phố Giấy / ${ctx.mode === 'local' ? 'Ván thử' : 'Phòng ' + esc(ctx.room)} / Kết thúc</span><span class="label">${S.round} vòng · ${n} người</span></div>
     <div class="end-hero">
       <div class="txt">
-        <span class="kicker">Ai giữ được phố?</span>
-        <h1 class="h1">${esc(S.players[w].name)} giữ được phố.</h1>
-        <p class="human" style="font-size:18px;max-width:620px">Những người còn lại đã bán nhà, thế chấp đất, rồi lần lượt rời phố. Phố vẫn còn đó, và những người đã sống ở đây.</p>
+        <span class="kicker">${XL ? 'Ai được cả xóm nể?' : 'Ai giữ được phố?'}</span>
+        <h1 class="h1">${esc(S.players[w].name)} ${XL ? 'có uy tín nhất xóm.' : 'giữ được phố.'}</h1>
+        <p class="human" style="font-size:18px;max-width:620px">${XL ? `Sau ${S.xl.rounds} vòng, sương đã tan ở ${S.xl.seen.filter(Boolean).length}/40 ô. Người mới đến giờ đã thành hàng xóm.` : 'Những người còn lại đã bán nhà, thế chấp đất, rồi lần lượt rời phố. Phố vẫn còn đó, và những người đã sống ở đây.'}</p>
         <div class="row" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">
           ${ctx.mode !== 'guest' ? btn('new', ctx.mode === 'host' ? 'Chơi ván mới, cùng phòng' : 'Chơi ván mới', 'primary lg') : '<span class="label">chờ chủ phòng mở ván mới…</span>'}
           ${btn('review', 'Xem lại bàn cờ', 'lg')}${btn('exit', 'Về trang đầu', 'ghost lg')}
@@ -469,8 +491,8 @@ export function endHtml(S, ctx) {
         <div class="legend">${S.players.map((p, k) => `<span><i style="background:${pieceColor(p.piece)}"></i>${esc(p.name)}</span>`).join('')}</div>
       </figure>
       <div class="rank">
-        <span class="rank-title" style="padding-bottom:8px">Thứ tự rời phố</span>
-        ${order.map((k, i) => `<div class="r ${i === 0 ? 'first' : ''}"><span class="mono" style="color:${i === 0 ? 'var(--accent)' : 'var(--ink-2)'}">${String(i + 1).padStart(2, '0')}</span>${pieceSvg(S.players[k].piece, 18)}<span style="font-weight:${i === 0 ? 700 : 600}">${esc(S.players[k].name)}</span><span class="label">${k === w ? 'còn lại' : st.outRound[k] ? 'vòng ' + st.outRound[k] : ''}</span></div>`).join('')}
+        <span class="rank-title" style="padding-bottom:8px">${XL ? 'Bảng uy tín' : 'Thứ tự rời phố'}</span>
+        ${order.map((k, i) => `<div class="r ${i === 0 ? 'first' : ''}"><span class="mono" style="color:${i === 0 ? 'var(--accent)' : 'var(--ink-2)'}">${String(i + 1).padStart(2, '0')}</span>${pieceSvg(S.players[k].piece, 18)}<span style="font-weight:${i === 0 ? 700 : 600}">${esc(S.players[k].name)}</span><span class="label">${XL ? xlRow(k) : k === w ? 'còn lại' : st.outRound[k] ? 'vòng ' + st.outRound[k] : ''}</span></div>`).join('')}
       </div>
     </div>
   </main>`;

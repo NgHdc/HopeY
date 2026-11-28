@@ -5,6 +5,13 @@ Quy trình phát hành và rollback: [`docs/RELEASE.md`](docs/RELEASE.md).
 
 ## [Chưa phát hành]
 
+### Thêm (thử nghiệm)
+- **Chế độ Xóm lạ, bước 1** (bật ô "Xóm lạ (thử)" khi chơi trên một máy, hoặc `?local=3&xomla`). Thiết kế: `docs/XOM_LA.md`.
+  - Bàn cờ **xáo mỗi ván** (giữ 4 góc, đất cùng quận đứng liền nhau) và **phủ sương**: ô chỉ mở khi có người dừng chân, người mở được thưởng khai hoang 10.
+  - **Chọn cách đi**: theo tổng hai xúc xắc hoặc theo một con.
+  - **12 vòng, thắng bằng uy tín** (tài sản/100, nhà tính 1,2 lần, mỗi 5 ô khai hoang +1). Không ai bị loại: hết tiền thì đi làm thuê (nửa lương, không mua đất).
+  - Giao diện tạm; bản pixel do Codex (U9) và Agy (A9) làm.
+
 ### Sửa
 - **Online: khách bấm link mà chủ phòng không thấy ai vào.** Khi hai máy ở hai mạng khác nhau (4G, wifi công ty), mạng chặn kết nối trực tiếp và trước đây cả hai bên chỉ chờ im lặng. Giờ sau 20 giây cả khách và chủ phòng đều được báo rõ "mạng chặn kết nối trực tiếp", kèm gợi ý dùng chung wifi. Thêm STUN của Cloudflare.
 - Khách bấm link phòng mà chưa nối được thì thấy màn hình "Chưa vào được phòng" kèm lý do, thay cho sảnh "0 / 6" ghế trông như đã vào.

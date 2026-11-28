@@ -14,6 +14,7 @@ import { openHost, joinHost, makeRoomCode, peerAvailable } from './net/peer.js';
 const $ = s => document.querySelector(s);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const STEP_MS = 120;
+const XL_KEY = 'phogiay-xomla';
 const SESSION_KEY = 'phogiay-session-v2', LOCAL_KEY = 'phogiay-local', NAME_KEY = 'phogiay-name', MAP_KEY = 'phogiay-map';
 const DEFAULT_NAMES = ['Lan', 'Minh', 'Hoa', 'Tuấn', 'Mai', 'Nam'];
 const params = new URLSearchParams(location.search);
@@ -163,11 +164,11 @@ function commit(seat, action) {
 }
 
 // ---------- ván thử trên máy ----------
-function startLocal(n, dev, map = app.mapId) {
+function startLocal(n, dev, map = app.mapId, xomla = false) {
   const first = (store.get(NAME_KEY) || '').trim() || DEFAULT_NAMES[0];
   const names = [first, ...DEFAULT_NAMES.filter(x => x !== first)].slice(0, n);
   Object.assign(app, { mode: 'local', S: null, review: false, tab: 'land', screen: 'game' });
-  app.truth = createGame(names, { dev, map });
+  app.truth = createGame(names, { dev, map, xomla });
   store.set(SESSION_KEY, { mode: 'local' }, sessionStorage);
   persist(); show(app.truth);
 }
@@ -320,7 +321,7 @@ function renderHome(root) {
   const urlCode = (params.get('room') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5);
   const local = store.get(LOCAL_KEY);
   const draft = app.homeDraft || {};
-  root.innerHTML = V.homeHtml({ name: draft.name ?? store.get(NAME_KEY) ?? '', code: draft.code ?? urlCode, online: peerAvailable(), hasLocalSave: !!(local && local.S && local.S.winner == null), devDefault: isLocalhost || params.has('dev'), version: APP_VERSION, mapId: app.mapId });
+  root.innerHTML = V.homeHtml({ name: draft.name ?? store.get(NAME_KEY) ?? '', code: draft.code ?? urlCode, online: peerAvailable(), hasLocalSave: !!(local && local.S && local.S.winner == null), devDefault: isLocalhost || params.has('dev'), version: APP_VERSION, mapId: app.mapId, xomla: !!store.get(XL_KEY) });
   $('#count').querySelectorAll('button').forEach(b => { const on = +b.dataset.n === app.homeCount; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
   const getName = () => {
     const v = $('#nm').value.trim().slice(0, 14);
@@ -341,7 +342,7 @@ function renderHome(root) {
     app.homeCount = +b.dataset.n;
     $('#count').querySelectorAll('button').forEach(x => { const on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); });
   };
-  on('#local', () => { const v = $('#nm').value.trim(); if (v) store.set(NAME_KEY, v.slice(0, 14)); app.homeDraft = null; startLocal(app.homeCount, $('#devchk').checked); });
+  on('#local', () => { const v = $('#nm').value.trim(); if (v) store.set(NAME_KEY, v.slice(0, 14)); app.homeDraft = null; store.set(XL_KEY, $('#xlchk').checked); startLocal(app.homeCount, $('#devchk').checked, app.mapId, $('#xlchk').checked); });
   on('#resume-local', () => { app.homeDraft = null; if (!resumeLocal()) $('#err').textContent = 'không mở được ván thử đã lưu'; });
 }
 function renderLobby(root) {
@@ -393,7 +394,7 @@ document.addEventListener('click', e => {
       return ask({ strip: 'Người chơi rớt mạng', kicker: `Chờ ${p.name} hay đi tiếp?`, title: `Cho ${p.name} rời ván?`, text: 'Đất trả về phố, mọi người chơi tiếp.', ok: `Cho ${p.name} rời ván`, danger: true, cancel: 'Chờ thêm', onOk: () => commit(app.truth.turn, { type: 'forfeit' }) });
     }
     case 'bankrupt':
-      return ask({ strip: 'Phá sản', kicker: 'Hết cách rồi?', title: 'Phá sản và rời ván?', text: 'Đất của bạn chuyển cho người bạn đang nợ (hoặc trả về phố). Bạn vẫn xem tiếp được.', ok: 'Phá sản', danger: true, cancel: 'Thử xoay xở tiếp', onOk: () => act({ type: 'bankrupt' }) });
+      return ask({ strip: 'Phá sản', kicker: 'Hết cách rồi?', title: 'Phá sản và rời ván?', text: app.truth && app.truth.xl ? 'Đất của bạn chuyển cho người bạn đang nợ (hoặc trả về phố), nợ được xóa. Bạn vẫn chơi tới hết ván nhưng chỉ nhận nửa lương và không mua đất được.' : 'Đất của bạn chuyển cho người bạn đang nợ (hoặc trả về phố). Bạn vẫn xem tiếp được.', ok: app.truth && app.truth.xl ? 'Đi làm thuê' : 'Phá sản', danger: true, cancel: 'Thử xoay xở tiếp', onOk: () => act({ type: 'bankrupt' }) });
     case 'dev-roll': return act({ type: 'roll', dice: [+$('#dv1').value, +$('#dv2').value] });
     case 'dev-money': return act({ type: 'debug', op: 'money', n: arg });
     case 'dev-goto': return act({ type: 'debug', op: 'goto', i: arg });
@@ -401,6 +402,7 @@ document.addEventListener('click', e => {
     case 'dev-own-district': { const T = mapOf(app.truth).tiles; groupOf(T, T[arg].d).forEach(i => act({ type: 'debug', op: 'own', i })); return; }
     case 'dev-card': { const [deck, id] = $('#dvc').value.split(':'); return act({ type: 'debug', op: 'card', deck, id: +id }); }
     case 'fly': case 'downgrade': return act({ type: a, i: arg });
+    case 'move': return act({ type: 'move', n: arg });
     case 'gamble': return act({ type: 'gamble', bet: +$('#bet').value, pick: arg });
     case 'build': case 'sell': case 'mort': case 'unmort': return act({ type: a, i: arg });
     default: return act({ type: a });
@@ -427,7 +429,7 @@ const ses = store.get(SESSION_KEY, sessionStorage);
 if (ses && ses.mode === 'host' && peerAvailable()) startHost(ses.name, ses.room);
 else if (ses && ses.mode === 'guest' && peerAvailable()) startGuest(ses.name, ses.room);
 else if (ses && ses.mode === 'local' && resumeLocal()) { /* đã mở lại ván thử */ }
-else if (params.has('local')) startLocal(Math.min(6, Math.max(2, +params.get('local') || 3)), isLocalhost || params.has('dev'));
+else if (params.has('local')) startLocal(Math.min(6, Math.max(2, +params.get('local') || 3)), isLocalhost || params.has('dev'), app.mapId, params.has('xomla'));
 else render();
 
 addEventListener('resize', syncPieces);
