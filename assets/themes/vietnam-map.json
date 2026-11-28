@@ -68,5 +68,9 @@
         44
       ]
     }
-  ]
+  ],
+  "variants": {
+    "default": "vietnam-map.png",
+    "vintage": "vietnam-map-vintage.png"
+  }
 }

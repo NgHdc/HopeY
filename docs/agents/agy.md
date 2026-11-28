@@ -4,6 +4,36 @@
 - Đã tạo nội dung chữ cho map Việt Nam (40 ô, 13 loại thẻ Vận mệnh, gợi ý Thanh Hóa) và chạy `node --test tests/*.test.mjs` (17/17 xanh).
 - File: `content/vietnam.json`.
 
+## 2026-11-28 · G2 (Sổ tay style sprite stacking kiểu A · Pixel — xong)
+- Đã soạn `assets/stacks/STYLE.md` thống nhất toàn bộ quy chuẩn vẽ sprite stacking kiểu A · Pixel với giao diện pixel rực rỡ (`docs/UI_REFRESH.md` mục 0) và bảng màu A1 (`design/themes/palettes.md`): lưới/số lát (`spacing: 1.0`, `squash: 0.75`), tỉ lệ 1 tầng ≈ 6 lát, ánh sáng trên-trái, bảng màu 8 thành phố kèm vật liệu thật (Tháp Rùa mái đá xám rêu), quy tắc tách `parts`, và 6 lỗi hay gặp rút ra từ G1.
+- File: `assets/stacks/STYLE.md`.
+- Việc tiếp theo: tạm dừng **G3** (22 địa danh còn lại) chờ **Cổng duyệt 2** theo đúng kế hoạch trong `agents-hub/tasks/agy.md`. Đang vướng: không.
+
+## 2026-11-28 · A4p (Nền lặp pixel 32×32 + bỏ SVG cũ — chờ duyệt)
+- Đã vẽ 2 nền lặp pixel 32×32 nối liền không thấy đường ghép: `assets/themes/vietnam-tile.png` (279 B — sóng nước & mây) và `assets/themes/classic-tile.png` (209 B — lưới chấm & góc giấy gấp), kèm ảnh kiểm tra lát 4×4 phóng ×3 `assets/themes/check/tiles-preview.png`.
+- Đã xóa 4 file SVG cũ (`vietnam-pattern.svg`, `classic-pattern.svg`, `vietnam-board.svg`, `classic-board.svg`) và cập nhật `--bg-pattern`, `--board-art` trong `design/themes/palettes.md` trỏ sang các file PNG pixel mới.
+- Việc tiếp theo: làm **G2** (`assets/stacks/STYLE.md`) rồi dừng chờ Cổng duyệt 2 trước khi làm G3. Đang vướng: không.
+
+![Kiểm tra nền lặp 32x32 A4p](../../assets/themes/check/tiles-preview.png)
+
+## 2026-11-28 · A3p (6 sprite Phố Giấy có hoạt ảnh + bỏ avatar vector — chờ duyệt)
+- Đã vẽ 6 sprite sheet pixel chibi 32×32 (128×128, mỗi sheet ~2,0–2,1 KB < 20 KB) + 6 chân dung 48×48 + cập nhật `assets/avatars/classic/avatars.json` đúng schema mục 0.4 `UI_REFRESH.md`.
+- Đã tách hẳn màu giữa 6 nhân vật: **Bác Hải Đăng** (`hai-dang`) chuyển sang áo sọc **đỏ – trắng ngọn hải đăng (`#C73236`)** thay vì xanh dương để không trùng **Ông Lái Đò** (`#1E74BA`).
+- Đã xóa toàn bộ 24 file SVG avatar cũ trong `assets/avatars/vietnam/`, `assets/avatars/classic/` và 2 ảnh `check/*-sheet.png` cũ (`git rm`), cập nhật `assets/avatars/SOURCES.md` và xuất `check/classic-sprites.png` (×4) & `classic-sprites.gif`.
+- Việc tiếp theo: làm **A4p** (nền lặp pixel 32×32 + bỏ SVG cũ + sửa `palettes.md`) rồi **G2** (`assets/stacks/STYLE.md`). Đang vướng: không.
+
+![6 sprite pixel Phố Giấy A3p](../../assets/avatars/check/classic-sprites.png)
+
+## 2026-11-28 · A6 (Hoàn chỉnh bản đồ pixel 2 vùng đất + bản nhạt giữa bàn — chờ duyệt)
+- Người dùng thích cả 2 bản phác Dải đất (muốn giữ nhiều lựa chọn), nên đã xuất đủ cả 2 bản ở khổ gốc `160×240`: `assets/themes/vietnam-map.png` (A · biển xanh RPG, 7,1 KB) và `assets/themes/vietnam-map-vintage.png` (B · giấy cổ vàng kem, 7,4 KB), khai báo trong `vietnam-map.json` (`variants`).
+- Đã vẽ `assets/themes/classic-map.png` (`160×240`, 4,8 KB — Phố Giấy nhìn chéo từ trên xuống, dòng sông liền mạch, 2 cầu, 8 khu đúng màu A1, ao sen, hải đăng, thuyền, người nhỏ) + `classic-map.json` + ảnh xem trước `check/classic-map-preview.png`.
+- Đã tạo 2 bản nhạt cho giữa bàn: `assets/themes/vietnam-board.png` (7,2 KB, mọi pixel đạt AA ≥ 8,96:1 với `--ink` và ≥ 4,65:1 với `--ink-2`) và `assets/themes/classic-board.png` (4,7 KB, mọi pixel đạt AA ≥ 9,45:1 với `--ink` và ≥ 4,70:1 với `--ink-2`), kèm ảnh kiểm tra `check/boards-preview.png`.
+- Việc tiếp theo: làm **A3p** (6 sprite Phố Giấy có hoạt ảnh + xóa avatar vector cũ) → **A4p** → **G2**. Đang vướng: không.
+
+| Phố Giấy (`classic-map.png` ×3) | Kiểm tra chữ trên 2 bản nhạt giữa bàn |
+|---|---|
+| ![Phố Giấy pixel](../../assets/themes/check/classic-map-preview.png) | ![Bản nhạt giữa bàn](../../assets/themes/check/boards-preview.png) |
+
 ## 2026-11-28 · A2p (6 sprite pixel Dải đất có hoạt ảnh — chờ duyệt)
 - Đã vẽ 6 sprite sheet pixel chibi 32×32 (128×128, 4 hàng `idle`/`walk`/`happy`/`sad`, mỗi sheet 2,0–2,6 KB < 20 KB) + 6 chân dung nửa người 48×48 + cập nhật `assets/avatars/vietnam/avatars.json` theo đúng schema `docs/UI_REFRESH.md` mục 0.4.
 - Đã sửa triệt để mọi góp ý từ bản vector: **Cô Hai** (`non-la`) có quai nón dưới cằm không vắt ngang mặt + quang gánh; **Minh Thư** (`ao-dai`) mặc áo dài hồng sen thật tà dài tới gối xẻ hai bên lộ quần dài trắng và tà bay khi `walk`; 6 màu áo chính khác nhau hoàn toàn ở 32px (đỏ son, vàng mai, hồng sen, xanh ngọc, sọc xanh biển, xanh lá mạ).

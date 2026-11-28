@@ -14,3 +14,16 @@ Mọi ảnh trong thư mục này do dự án tự vẽ hoặc dựng từ dữ 
   - `check/vietnam-map-draft-a.png` (A: biển xanh đậm kiểu bản đồ game RPG).
   - `check/vietnam-map-draft-b.png` (B: bản đồ giấy cổ vàng kem nắng).
 - **Tọa độ pixel gốc:** `vietnam-map.json` (không vẽ chữ lên ảnh).
+- **Bản hoàn chỉnh A6 (gốc 160×240, mỗi PNG < 8 KB < 40 KB):**
+  - `vietnam-map.png` (bản A: biển xanh RPG rực rỡ, mặc định).
+  - `vietnam-map-vintage.png` (bản B: bản đồ giấy cổ vàng kem nắng — giữ cả 2 làm tùy chọn theo yêu cầu người dùng, ghi trong `vietnam-map.json`).
+  - `vietnam-board.png` (bản nhạt cho giữa bàn, kiểm chứng AA ≥ 4,65:1 mọi pixel với `--ink-2` và ≥ 8,96:1 với `--ink`).
+  - `classic-map.png` (Phố Giấy nhìn chéo từ trên xuống, dòng sông uốn lượn, 2 cầu, 8 khu đúng màu A1, hải đăng, thuyền, người que nhỏ) + `classic-map.json`.
+  - `classic-board.png` (bản nhạt cho giữa bàn Phố Giấy, kiểm chứng AA ≥ 4,70:1 mọi pixel).
+  - Ảnh kiểm tra: `check/classic-map-preview.png` (×3), `check/boards-preview.png`.
+
+## A4p · Nền lặp kiểu pixel 32×32 (2026-11-28)
+- `vietnam-tile.png` (279 B): ô lặp 32×32 nối liền không đường ghép, sóng nước chu kỳ 16px, mây nhỏ & chấm hoa mai trên nền trong suốt.
+- `classic-tile.png` (209 B): ô lặp 32×32 nối liền không đường ghép, lưới chấm giấy thủ công & nếp gấp tam giác trên nền trong suốt.
+- Ảnh kiểm tra lát 4×4 phóng ×3: `check/tiles-preview.png`.
+- Đã gỡ bỏ 4 file SVG cũ (`*-pattern.svg`, `*-board.svg`) và cập nhật `design/themes/palettes.md` trỏ sang PNG.

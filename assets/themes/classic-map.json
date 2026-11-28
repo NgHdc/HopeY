@@ -1,0 +1,54 @@
+{
+  "w": 160,
+  "h": 240,
+  "cities": [
+    {
+      "district": 1,
+      "name": "Ngõ Đất",
+      "x": 30,
+      "y": 32
+    },
+    {
+      "district": 2,
+      "name": "Bến Sông",
+      "x": 70,
+      "y": 54
+    },
+    {
+      "district": 3,
+      "name": "Chợ Hoa",
+      "x": 32,
+      "y": 108
+    },
+    {
+      "district": 4,
+      "name": "Phố Nghề",
+      "x": 124,
+      "y": 104
+    },
+    {
+      "district": 5,
+      "name": "Phố Cổ",
+      "x": 122,
+      "y": 134
+    },
+    {
+      "district": 6,
+      "name": "Đồi Nắng",
+      "x": 126,
+      "y": 46
+    },
+    {
+      "district": 7,
+      "name": "Vườn Xanh",
+      "x": 34,
+      "y": 170
+    },
+    {
+      "district": 8,
+      "name": "Cảng Biển",
+      "x": 98,
+      "y": 186
+    }
+  ]
+}

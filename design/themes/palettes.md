@@ -22,13 +22,13 @@ Mọi cặp chữ/nền đã kiểm chứng tự động đạt **WCAG 2.1 AA �
 ## 2. Vùng đất `vietnam` — Dải đất (Việt Nam)
 
 **Cảm hứng:** Vàng kem nắng phương Nam (`#FFF6DC`), đỏ son sơn mài (`#C93420`), vàng hoa mai (`#F5B71A`), xanh ngọc biển và 8 sắc tỉnh thành bão hòa rõ rệt để liếc nhanh là phân biệt ngay.
-**Hoa văn nền:** `../../assets/themes/vietnam-pattern.svg` (sóng nước & mây cách điệu nhẹ màu vàng đất độ mờ thấp, không át chữ).
+**Hoa văn nền:** `../../assets/themes/vietnam-tile.png` (ô lặp pixel 32×32: sóng nước & mây cách điệu nhẹ, `image-rendering: pixelated`).
 **Swatch:** ![Bảng màu Dải đất](../../assets/themes/vietnam-swatch.png)
 
 ```css
 [data-map="vietnam"] {
   --bg: #FFF6DC;
-  --bg-pattern: url("../../assets/themes/vietnam-pattern.svg");
+  --bg-pattern: url("../../assets/themes/vietnam-tile.png");
   --surface: #FFFFFF;
   --surface-2: #FFE8B0;
 
@@ -61,7 +61,7 @@ Mọi cặp chữ/nền đã kiểm chứng tự động đạt **WCAG 2.1 AA �
   --shadow: 0 4px 0 var(--ink);
   --shadow-press: 0 1px 0 var(--ink);
   --font-display: "Baloo 2", "Inter", sans-serif;
-  --board-art: url("../../assets/themes/vietnam-board.svg");
+  --board-art: url("../../assets/themes/vietnam-board.png");
 }
 ```
 
@@ -85,13 +85,13 @@ Mọi cặp chữ/nền đã kiểm chứng tự động đạt **WCAG 2.1 AA �
 ## 3. Vùng đất `classic` — Phố Giấy (bàn gốc, tươi sáng)
 
 **Cảm hứng:** Giữ chất giấy thủ công sạch sẽ của Phố Giấy nhưng chuyển từ kem trầm sang giấy xanh trời sáng (`#F4F8FD`), cam đất nung rực (`#C7461E`), xanh trời (`#2570C4`) và hồng phấn Chợ Hoa (`#BD3E6D`).
-**Hoa văn nền:** `../../assets/themes/classic-pattern.svg` (lưới đứt giấy cắt dán, nếp gấp tam giác và chấm màu nhẹ).
+**Hoa văn nền:** `../../assets/themes/classic-tile.png` (ô lặp pixel 32×32: lưới chấm giấy cắt dán & góc giấy gấp, `image-rendering: pixelated`).
 **Swatch:** ![Bảng màu Phố Giấy](../../assets/themes/classic-swatch.png)
 
 ```css
 [data-map="classic"] {
   --bg: #F4F8FD;
-  --bg-pattern: url("../../assets/themes/classic-pattern.svg");
+  --bg-pattern: url("../../assets/themes/classic-tile.png");
   --surface: #FFFFFF;
   --surface-2: #E1EDF9;
 
@@ -124,7 +124,7 @@ Mọi cặp chữ/nền đã kiểm chứng tự động đạt **WCAG 2.1 AA �
   --shadow: 0 4px 0 var(--ink);
   --shadow-press: 0 1px 0 var(--ink);
   --font-display: "Baloo 2", "Inter", sans-serif;
-  --board-art: url("../../assets/themes/classic-board.svg");
+  --board-art: url("../../assets/themes/classic-board.png");
 }
 ```
 
