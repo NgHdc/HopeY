@@ -1,0 +1,64 @@
+/* Phố Giấy · màu A1 của Agy. Chỉ khai báo biến theo map. */
+[data-map="classic"] {
+  --bg: #F4F8FD;
+  --bg-pattern: url("../../assets/themes/classic-pattern.svg");
+  --surface: #FFFFFF;
+  --surface-2: #E1EDF9;
+  --ink: #1B263B;
+  --ink-2: #455570;
+  --accent: #C7461E;
+  --accent-2: #2570C4;
+  --good: #1A7D52;
+  --bad: #C22D42;
+  --d1: #945832;
+  --d2: #1E74BA;
+  --d3: #BD3E6D;
+  --d4: #B85210;
+  --d5: #C73236;
+  --d6: #F0B41C;
+  --d7: #1B7D44;
+  --d8: #24579E;
+  --station: #364970;
+  --util: #167C8F;
+  --tax: #B03E69;
+  --card: #AD5605;
+  --px: 3px;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --border: var(--px) solid var(--ink);
+  --shadow: calc(var(--px) * 2) calc(var(--px) * 2) 0 var(--ink);
+  --shadow-press: var(--px) 0 0 var(--ink);
+  --font-pixel: "Tiny5", "VT323", monospace;
+  --font-text: "Inter", Arial, "Helvetica Neue", sans-serif;
+  --font-display: var(--font-pixel);
+  --board-art: none;
+  --on-accent: #FFFFFF;
+  --on-accent-2: #FFFFFF;
+  --on-d6: var(--ink);
+
+  /* Bí danh cho view.js/style.css hiện tại; Claude sẽ thay ở K1. */
+  --paper: var(--bg);
+  --panel: var(--surface-2);
+  --accent-hover: var(--accent);
+  --cool-1: var(--station);
+  --cool-1-l: var(--surface-2);
+  --cool-2: var(--util);
+  --cool-2-l: var(--surface-2);
+  --neutral: var(--surface-2);
+  --grey: var(--ink-2);
+  --radius: var(--radius-sm);
+  --line: 2px;
+  --hair: 1px;
+  --mark: 2px;
+  --piece-0: var(--accent);
+  --piece-1: var(--d2);
+  --piece-2: var(--d3);
+  --piece-3: var(--d7);
+  --piece-4: var(--d5);
+  --piece-5: var(--d8);
+}
+
+@media (max-width: 600px) {
+  [data-map="classic"] { --px: 2px; }
+}

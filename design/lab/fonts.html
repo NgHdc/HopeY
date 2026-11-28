@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Font pixel có dấu · Phố Giấy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Jersey+10&family=Pixelify+Sans:wght@400;500;600;700&family=Press+Start+2P&family=Silkscreen:wght@400;700&family=Tiny5&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tokens.css">
+  <link rel="stylesheet" href="../themes/vietnam.css">
+  <link rel="stylesheet" href="../themes/classic.css">
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; padding: 24px clamp(14px, 3vw, 48px) 48px; color: var(--ink); background-color: var(--bg); background-image: var(--bg-pattern); font: 16px/1.55 var(--font-text); }
+    h1, h2, h3, button { font-family: var(--font-pixel); }
+    .page { max-width: 1440px; margin: auto; }
+    .head { display: flex; justify-content: space-between; align-items: start; gap: 24px; flex-wrap: wrap; margin-bottom: 20px; }
+    h1 { font-size: clamp(24px, 4vw, 36px); line-height: 1.25; margin: 0 0 8px; }
+    .head p { max-width: 760px; margin: 0; }
+    .map-switch { display: flex; gap: 8px; }
+    .map-switch button { min-height: 42px; padding: 8px 12px; border: var(--border); box-shadow: var(--shadow); background: var(--surface); color: var(--ink); cursor: pointer; }
+    .map-switch button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+    .sample-phrase { padding: 14px; border: var(--border); box-shadow: var(--shadow); background: var(--surface); margin: 16px 0 24px; }
+    .sample-phrase code { font: 14px/1.7 var(--font-text); overflow-wrap: anywhere; }
+    .font-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .font-card { min-width: 0; padding: 16px; border: var(--border); box-shadow: var(--shadow); background: var(--surface); }
+    .font-top { display: flex; justify-content: space-between; gap: 12px; align-items: start; }
+    .font-top h2 { margin: 0 0 8px; font-size: 23px; line-height: 1.3; }
+    .status { padding: 3px 7px; border: 1px solid currentColor; font: 12px/1.5 var(--font-text); white-space: nowrap; }
+    .status.full { color: var(--good); }
+    .status.unknown { color: var(--bad); }
+    .meta { margin: 0 0 12px; color: var(--ink-2); font-size: 13px; }
+    .size-row { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 8px; align-items: start; padding: 8px 0; border-top: 1px solid var(--surface-2); }
+    .size-label { padding-top: 3px; color: var(--ink-2); font: 12px var(--font-text); }
+    .specimen { min-width: 0; font-family: var(--font-sample); line-height: 1.45; overflow-wrap: anywhere; }
+    .specimen[data-size="12"] { font-size: 12px; }
+    .specimen[data-size="16"] { font-size: 16px; }
+    .specimen[data-size="24"] { font-size: 24px; }
+    .accent-test { display: block; color: var(--accent); }
+    .note { margin: 18px 0 0; padding: 12px 14px; border-inline-start: var(--px) solid var(--accent); background: var(--surface-2); font-size: 14px; }
+    @media (max-width: 680px) { .font-grid { grid-template-columns: 1fr; } .font-card { padding: 12px; } }
+  </style>
+</head>
+<body data-map="vietnam">
+  <main class="page">
+    <header class="head">
+      <div>
+        <h1>Thử font pixel có dấu</h1>
+        <p>So sánh cùng một dòng chữ ở 12, 16 và 24px. Nhìn dấu ở các chữ ỹ, ữ, ặ, ỡ, ợ: xem có bị thay font, thiếu dấu hay chạm vào chữ bên cạnh không.</p>
+      </div>
+      <nav class="map-switch" aria-label="Chọn bảng màu">
+        <button type="button" data-map="vietnam" aria-pressed="true">Dải đất</button>
+        <button type="button" data-map="classic" aria-pressed="false">Phố Giấy</button>
+      </nav>
+    </header>
+    <p class="sample-phrase"><b>Câu thử:</b><br><code>Hồ Hoàn Kiếm – Tháp Rùa · Đà Nẵng · Thừa Thiên Huế · ỹ ữ ặ ỡ ợ · 1 500 ₫g</code></p>
+    <section class="font-grid" id="fontGrid" aria-label="So sánh font pixel"></section>
+    <p class="note"><b>Cách đọc dấu:</b> nhãn xanh nghĩa Google Fonts công bố subset tiếng Việt cho font đó. Nhãn đỏ nghĩa chưa có subset tiếng Việt trong metadata và có thể rơi về font dự phòng; hãy đối chiếu nét chữ với mẫu Inter. Font tải từ Google Fonts khi có kết nối mạng.</p>
+  </main>
+  <script type="module">
+    const phrase = 'Hồ Hoàn Kiếm – Tháp Rùa · Đà Nẵng · Thừa Thiên Huế · ỹ ữ ặ ỡ ợ · 1 500 ₫g';
+    const fonts = [
+      { name: 'Tiny5', family: '"Tiny5", monospace', vi: true, info: '5-pixel display · có subset Vietnamese (Google Fonts)' },
+      { name: 'VT323', family: '"VT323", monospace', vi: true, info: 'Terminal pixel · có subset Vietnamese (Google Fonts)' },
+      { name: 'Pixelify Sans', family: '"Pixelify Sans", monospace', vi: false, info: 'Display pixel · metadata chỉ liệt kê latin/latin-ext' },
+      { name: 'Jersey 10', family: '"Jersey 10", monospace', vi: false, info: 'Display thể thao · metadata chỉ liệt kê latin/latin-ext' },
+      { name: 'Silkscreen', family: '"Silkscreen", monospace', vi: false, info: 'Pixel vuông · metadata chỉ liệt kê latin/latin-ext' },
+      { name: 'Press Start 2P', family: '"Press Start 2P", monospace', vi: false, info: 'Pixel arcade · metadata chỉ liệt kê latin/latin-ext' },
+      { name: 'Inter (đối chiếu)', family: '"Inter", sans-serif', vi: true, info: 'Font văn bản · đối chiếu dấu và độ đọc' },
+    ];
+    const grid = document.getElementById('fontGrid');
+    grid.innerHTML = fonts.map(font => `<article class="font-card" style="--font-sample:${font.family}">
+      <header class="font-top"><h2>${font.name}</h2><span class="status ${font.vi ? 'full' : 'unknown'}">${font.vi ? 'Có subset Việt' : 'Chưa xác nhận đủ dấu'}</span></header>
+      <p class="meta">${font.info}</p>
+      ${[12, 16, 24].map(size => `<div class="size-row"><span class="size-label">${size}px</span><div class="specimen" data-size="${size}" lang="vi">${phrase}<span class="accent-test">ỹ ữ ặ ỡ ợ — ấ ầ ẩ ẫ ậ</span></div></div>`).join('')}
+    </article>`).join('');
+    document.querySelectorAll('.map-switch button').forEach(button => button.addEventListener('click', () => {
+      document.body.dataset.map = button.dataset.map;
+      document.querySelectorAll('.map-switch button').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+    }));
+  </script>
+</body>
+</html>
