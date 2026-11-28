@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <clipPath id="c"><circle cx="128" cy="128" r="116"/></clipPath>
+  </defs>
+  <circle cx="128" cy="134" r="116" fill="#1B263B"/>
+  <circle cx="128" cy="126" r="116" fill="#24579E" stroke="#1B263B" stroke-width="8"/>
+  <g clip-path="url(#c)">
+    <circle cx="96" cy="84" r="78" fill="#5C94E0" opacity="0.42"/>
+    
+    
+    <!-- Ao khoac vang di bien + khan xanh -->
+    <path d="M54 250 C58 192 88 176 128 176 C168 176 198 192 202 250 Z" fill="#F0B41C" stroke="#1B263B" stroke-width="7"/>
+    <path d="M106 178 L128 214 L150 178 Z" fill="#1B3C6E" stroke="#1B263B" stroke-width="6" stroke-linejoin="round"/>
+    <circle cx="128" cy="136" r="41" fill="#F5C296" stroke="#1B263B" stroke-width="7"/>
+    <!-- Rau bac gon gang -->
+    <path d="M90 144 C92 186 164 186 166 144 Q146 154 128 150 Q110 154 90 144 Z" fill="#F0F4FA" stroke="#1B263B" stroke-width="6"/>
+    <circle cx="111" cy="132" r="5.5" fill="#1B263B"/>
+    <circle cx="145" cy="132" r="5.5" fill="#1B263B"/>
+    <path d="M116 156 Q128 166 140 156" fill="none" stroke="#1B263B" stroke-width="5" stroke-linecap="round"/>
+    <!-- Mu thuy thu trang dinh phang + sao vang -->
+    <path d="M72 96 L84 62 Q128 52 172 62 L184 96 Z" fill="#FFFFFF" stroke="#1B263B" stroke-width="7" stroke-linejoin="round"/>
+    <rect x="82" y="92" width="92" height="16" rx="4" fill="#1B3C6E" stroke="#1B263B" stroke-width="6"/>
+    <path d="M76 108 Q128 98 180 108" fill="none" stroke="#1B263B" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="128" cy="78" r="9" fill="#F0B41C" stroke="#1B263B" stroke-width="4"/>
+    
+  </g>
+  <circle cx="128" cy="126" r="116" fill="none" stroke="#1B263B" stroke-width="8"/>
+</svg>
