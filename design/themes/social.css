@@ -1,15 +1,19 @@
 .social-net { display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border:var(--border);background:var(--surface-2);font:18px/1 'VT323',monospace }
-.social-net::before { content:'●';color:#3b9c67 }.social-net.offline::before { color:var(--bad) }
+.social-net::before { content:'';width:16px;height:16px;background:url('../../assets/ui/icons/net-ok.png') no-repeat center/contain;image-rendering:pixelated }.social-net.offline::before { background-image:url('../../assets/ui/icons/net-lost.png') }
 .social-chat,.social-emotes,.social-mic { padding:10px;border:var(--border);background:var(--surface);margin-top:10px }
 .social-chat h2,.social-emotes h2 { font:24px/1 'VT323',monospace;margin:0 0 8px }
 .social-log { max-height:220px;overflow:auto;display:flex;flex-direction:column;gap:6px;list-style:none;margin:0 0 8px;padding:0 }
 .social-log li { overflow-wrap:anywhere;background:var(--surface-2);padding:4px 6px }.social-log b { color:var(--accent) }
 .social-chat form { display:flex;gap:6px }.social-chat input { min-width:0;flex:1;padding:6px }.social-chat button,.social-emotes button,.social-mic button,.social-chat-toggle { border:var(--border);background:var(--surface-2);color:var(--ink);min-height:36px;cursor:pointer }
-.social-emote-grid { display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px }.social-emote-grid button { font-size:20px }
+.social-emote-grid { display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px }.social-emote-grid button { display:grid;place-items:center }.social-emote-grid img { width:24px;height:24px;image-rendering:pixelated }
 .social-mic { display:flex;align-items:center;gap:8px;flex-wrap:wrap }.social-mic button[aria-pressed=true] { background:var(--accent);color:var(--on-accent) }
 .social-badge { display:inline-block;margin-left:4px;padding:1px 4px;border:var(--border);font:16px/1 'VT323',monospace;background:var(--surface-2);white-space:nowrap }
 .social-muted { color:var(--bad);font-size:14px;margin-left:4px }.social-speaking { outline:3px solid #f2c348;outline-offset:2px;box-shadow:0 0 0 5px #f2c34866 }
-.social-bubble { position:absolute;z-index:15;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);padding:4px 8px;border:6px solid transparent;border-image:var(--ui-frame-card) 6 fill / 1 / 0 stretch;background:var(--surface);font-size:22px;pointer-events:none;animation:social-pop 2s forwards }
+.social-bubble { position:absolute;z-index:15;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);padding:4px 8px 8px;border:6px solid transparent;border-bottom-width:10px;border-image:url('../../assets/ui/bubble.png') 6 6 10 6 fill / 1 / 0 stretch;background:var(--surface);pointer-events:none;animation:social-pop 2s forwards }
+.social-bubble img { width:24px;height:24px;image-rendering:pixelated }.social-badge:before { content:'';display:inline-block;width:16px;height:16px;background:url('../../assets/ui/icons/host.png') center/contain no-repeat;vertical-align:middle;margin-right:3px;image-rendering:pixelated }
+.social-badge.watch:before { background-image:url('../../assets/ui/icons/watch.png') }.social-badge.lost:before { background-image:url('../../assets/ui/icons/net-lost.png') }
+.social-muted { display:inline-block;width:16px;height:16px;background:url('../../assets/ui/icons/mic-off.png') center/contain no-repeat;image-rendering:pixelated;font-size:0 }
+.social-mic button#mic:before { content:'';display:inline-block;width:16px;height:16px;margin-right:5px;vertical-align:middle;background:url('../../assets/ui/icons/mic-off.png') center/contain no-repeat;image-rendering:pixelated }.social-mic button#mic[aria-pressed=true]:before { background-image:url('../../assets/ui/icons/mic-on.png') }
 @keyframes social-pop { 0%,70% { opacity:1;translate:0 0 } 100% { opacity:0;translate:0 -10px } }
 .social-watch { padding:8px 12px;background:var(--accent-2);color:var(--on-accent-2);font:24px/1 'VT323',monospace;text-align:center }
 .social-chat-toggle { display:none;padding:4px 10px }

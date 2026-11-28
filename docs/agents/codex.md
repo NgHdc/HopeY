@@ -76,3 +76,8 @@
 - Lab có bảng uy tín vòng 5/12, đấu giá kín, bầu cua, đoán giá chợ với trạng thái chờ kín và màn lật kết quả; thêm màn chuyền máy, công tắc sảnh và bảng kết thúc.
 - CSS đã tham chiếu bộ ảnh A9 trong `assets/xomla/` của Agy; cần merge ảnh vào dev để hiển thị. Chưa chụp được ảnh tự động vì cổng dev 5173 không chạy.
 - Tiếp theo: tích hợp A7/A8/A9 sau khi ảnh được merge, báo Claude mở cổng duyệt 3; vướng: ảnh còn ở nhánh Agy.
+## 2026-11-29 · ảnh A7/A8/A9 cho U6/U9
+- Nối ảnh biểu cảm, bong bóng, trạng thái mạng, mic và huy hiệu A7/A8 vào `design/lab/social.html` và `design/themes/social.css`.
+- Nối ảnh sương, chiếu bầu cua, sáu mặt, hột lăn và phong bì A9 vào `design/lab/xomla.html` và `design/themes/xomla.css`.
+- Các URL sẽ hiện sau khi Claude merge nhánh `agy/assets` vào dev; chưa chụp được ảnh vì dev server 5173 không chạy.
+- Tiếp theo: báo Claude mở cổng duyệt 3; vướng: chờ merge ảnh Agy để xem trực quan.
