@@ -8,6 +8,7 @@ import { groupOf } from './core/board.js';
 import { MAPS, DEFAULT_MAP, mapOf } from './core/maps/index.js';
 import * as V from './ui/view.js';
 import { createPieces, fpsMeter } from './ui/pieces.js';
+import { loadAvatars, spriteHtml, setAnim } from './render/sprite.js';
 import { openHost, joinHost, makeRoomCode, peerAvailable } from './net/peer.js';
 
 const $ = s => document.querySelector(s);
@@ -17,7 +18,10 @@ const SESSION_KEY = 'phogiay-session-v2', LOCAL_KEY = 'phogiay-local', NAME_KEY 
 const DEFAULT_NAMES = ['Lan', 'Minh', 'Hoa', 'Tuấn', 'Mai', 'Nam'];
 const params = new URLSearchParams(location.search);
 const isLocalhost = ['localhost', '127.0.0.1', ''].includes(location.hostname);
-const pieces = createPieces({ pieceSvg: V.pieceSvg });
+// Nhân vật pixel theo map: nạp avatars.json một lần mỗi map, rồi vẽ lại.
+const cast = new Map(); // mapId → list (đã nạp) | 'loading'
+const sprite = () => ({ list: V.avatars(), html: (list, k) => spriteHtml(list, k, { label: false }), setAnim });
+const pieces = createPieces({ pieceSvg: V.pieceSvg, sprite });
 if (params.has('fps')) fpsMeter();
 
 const app = {
@@ -61,8 +65,24 @@ function ctx() {
     tab: app.tab, layer: true, banner: lost ? 'Mất kết nối với chủ phòng.' : '', bet: app.bet,
   };
 }
+/** Map đang hiện trên màn hình: ván đang chơi, map ở sảnh, hoặc map chọn ở trang đầu. */
+function viewMapId() {
+  if (app.screen === 'game' && app.S) return mapOf(app.S).id;
+  if (app.screen === 'lobby') return app.mode === 'host' ? app.mapId : app.lobbyMap || DEFAULT_MAP;
+  return app.mapId;
+}
+function useMap(id) {
+  document.body.dataset.map = id;
+  const got = cast.get(id);
+  if (Array.isArray(got)) { V.setAvatars(got); return; }
+  V.setAvatars([]);
+  if (got === 'loading') return;
+  cast.set(id, 'loading');
+  loadAvatars(id).then(list => { cast.set(id, list); if (viewMapId() === id) render(); });
+}
 function render() {
   const root = $('#root');
+  useMap(viewMapId());
   // giữ chữ đang gõ ở trang đầu khi vẽ lại
   if ($('#nm')) app.homeDraft = { name: $('#nm').value, code: $('#code') ? $('#code').value : '' };
   if (app.screen === 'game' && app.S) {
@@ -96,6 +116,7 @@ function show(next, events = []) {
       }
       app.pos = null; app.animating = false;
     }
+    if (prev && app.screen === 'game') emotes(next, events);
     if (next.winner != null && (!prev || prev.winner == null)) app.review = false;
     app.S = next;
     render();
@@ -106,6 +127,18 @@ function show(next, events = []) {
     }
   });
   return app.queue;
+}
+
+/** Nhận tiền thì vui, mất tiền (thuê, thuế, phạt) hoặc vào Tù thì buồn. */
+function emotes(S, events) {
+  const mood = new Map();
+  for (const e of events) {
+    if (e.type === 'money' && e.amt > 0) {
+      if (e.to != null) mood.set(e.to, 'happy');
+      if (e.from != null) mood.set(e.from, 'sad');
+    } else if (e.type === 'jump' && e.to === S.players[e.seat]?.pos && S.players[e.seat]?.jail) mood.set(e.seat, 'sad');
+  }
+  for (const [seat, anim] of mood) pieces.emote(seat, anim);
 }
 
 // ---------- hộp thoại ----------

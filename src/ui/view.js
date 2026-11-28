@@ -17,9 +17,15 @@ export const PIECES = [
   { n: 'ngôi nhà', s: '<path d="M1.5 7.5 L8 2 L14.5 7.5 V14.5 H1.5Z"/><rect x="6.5" y="9.5" width="3" height="5" fill="var(--accent-2)"/>' },
   { n: 'chiếc lá', s: '<path d="M1.5 14.5 C1.5 6 6 1.5 14.5 1.5 C14.5 10 10 14.5 1.5 14.5Z"/><path d="M2.5 13.5 L11 5" stroke="var(--paper)" stroke-width=".7"/>' },
 ];
-export const pieceColor = k => `var(--piece-${k})`;
-export const pieceSvg = (k, sz, label = true) =>
-  `<svg class="piece" width="${sz}" height="${sz}" viewBox="0 0 16 16" style="fill:${pieceColor(k)}" ${label ? `role="img" aria-label="quân ${PIECES[k].n}"` : 'aria-hidden="true"'}>${PIECES[k].s}</svg>`;
+// Nhân vật pixel của map đang xem (main.js nạp avatars.json rồi gọi setAvatars). Chưa nạp xong thì vẽ quân hình học.
+let AV = [];
+export const setAvatars = list => { AV = Array.isArray(list) ? list : []; };
+export const avatars = () => AV;
+export const pieceColor = k => (AV[k] && AV[k].color) || `var(--piece-${k})`;
+export const pieceName = k => (AV[k] ? AV[k].name : 'quân ' + PIECES[k].n);
+export const pieceSvg = (k, sz, label = true) => AV[k]
+  ? `<img class="piece av" src="${esc(AV[k].portraitUrl)}" width="${sz}" height="${sz}" ${label ? `alt="${esc(AV[k].name)}"` : 'alt="" aria-hidden="true"'}>`
+  : `<svg class="piece" width="${sz}" height="${sz}" viewBox="0 0 16 16" style="fill:${pieceColor(k)}" ${label ? `role="img" aria-label="quân ${PIECES[k].n}"` : 'aria-hidden="true"'}>${PIECES[k].s}</svg>`;
 
 // ---------- ô ----------
 function cell(i) {
@@ -39,56 +45,16 @@ const btn = (act, label, cls = '', { arg = '', disabled = false, id = '' } = {})
   `<button type="button" class="btn ${cls}" data-act="${act}"${arg !== '' ? ` data-arg="${arg}"` : ''}${id ? ` id="${id}"` : ''}${disabled ? ' disabled' : ''}>${label}</button>`;
 
 // ============ TRANG ĐẦU ============
-const CITY = `<svg viewBox="0 0 640 560" aria-hidden="true">
-  <defs>
-    <pattern id="h1" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="var(--d1)"/><line x1="0" y1="0" x2="0" y2="7" stroke="var(--paper)" stroke-width="1.4" opacity=".55"/></pattern>
-    <pattern id="h2" width="7" height="7" patternUnits="userSpaceOnUse"><rect width="7" height="7" fill="var(--d2)"/><circle cx="3.5" cy="3.5" r="1.1" fill="var(--ink)" opacity=".55"/></pattern>
-    <pattern id="h3" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="var(--d3)"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--ink)" stroke-width="1.2" opacity=".4"/></pattern>
-    <pattern id="h4" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="var(--d4)"/><line x1="0" y1="0" x2="6" y2="0" stroke="var(--paper)" stroke-width="1.2" opacity=".55"/></pattern>
-    <pattern id="h5" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="var(--d5)"/><path d="M0 0 L8 8 M8 0 L0 8" stroke="var(--paper)" stroke-width="1" opacity=".45"/></pattern>
-    <pattern id="h6" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="var(--d6)"/><circle cx="5" cy="5" r="2" fill="var(--ink)" opacity=".5"/></pattern>
-    <pattern id="h7" width="10" height="6" patternUnits="userSpaceOnUse"><rect width="10" height="6" fill="var(--d7)"/><path d="M0 4 Q2.5 1 5 4 T10 4" fill="none" stroke="var(--paper)" stroke-width="1" opacity=".55"/></pattern>
-    <pattern id="sand" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="var(--neutral)" stroke-width="1.4"/></pattern>
-  </defs>
-  <g stroke="var(--ink)" stroke-width=".5" opacity=".35"><line x1="0" y1="80" x2="640" y2="80"/><line x1="0" y1="200" x2="640" y2="200"/><line x1="0" y1="440" x2="640" y2="440"/><line x1="120" y1="0" x2="120" y2="560"/><line x1="320" y1="0" x2="320" y2="560"/><line x1="520" y1="0" x2="520" y2="560"/></g>
-  <path d="M0 360 C120 330 200 400 330 372 S540 330 640 352 L640 408 C540 386 450 430 330 420 S110 384 0 410Z" fill="var(--cool-2-l)"/>
-  <path d="M0 384 C120 356 200 420 330 396 S540 356 640 378" fill="none" stroke="var(--cool-2)" stroke-width="1"/>
-  <path d="M20 396 q10 -4 20 0 t20 0 t20 0 M380 404 q10 -4 20 0 t20 0 t20 0 M520 386 q10 -4 20 0 t20 0" fill="none" stroke="var(--cool-2)" stroke-width=".7"/>
-  <rect x="40" y="220" width="120" height="100" fill="url(#h1)" stroke="var(--ink)" stroke-width=".6"/>
-  <rect x="180" y="250" width="90" height="70" fill="url(#h3)" stroke="var(--ink)" stroke-width=".6"/>
-  <rect x="290" y="150" width="70" height="170" fill="url(#h5)" stroke="var(--ink)" stroke-width=".6"/>
-  <circle cx="325" cy="122" r="18" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
-  <rect x="380" y="230" width="110" height="90" fill="url(#h4)" stroke="var(--ink)" stroke-width=".6"/>
-  <path d="M500 320 L560 240 L620 320Z" fill="url(#h6)" stroke="var(--ink)" stroke-width=".6"/>
-  <circle cx="590" cy="110" r="30" fill="var(--accent-2)"/>
-  <rect x="60" y="450" width="160" height="70" fill="url(#h7)" stroke="var(--ink)" stroke-width=".6"/>
-  <circle cx="270" cy="470" r="32" fill="var(--d7)"/><line x1="270" y1="500" x2="270" y2="525" stroke="var(--ink)" stroke-width="1.2"/>
-  <rect x="340" y="440" width="120" height="80" fill="url(#h2)" stroke="var(--ink)" stroke-width=".6"/>
-  <rect x="490" y="455" width="130" height="65" fill="var(--d8)"/><path d="M555 455 V425 M545 425 H565" stroke="var(--ink)" stroke-width="1.2"/>
-  <rect x="0" y="525" width="640" height="35" fill="url(#sand)"/>
-  <line x1="0" y1="525" x2="640" y2="525" stroke="var(--ink)" stroke-width=".8"/><line x1="0" y1="320" x2="640" y2="320" stroke="var(--ink)" stroke-width=".8"/>
-  <g fill="none" stroke="var(--ink)" stroke-width="1.2">
-    <circle cx="200" cy="300" r="4" fill="var(--ink)"/><path d="M200 304 V314 M194 308 H206 M200 314 L196 320 M200 314 L204 320"/>
-    <circle cx="420" cy="500" r="4" fill="var(--ink)"/><path d="M420 504 V514 M414 508 H426 M420 514 L416 520 M420 514 L424 520"/>
-    <circle cx="610" cy="300" r="4" fill="var(--ink)"/><path d="M610 304 V314 M604 308 H616 M610 314 L606 320 M610 314 L614 320"/>
-  </g>
-  <path d="M192 293 L200 287 L208 293Z M412 493 L420 487 L428 493Z" fill="var(--accent-2)"/>
-  <g stroke="var(--ink)" stroke-width=".8"><path d="M14 14 V30 M6 22 H22 M626 14 V30 M618 22 H634 M14 530 V546 M6 538 H22 M626 530 V546 M618 538 H634"/></g>
-  <g font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink-2)">
-    <text x="40" y="214">ngõ đất</text><text x="330" y="144">phố cổ</text><text x="380" y="224">phố nghề</text><text x="500" y="234">đồi nắng</text>
-    <text x="60" y="444">vườn xanh</text><text x="340" y="434">bến sông</text><text x="490" y="449">cảng biển</text><text x="180" y="244">chợ hoa</text>
-  </g>
-</svg>`;
 
 /** Nút chọn map (trang đầu, sảnh). */
 export const mapSeg = cur => `<div class="seg" role="group" aria-label="Bàn cờ" id="maps">${Object.values(MAPS).map(m => `<button type="button" data-act="map" data-arg="${m.id}" class="${m.id === cur ? 'on' : ''}" aria-pressed="${m.id === cur}" title="${esc(m.blurb)}">${esc(m.name)}</button>`).join('')}</div>`;
 
 export function homeHtml({ name, code, online, hasLocalSave, devDefault, version, mapId }) {
   return `<main class="home">
-    <section class="home-art" aria-label="Bản đồ Phố Giấy">
-      <div class="strip"><span>Phố Giấy / Bản đồ</span><span>8 quận · 40 ô</span></div>
-      ${CITY}
-      <p class="human">Một con sông, tám khu phố, và những người que nhỏ đang chờ hàng xóm mới.</p>
+    <section class="home-art" aria-label="Bản đồ ${esc(MAPS[mapId].name)}">
+      <div class="strip"><span>${esc(MAPS[mapId].name)} / Bản đồ</span><span>8 quận · 40 ô</span></div>
+      <div class="home-map" role="img" aria-label="Bản đồ pixel ${esc(MAPS[mapId].name)}"></div>
+      <div class="home-cast">${AV.map((a, k) => pieceSvg(k, 48)).join('')}</div>
     </section>
     <section class="home-form">
       <div class="strip"><span>Phố Giấy / Bắt đầu</span><span>v${version}</span></div>
@@ -163,7 +129,7 @@ export function lobbyHtml({ room, url, seats, me, isHost, canStart, status, stat
           <span style="font-size:13px;font-weight:600">Chọn quân cờ của bạn</span>
           <div class="pick" role="radiogroup" aria-label="Quân cờ">${PIECES.map((p, k) => {
             const chosen = mine.piece === k, busy = taken.has(k) && !chosen;
-            return `<button type="button" role="radio" aria-checked="${chosen}" aria-label="${p.n}${busy ? ', đã có người chọn' : ''}" data-act="piece" data-arg="${k}" ${busy ? 'disabled' : ''}>${pieceSvg(k, 30, false)}</button>`;
+            return `<button type="button" role="radio" aria-checked="${chosen}" aria-label="${esc(pieceName(k))}${busy ? ', đã có người chọn' : ''}" data-act="piece" data-arg="${k}" ${busy ? 'disabled' : ''}>${pieceSvg(k, 30, false)}</button>`;
           }).join('')}</div>
         </div>` : ''}
         <div class="go-row">
@@ -203,17 +169,6 @@ function dieSvg(n, label) {
   return `<svg class="die" viewBox="0 0 16 16" role="img" aria-label="${label} ${n}"><rect x=".5" y=".5" width="15" height="15" fill="var(--paper)" stroke="var(--ink)" stroke-width=".6"/>${P6[n].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.3" fill="${n === 1 ? 'var(--accent-2)' : 'var(--ink)'}"/>`).join('')}</svg>`;
 }
 
-const SCENE = `<svg class="scene" viewBox="0 0 260 70" aria-hidden="true">
-  <line x1="0" y1="62" x2="260" y2="62" stroke="var(--ink)" stroke-width=".6"/>
-  <rect x="10" y="30" width="28" height="32" fill="none" stroke="var(--ink)" stroke-width=".7"/><path d="M6 30 L24 16 L42 30" fill="none" stroke="var(--ink)" stroke-width=".7"/>
-  <rect x="52" y="34" width="22" height="28" fill="none" stroke="var(--ink)" stroke-width=".7"/><path d="M49 34 L63 23 L77 34" fill="none" stroke="var(--ink)" stroke-width=".7"/>
-  <rect x="96" y="14" width="18" height="48" fill="var(--d5)"/><circle cx="105" cy="8" r="6" fill="none" stroke="var(--accent)" stroke-width="1"/>
-  <g fill="none" stroke="var(--ink)" stroke-width="1"><circle cx="150" cy="40" r="3" fill="var(--ink)"/><path d="M150 43 V53 M145 47 H155 M150 53 L146 61 M150 53 L154 61"/></g>
-  <path d="M143 38 L150 33 L157 38Z" fill="var(--accent-2)"/>
-  <circle cx="200" cy="40" r="14" fill="var(--d7)"/><line x1="200" y1="52" x2="200" y2="62" stroke="var(--ink)"/>
-  <circle cx="244" cy="16" r="8" fill="var(--accent-2)"/>
-</svg>`;
-
 function gambleResultHtml(S) {
   const g = S.gamble;
   if (!g) return '';
@@ -235,7 +190,6 @@ function centerHtml(S, ctx) {
       ${gambleResultHtml(S)}
       <p class="msg" aria-live="polite">${esc(S.msg)}</p>
       <div class="recent"><span class="label">vừa xảy ra</span>${S.log.slice(0, 2).map(l => `<span>${esc(l)}</span>`).join('')}</div>
-      ${SCENE}
     </div>
     <div class="c-right">${v.kind === 'card' ? eventCardHtml(S, v) : deedHtml(S, v.i, last)}</div>
   </div>`;

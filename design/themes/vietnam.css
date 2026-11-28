@@ -49,7 +49,7 @@
   --border: var(--px) solid var(--ink);
   --shadow: calc(var(--px) * 2) calc(var(--px) * 2) 0 var(--ink);
   --shadow-press: var(--px) 0 0 var(--ink);
-  --font-pixel: "Tiny5", "VT323", monospace;
+  --font-pixel: "VT323", monospace;
   --font-text: "Inter", Arial, "Helvetica Neue", sans-serif;
   --font-display: var(--font-pixel);
   --board-art: url("../../assets/themes/vietnam-board.png");

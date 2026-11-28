@@ -6,6 +6,8 @@ Quy trình phát hành và rollback: [`docs/RELEASE.md`](docs/RELEASE.md).
 ## [Chưa phát hành]
 
 ### Đổi
+- **Giao diện pixel** (K1): mỗi map có bảng màu, nền hoa văn, khung 9 ô và icon ô riêng. Trang đầu hiện bản đồ pixel của map đang chọn (Dải đất biển xanh, Phố Giấy dòng sông), giữa bàn cờ là bản đồ giấy cổ nhạt. Tiêu đề dùng font pixel VT323 (đủ dấu tiếng Việt; Tiny5 mất móc ư/ơ nên bỏ).
+- **Quân cờ là nhân vật pixel** của từng map (6 người mỗi map): đi bộ khi di chuyển, quay mặt theo hướng đi, vui khi nhận tiền, buồn khi mất tiền hoặc vào Tù.
 - **Quân cờ trượt mượt** giữa các ô (nhảy nhẹ mỗi bước, bay vòng cung khi dùng máy bay hoặc vào Tù), thay cho kiểu nhảy cóc. Trang không còn bị vẽ lại ở mỗi ô quân đi qua. Thêm `?fps` để đo độ mượt.
 
 ## [0.5.0] — 2026-11-28 · Dải đất

@@ -5,12 +5,17 @@
 const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 const MAX = 6;
 
-export function createPieces({ pieceSvg }) {
+/**
+ * `pieceSvg(piece, size)`: quân hình học (dự phòng).
+ * `sprite()`: { list, html(list, k), setAnim(el, anim, list, k) } — nhân vật pixel của map; trả list rỗng khi chưa nạp.
+ */
+export function createPieces({ pieceSvg, sprite }) {
   const layer = document.createElement('div');
   layer.className = 'pieces-layer';
   layer.setAttribute('aria-hidden', 'true');
   document.body.append(layer);
-  const els = new Map(); // seat → { el, piece, size }
+  const els = new Map(); // seat → { el, piece, size, list, emote }
+  const SHEET_COLS = 4;
 
   /** Vị trí trên trang của ô i (null nếu chưa có bàn cờ). `spot`: chỗ dành cho quân (span .pieces trong ô). */
   function box(i) {
@@ -24,10 +29,12 @@ export function createPieces({ pieceSvg }) {
     };
   }
 
-  /** Cỡ quân theo cỡ ô nhỏ nhất (ô thường), 12–20px. */
-  function pieceSize() {
+  /** Cỡ quân theo cỡ ô nhỏ nhất (ô thường). Nhân vật pixel: bội của 8 (16–32px) cho nét đều; quân hình học: 12–20px. */
+  function pieceSize(pixel) {
     const b = box(1);
-    return b ? Math.max(12, Math.min(20, Math.round(Math.min(b.w, b.h) * 0.32))) : 16;
+    if (!b) return 16;
+    const m = Math.min(b.w, b.h);
+    return pixel ? Math.max(16, Math.min(32, Math.floor(m * 0.42 / 8) * 8)) : Math.max(12, Math.min(20, Math.round(m * 0.32)));
   }
 
   /** Tọa độ góc trái-trên của quân `seat` khi đứng ở ô i, xếp lưới 3×2 cạnh các quân cùng ô. */
@@ -66,11 +73,27 @@ export function createPieces({ pieceSvg }) {
       o = { el, piece: -1, size: 0 };
       els.set(seat, o);
     }
-    if (o.piece !== piece || o.size !== size) {
-      o.el.innerHTML = pieceSvg(piece, size, false);
-      o.piece = piece; o.size = size;
+    const list = sprite ? sprite().list : [];
+    if (o.piece !== piece || o.size !== size || o.list !== list) {
+      const html = list[piece] && sprite().html(list, piece);
+      o.el.innerHTML = html || pieceSvg(piece, size, false);
+      o.sp = html ? o.el.querySelector('.sprite') : null;
+      if (o.sp) {
+        // cỡ khung theo ô (sprite.js chỉ nhận hệ số nguyên)
+        o.sp.style.setProperty('--frame', size + 'px');
+        o.sp.style.setProperty('--sheet-width', size * SHEET_COLS + 'px');
+        o.sp.style.setProperty('--sheet-height', size * SHEET_COLS + 'px');
+      }
+      o.piece = piece; o.size = size; o.list = list;
     }
     return o;
+  }
+
+  /** Đổi hoạt ảnh (idle/walk/happy/sad) và hướng nhìn của nhân vật. Quân hình học thì bỏ qua. */
+  function pose(o, anim, flip) {
+    if (!o.sp) return;
+    sprite().setAnim(o.sp, anim, o.list, o.piece);
+    if (flip != null) o.sp.style.setProperty('--flip', flip ? -1 : 1);
   }
 
   const place = (el, p) => { el.style.transform = `translate(${p.x}px, ${p.y}px)`; };
@@ -80,7 +103,7 @@ export function createPieces({ pieceSvg }) {
     const onBoard = S && document.querySelector('.board');
     layer.hidden = !onBoard;
     if (!onBoard) return;
-    const size = pieceSize();
+    const size = pieceSize(!!(sprite && sprite().list.length));
     const at = pos || S.players.map(p => p.pos);
     S.players.forEach((p, k) => {
       const o = ensure(k, p.piece, size);
@@ -102,14 +125,37 @@ export function createPieces({ pieceSvg }) {
     if (pts.some(p => !p)) return;
     const end = pts[pts.length - 1];
     if (reduced()) { place(o.el, end); return; }
-    const lift = Math.round(size * 0.45), frames = [], n = pts.length - 1;
-    for (let s = 0; s < n; s++) {
-      const a = pts[s], b = pts[s + 1];
-      frames.push({ offset: s / n, transform: `translate(${a.x}px, ${a.y}px)`, easing: 'ease-out' });
-      frames.push({ offset: (s + 0.5) / n, transform: `translate(${(a.x + b.x) / 2}px, ${(a.y + b.y) / 2 - lift}px)`, easing: 'ease-in' });
+    const lift = Math.round(size * (o.sp ? 0.2 : 0.45));
+    // các đoạn liên tiếp cùng hướng ngang (đi sang trái thì nhân vật quay mặt sang trái)
+    const runs = [];
+    let face = null;
+    for (let s = 0; s < pts.length - 1; s++) {
+      const dx = pts[s + 1].x - pts[s].x, f = dx < 0 ? true : dx > 0 ? false : face;
+      if (!runs.length || f !== face) runs.push({ face: f, from: s, to: s + 1 }); else runs[runs.length - 1].to = s + 1;
+      face = f;
     }
-    frames.push({ offset: 1, transform: `translate(${end.x}px, ${end.y}px)` });
-    await run(o, frames, n * stepMs, end);
+    pose(o, 'walk');
+    for (const r of runs) {
+      const n = r.to - r.from, frames = [], last = pts[r.to];
+      pose(o, 'walk', !!r.face);
+      for (let s = r.from; s < r.to; s++) {
+        const a = pts[s], b = pts[s + 1], k = s - r.from;
+        frames.push({ offset: k / n, transform: `translate(${a.x}px, ${a.y}px)`, easing: 'ease-out' });
+        frames.push({ offset: (k + 0.5) / n, transform: `translate(${(a.x + b.x) / 2}px, ${(a.y + b.y) / 2 - lift}px)`, easing: 'ease-in' });
+      }
+      frames.push({ offset: 1, transform: `translate(${last.x}px, ${last.y}px)` });
+      await run(o, frames, n * stepMs, last);
+    }
+    pose(o, 'idle');
+  }
+
+  /** Nhân vật vui (`happy`) hoặc buồn (`sad`) một lúc rồi đứng yên lại. Không chặn luồng game. */
+  function emote(seat, anim, ms = 1400) {
+    const o = els.get(seat);
+    if (!o || !o.sp || reduced()) return;
+    clearTimeout(o.emote);
+    pose(o, anim);
+    o.emote = setTimeout(() => { if (!o.anim) pose(o, 'idle'); }, ms);
   }
 
   /** Bay thẳng tới ô `to` (vé máy bay, vào Tù, thẻ dịch chuyển): vòng cung và phóng to ở giữa. */
@@ -139,9 +185,9 @@ export function createPieces({ pieceSvg }) {
     o.el.classList.remove('moving');
   }
 
-  function clear() { for (const o of els.values()) o.el.remove(); els.clear(); layer.hidden = true; }
+  function clear() { for (const o of els.values()) { clearTimeout(o.emote); o.el.remove(); } els.clear(); layer.hidden = true; }
 
-  return { sync, walk, jump, clear, layer };
+  return { sync, walk, jump, emote, clear, layer };
 }
 
 /** Đồng hồ FPS nhỏ (bật bằng ?fps) để đo độ mượt khi thử. */
