@@ -4,6 +4,14 @@
 - Đã tạo nội dung chữ cho map Việt Nam (40 ô, 13 loại thẻ Vận mệnh, gợi ý Thanh Hóa) và chạy `node --test tests/*.test.mjs` (17/17 xanh).
 - File: `content/vietnam.json`.
 
+## 2026-11-28 · A3 (6 avatar cư dân Phố Giấy — chờ duyệt)
+- Đã vẽ đủ 6 cư dân Phố Giấy (`chu-do`, `co-hoa`, `tho-gom`, `be-den-long`, `co-vuon`, `hai-dang`) cùng hệ nét viền sticker dày với A2: mỗi nhân vật có portrait SVG 256×256 + token 64×64 đọc rõ ở 24px, mọi file 1,0–2,6 KB (< 40 KB).
+- Đã tạo `assets/avatars/classic/avatars.json`, cập nhật `assets/avatars/SOURCES.md` và chụp bảng kiểm tra `assets/avatars/check/classic-sheet.png`.
+- File: `assets/avatars/classic/*`, `assets/avatars/SOURCES.md`, `assets/avatars/check/classic-sheet.png`.
+- Việc tiếp theo: làm **A4** (minh họa giữa bàn `assets/themes/vietnam-board.svg` và `classic-board.svg`, màu nhạt dưới chữ, < 80 KB). Đang vướng: không.
+
+![Bảng 6 avatar Phố Giấy](../../assets/avatars/check/classic-sheet.png)
+
 ## 2026-11-27 · A2 (6 avatar vùng đất Dải đất — chờ duyệt)
 - Đã vẽ đủ 6 nhân vật Dải đất (`non-la`, `xich-lo`, `ao-dai`, `ong-do`, `ngu-dan`, `tha-dieu`) dạng SVG vector nét đậm kiểu sticker (đồng bộ sprite A · Pixel): mỗi nhân vật có portrait 256×256 + token 64×64 đọc rõ ở 24px, mọi file 1,0–3,1 KB (< 40 KB).
 - Đã tạo `assets/avatars/vietnam/avatars.json`, `assets/avatars/SOURCES.md` và bảng kiểm tra 6 chân dung + 6 token ở cỡ 24px tại `assets/avatars/check/vietnam-sheet.png`.

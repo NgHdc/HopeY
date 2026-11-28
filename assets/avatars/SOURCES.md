@@ -19,3 +19,16 @@ Công cụ: SVG dựng bằng Python (script tạo hình vector chuẩn hóa kí
 | `ong-do` | Ông Đồ | `#177D8C` (xanh ngọc lam) | Ông đồ đội khăn đóng, kính tròn, chòm râu bạc dài, cầm bút lông cạnh tờ giấy đỏ câu đối; token nổi bật khăn đóng, kính tròn và râu trắng. |
 | `ngu-dan` | Anh Năm | `#1D73B2` (xanh biển) | Ngư dân rám nắng buộc băng đô đỏ trên trán, áo sọc biển trắng-xanh, mái chèo và vành thuyền thúng phía sau; token nổi bật băng đô đỏ. |
 | `tha-dieu` | Bé Tí | `#1A7D43` (xanh lá mạ) | Bé lanh lợi tóc chỏm dựng, áo vàng yếm xanh, cánh diều sáo vàng-đỏ bay phía sau; token nổi bật cánh diều vàng + chỏm tóc. |
+
+## A3 · 6 cư dân Phố Giấy (`assets/avatars/classic/`, 2026-11-27)
+
+Công cụ: SVG dựng bằng Python cùng hệ nét viền sticker dày (`#1B263B`), portrait 256×256 và token 64×64 đọc rõ ở 24px.
+
+| ID | Tên | Màu đại diện | Mô tả tạo hình (portrait & token) |
+|---|---|---|---|
+| `chu-do` | Ông Lái Đò | `#1E74BA` (xanh sông) | Bác lái đò Bến Sông đội mũ rơm rộng vành đai đỏ, mái chèo gỗ phía sau; token nổi bật mũ rơm rộng vành. |
+| `co-hoa` | Chị Hoa | `#BD3E6D` (hồng phấn) | Cô bán hoa Chợ Hoa tóc hai búi cài bông hoa 5 cánh trắng-vàng, bó hoa rực rỡ; token nổi bật bông hoa lớn cài tóc. |
+| `tho-gom` | Bác Thợ Gốm | `#C7461E` (cam đất nung) | Thợ gốm Phố Nghề đeo tạp dề nâu, khăn trắng chấm cam buộc trán, bình gốm đất nung; token nổi bật khăn trắng buộc trán. |
+| `be-den-long` | Bé Lồng Đèn | `#F0B41C` (vàng nắng) | Bé Phố Cổ hai búi tóc tròn viền đỏ, áo đỏ, chiếc đèn lồng đỏ tua vàng treo góc trên; token nổi bật hai búi tóc tròn đối xứng. |
+| `co-vuon` | Chị Vườn Sen | `#1B7D44` (xanh lá vườn) | Cô làm vườn đeo kính tròn, mũ vải xanh có mầm lá non mọc trên đỉnh, chậu cây mầm; token nổi bật mầm lá xanh non trên mũ. |
+| `hai-dang` | Bác Hải Đăng | `#24579E` (xanh biển sâu) | Người gác hải đăng Cảng Biển mặc áo khoác vàng, râu bạc gọn, đội mũ thủy thủ trắng sao vàng; token nổi bật mũ thủy thủ trắng sao vàng. |
