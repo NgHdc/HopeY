@@ -1,7 +1,7 @@
 /* Dải đất · màu A1 của Agy. Chỉ khai báo biến theo map. */
 [data-map="vietnam"] {
   --bg: #FFF6DC;
-  --bg-pattern: url("../../assets/themes/vietnam-pattern.svg");
+  --bg-pattern: url("../../assets/themes/vietnam-tile.png");
   --surface: #FFFFFF;
   --surface-2: #FFE8B0;
   --ink: #1F1A2E;
@@ -52,7 +52,8 @@
   --font-pixel: "Tiny5", "VT323", monospace;
   --font-text: "Inter", Arial, "Helvetica Neue", sans-serif;
   --font-display: var(--font-pixel);
-  --board-art: none;
+  --board-art: url("../../assets/themes/vietnam-board.png");
+  --home-map: url("../../assets/themes/vietnam-map.png");
   --on-accent: #FFFFFF;
   --on-accent-2: var(--ink);
   --on-d6: var(--ink);
