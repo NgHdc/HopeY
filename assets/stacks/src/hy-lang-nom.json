@@ -1,0 +1,41 @@
+{
+  "style": "pixel",
+  "side_nose": "left",
+  "top_nose": "down",
+  "order": "reading",
+  "colours": 24,
+  "shade": 0.16,
+  "bg_tol": 20,
+  "dark_thresh": 0,
+  "spacing": 1.0,
+  "squash": 0.75,
+  "parts": [
+    {
+      "file": "hy-lang-nom-base.png",
+      "slices": 10,
+      "offset": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "hy-lang-nom-bridge.png",
+      "slices": 8,
+      "offset": [
+        0,
+        0,
+        7
+      ]
+    },
+    {
+      "file": "hy-lang-nom-gate.png",
+      "slices": 16,
+      "offset": [
+        0,
+        -17,
+        5
+      ]
+    }
+  ]
+}

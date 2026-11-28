@@ -1,0 +1,109 @@
+{
+  "festivals": {
+    "auction": {
+      "name": "Đấu giá kín",
+      "intro": "Tiếng trống đình vừa dứt, mảnh đất mới lộ diện. Mỗi người ghi kín một giá bỏ phong bì, rồi mở cùng lúc.",
+      "results": {
+        "win": "Phong bì mở ra: bạn trả cao nhất, mảnh đất đã sang tên trước ánh mắt tiếc nuối của cả xóm.",
+        "lose": "Mức giá của bạn thấp hơn một bậc — mảnh đất thuộc về hàng xóm nhanh tay hơn.",
+        "draw": "Hai phong bì ghi cùng một con số; theo lệ xóm, người ngồi gần bậc thềm hơn được nhận đất."
+      }
+    },
+    "baucua": {
+      "name": "Bầu cua",
+      "intro": "Chiếu bầu cua trải rộng giữa sân đình, bát sứ úp xuống rồi — chọn mặt đặt tiền trước khi mở bát.",
+      "results": {
+        "win": "Mở bát reo hò! Mặt bạn chọn hiện lên rõ mồn một, tiền thưởng chảy thẳng về túi.",
+        "lose": "Ba hột lăn ra toàn mặt khác — sới hội cười rộ, hẹn bạn gỡ lại ở chiếu sau.",
+        "draw": "Được thua vừa khít tiền cược, coi như góp vui một lượt trống hội."
+      }
+    },
+    "market": {
+      "name": "Đoán giá chợ",
+      "intro": "Phiên chợ sáng đông nghịt người trả giá. Ghi kín một số từ 0 đến 100 — ai gần hai phần ba mức trung bình cả bàn nhất sẽ thắng.",
+      "results": {
+        "win": "Cân chợ dừng kim đúng phía bạn: bạn đọc vị được cả xóm và ẵm trọn phần thưởng phiên chợ.",
+        "lose": "Bạn đoán hơi lệch nhịp với đám đông sáng nay; để ý xem hàng xóm đang nghĩ tới mức nào.",
+        "draw": "Hai phiếu sát nút bằng nhau tới từng vạch cân — phần thưởng phiên chợ chia đều đôi bên."
+      }
+    }
+  },
+  "reveals": [
+    "Sương tan, hiện ra một mái đình cũ rêu phong bên gốc đa đầu xóm.",
+    "Làn mây vén lên, lộ ra con ngõ nhỏ thơm mùi bánh mới ra lò buổi sớm.",
+    "Gió thổi quang sương mù, để lộ mặt đường lát gạch ấm nắng giữa phố.",
+    "Màn sương mỏng dần, tiếng rao hàng quen thuộc vọng tới từ góc chợ phía trước.",
+    "Nắng sớm xuyên qua đám mây, soi rõ tấm biển gỗ sơn mới bên vệ đường.",
+    "Bước chân vừa chạm đất, sương dạt sang hai bên mở ra một khoảng sân rộng.",
+    "Mây trắng cuộn đi, hiện lên hàng cây rợp bóng dọc theo bờ sông hiền hòa.",
+    "Lớp sương dày tan biến, để lộ một góc phố tấp nập người qua kẻ lại.",
+    "Gió sông lùa qua làm quang lối đi, trước mắt là một chốn dừng chân mới tinh.",
+    "Sương mù rút xuống mép cỏ, tấm bản đồ xóm lạ vừa thêm một dấu chấm sáng.",
+    "Đám mây khẽ nứt đôi rồi tan hẳn, tiếng chuông chiều ngân nhẹ ở cuối đường.",
+    "Ánh đèn lồng xuyên qua làn sương mỏng, báo hiệu một ô đất vừa được khai hoang."
+  ],
+  "titles": [
+    {
+      "id": "landlord",
+      "name": "Địa chủ",
+      "text": "Đi tới đâu dựng mái tới đó, nửa xóm này nhìn thấy biển tên bạn là biết ngay nhà ai."
+    },
+    {
+      "id": "detective",
+      "name": "Thám tử",
+      "text": "Mắt tinh, tai thính, chuyện lớn chuyện nhỏ sau lũy tre làng đều không qua nổi sổ tay của bạn."
+    },
+    {
+      "id": "gambler",
+      "name": "Liều ăn nhiều",
+      "text": "Chiếu hội nào cũng có mặt, phong bì nào cũng dám ghi — càng gay cấn tay bạn càng ấm."
+    },
+    {
+      "id": "trapper",
+      "name": "Kẻ gài bẫy",
+      "text": "Nói cười hiền khô nhưng từng nước đi đều giăng sẵn thế, khiến cả xóm phải dè chừng."
+    }
+  ],
+  "customs": [
+    {
+      "id": "si_dien",
+      "name": "Lệ Sĩ diện",
+      "hint": "Người xóm hay để ý lúc cầm tiền đi tậu đất, nhất là khi túi tiền còn lại gọn ghẽ quá mức."
+    },
+    {
+      "id": "khao_lang",
+      "name": "Lệ Khao làng",
+      "hint": "Dựng mái mới giữa xóm, chọn nhầm dịp thì hàng xóm kéo sang ăn mừng đông lắm."
+    },
+    {
+      "id": "toi_lua_tat_den",
+      "name": "Lệ Tối lửa tắt đèn",
+      "hint": "Gặp hàng xóm cùng một chỗ dừng chân, chuyện trò vài câu lại hóa ra có lộc."
+    },
+    {
+      "id": "dat_lanh_chim_dau",
+      "name": "Lệ Đất lành chim đậu",
+      "hint": "Lúc túi mỏng nhất mà chịu khó đi hết một vòng, xóm giềng chẳng để ai thiệt."
+    },
+    {
+      "id": "bao_phuong",
+      "name": "Lệ Báo phường",
+      "hint": "Nhà ai mọc vượt hẳn xóm giềng cùng khu phố, lý trưởng thế nào cũng ghé hỏi thăm."
+    },
+    {
+      "id": "trau_cham",
+      "name": "Lệ Trâu chậm",
+      "hint": "Bước chân còn chậm chạp đầu lượt, đôi khi trời lại thương cho đi thêm một quãng."
+    },
+    {
+      "id": "phep_vua",
+      "name": "Lệ Phép vua",
+      "hint": "Người đứng đầu sổ tài sản mà chạm tay vào lá Vận mệnh, khó tránh phần đóng góp cho đình."
+    },
+    {
+      "id": "to_truong",
+      "name": "Lệ Tổ trưởng",
+      "hint": "Sổ địa chính xóm này chuộng vần điệu: ai gom được những chốn chung một mối tên sẽ có tiếng nói riêng."
+    }
+  ]
+}

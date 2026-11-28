@@ -1,0 +1,32 @@
+{
+  "style": "pixel",
+  "side_nose": "left",
+  "top_nose": "down",
+  "order": "reading",
+  "colours": 24,
+  "shade": 0.16,
+  "bg_tol": 20,
+  "dark_thresh": 0,
+  "spacing": 1.0,
+  "squash": 0.75,
+  "parts": [
+    {
+      "file": "hy-pho-hien-chua-chuong-base.png",
+      "slices": 13,
+      "offset": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "hy-pho-hien-chua-chuong-upper.png",
+      "slices": 14,
+      "offset": [
+        0,
+        1,
+        12
+      ]
+    }
+  ]
+}

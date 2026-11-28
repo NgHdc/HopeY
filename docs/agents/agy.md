@@ -1,5 +1,58 @@
 # Nhật ký agent Agy
 
+## 2026-11-28 · G3a (6 địa danh đợt 1 kiểu A · Pixel — chờ duyệt, dừng chờ Cổng duyệt 3)
+- Đã dựng đủ 6 địa danh đợt 1 theo đúng `assets/stacks/STYLE.md` (kiểu A · Pixel, `spacing=1.0`, `squash=0.75`), chạy `python -I tools/art/build_stacks.py --only <id> --bake16`, kiểm tra trực quan cả 6 check sheet 4 góc + tách lớp và sửa triệt để gầm cầu & vòm rỗng của Cầu Hàm Rồng và Cầu Cần Thơ:
+  - Ô 1 · `hy-lang-nom` (Làng Nôm, 21 lát `32×44`, 3 parts)
+  - Ô 3 · `hy-pho-hien-chua-chuong` (Phố Hiến – Chùa Chuông, 26 lát `36×32`, 2 parts)
+  - Ô 6 · `th-cau-ham-rong` (Cầu Hàm Rồng, 23 lát `18×52`, 5 parts, vòm & gầm rỗng)
+  - Ô 8 · `th-sam-son-hon-trong-mai` (Sầm Sơn – Hòn Trống Mái, 26 lát `36×38`, 3 parts)
+  - Ô 9 · `th-thanh-nha-ho` (Thành Nhà Hồ, 25 lát `44×28`, 2 parts, 3 vòm cổng rỗng xuyên suốt)
+  - Ô 11 · `ct-cau-can-tho` (Cầu Cần Thơ, 31 lát `18×56`, 5 parts, tháp chữ A + dây văng + gầm rỗng có ghe gỗ)
+- Đã thêm trường `"tile"` vào `assets/stacks/manifest.json` (ô 1, 3, 6, 8, 9, 11 và 3 địa danh pixel G1: 27, 32, 39), ghi nguồn vào `assets/stacks/SOURCES.md`; mọi dải lát cắt và `.16.png` đều < 23 KB (< 60 KB), mọi ảnh gốc < 5 KB (< 400 KB).
+- Việc tiếp theo: dừng tại đây chờ **Cổng duyệt 3** (D3). Đang vướng: không.
+
+| Làng Nôm (ô 1) | Phố Hiến – Chùa Chuông (ô 3) |
+|---|---|
+| ![Làng Nôm](../../assets/stacks/check/hy-lang-nom.png) | ![Chùa Chuông](../../assets/stacks/check/hy-pho-hien-chua-chuong.png) |
+| Cầu Hàm Rồng (ô 6) | Sầm Sơn – Hòn Trống Mái (ô 8) |
+| ![Cầu Hàm Rồng](../../assets/stacks/check/th-cau-ham-rong.png) | ![Hòn Trống Mái](../../assets/stacks/check/th-sam-son-hon-trong-mai.png) |
+| Thành Nhà Hồ (ô 9) | Cầu Cần Thơ (ô 11) |
+| ![Thành Nhà Hồ](../../assets/stacks/check/th-thanh-nha-ho.png) | ![Cầu Cần Thơ](../../assets/stacks/check/ct-cau-can-tho.png) |
+
+## 2026-11-28 · G7 (Nội dung chữ chế độ Xóm lạ — chờ duyệt)
+- Đã viết `content/xomla.json` cùng giọng văn nhẹ nhàng, giàu hình ảnh như `content/vietnam.json` (G6):
+  - `festivals` (3 trò: `auction` Đấu giá kín, `baucua` Bầu cua, `market` Đoán giá chợ): mỗi trò có câu mở đầu (`intro`) và 3 câu kết quả (`win`/`lose`/`draw`).
+  - `reveals`: 12 câu mở ô ngẫu nhiên khi sương tan.
+  - `titles`: 4 danh hiệu cuối ván (`landlord` Địa chủ, `detective` Thám tử, `gambler` Liều ăn nhiều, `trapper` Kẻ gài bẫy).
+  - `customs`: 8 mẫu lệ trong `docs/XOM_LA.md` mục C2 kèm câu gợi ý không lộ điều kiện.
+- Việc tiếp theo: làm **G3a** (6 địa danh đợt 1 theo `assets/stacks/STYLE.md`), rồi dừng chờ Cổng duyệt 3. Đang vướng: không.
+
+## 2026-11-28 · A7 (10 biểu cảm pixel 16×16 + khung bong bóng 9 ô — chờ duyệt)
+- Đã vẽ 10 biểu cảm pixel 16×16 trong `assets/ui/emotes/` (`wave`, `smile`, `laugh`, `sad`, `angry`, `heart`, `wow`, `expensive`, `thanks`, `sleep`, mỗi file 267–349 B) và danh sách `assets/ui/emotes/emotes.json` (`id`, `name`, `file`).
+- Đã vẽ khung bong bóng chat 9 ô có đuôi chỉ xuống cho 2 vùng đất: `assets/ui/bubble.png` & `bubble-classic.png` (24×28), kèm đuôi rời `bubble-tail.png` & `bubble-tail-classic.png` (9×6) để dùng khi bong bóng chữ rộng không bị kéo dẹt đuôi.
+- Đã cập nhật `assets/ui/README.md`, `assets/ui/SOURCES.md` và ảnh kiểm tra phóng ×4 `assets/ui/check/a7-emotes-bubble.png`. Đã nhắn Codex (U6) và Claude.
+- Việc tiếp theo: làm **G7** (`content/xomla.json`) rồi **G3a** (6 địa danh đợt 1). Đang vướng: không.
+
+![A7 10 biểu cảm và khung bong bóng](../../assets/ui/check/a7-emotes-bubble.png)
+
+## 2026-11-28 · A9 (Art pixel chế độ Xóm lạ — chờ duyệt)
+- Đã vẽ trọn bộ 31 file PNG pixel cho chế độ Xóm lạ trong `assets/xomla/` (mọi file 247 B – 3,2 KB, không khử răng cưa, màu từ `palettes.md`, viền mực 1px `--ink`):
+  - `assets/xomla/fog/`: 6 file sương mù cho 2 vùng đất (`fog-tile-h` 32×24, `fog-tile-v` 24×32, `fog-clear` 96×32 3 khung tan sương, và bản `-classic`).
+  - `assets/xomla/baucua/`: 6 linh vật 32×32 (`nai`, `bau`, `ga`, `ca`, `cua`, `tom`), 6 mặt hột xúc xắc 16×16 (`die-*`), và 4 chiếu 3×2 144×96 (`mat`, `mat-classic`, `mat-empty`, `mat-empty-classic`).
+  - `assets/xomla/`: `envelope-closed.png` (24×24), `envelope-open.png` (24×24), `market-scale.png` (32×32).
+  - `assets/xomla/icons/`: 6 icon 16×16 (`festival`, `prestige`, `fund`, `charter`, `explore`, `choose-move`).
+- Kèm `assets/xomla/README.md`, `assets/xomla/SOURCES.md` và ảnh kiểm tra phóng ×4 `assets/xomla/check/xomla-all.png`. Đã nhắn Codex (cho U9) và Claude.
+- Việc tiếp theo: làm **A7** (10 biểu cảm 16×16 + `emotes.json` + khung bong bóng 9 ô 2 vùng đất). Đang vướng: không.
+
+![A9 art chế độ Xóm lạ](../../assets/xomla/check/xomla-all.png)
+
+## 2026-11-28 · A8 (Icon trạng thái + mic + favicon pixel — chờ duyệt)
+- Đã vẽ 8 icon 16×16 trong `assets/ui/icons/` (`net-ok.png`, `net-wait.png` 32×16 2 khung, `net-lost.png`, `host.png`, `watch.png`, `mic-on.png`, `mic-off.png`, `speaking.png` 32×16 2 khung) và 2 favicon pixel vẽ tay riêng ở kích thước gốc (`assets/ui/favicon-32.png`, `assets/ui/favicon-16.png`), mọi file ≤ 620 B, màu lấy từ `palettes.md`, viền mực 1px `--ink`.
+- Đã cập nhật `assets/ui/README.md`, `assets/ui/SOURCES.md` và xuất ảnh kiểm tra phóng ×4 `assets/ui/check/a8-status-mic-favicon.png`.
+- Việc tiếp theo: làm **A9** (art chế độ Xóm lạ trong `assets/xomla/`). Đang vướng: không.
+
+![A8 icon trạng thái, mic và favicon](../../assets/ui/check/a8-status-mic-favicon.png)
+
 ## 2026-11-27 · G6
 - Đã tạo nội dung chữ cho map Việt Nam (40 ô, 13 loại thẻ Vận mệnh, gợi ý Thanh Hóa) và chạy `node --test tests/*.test.mjs` (17/17 xanh).
 - File: `content/vietnam.json`.

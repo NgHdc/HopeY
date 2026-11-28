@@ -1,0 +1,59 @@
+{
+  "style": "pixel",
+  "side_nose": "left",
+  "top_nose": "down",
+  "order": "reading",
+  "colours": 24,
+  "shade": 0.15,
+  "bg_tol": 20,
+  "dark_thresh": 0,
+  "spacing": 1.0,
+  "squash": 0.75,
+  "parts": [
+    {
+      "file": "th-cau-ham-rong-river.png",
+      "slices": 9,
+      "offset": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "th-cau-ham-rong-road1.png",
+      "slices": 5,
+      "offset": [
+        0,
+        -13,
+        7
+      ]
+    },
+    {
+      "file": "th-cau-ham-rong-road2.png",
+      "slices": 5,
+      "offset": [
+        0,
+        13,
+        7
+      ]
+    },
+    {
+      "file": "th-cau-ham-rong-arch1.png",
+      "slices": 12,
+      "offset": [
+        0,
+        -11,
+        11
+      ]
+    },
+    {
+      "file": "th-cau-ham-rong-arch2.png",
+      "slices": 12,
+      "offset": [
+        0,
+        11,
+        11
+      ]
+    }
+  ]
+}

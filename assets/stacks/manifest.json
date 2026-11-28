@@ -1,6 +1,20 @@
 {
   "assets": [
     {
+      "id": "ct-cau-can-tho",
+      "w": 18,
+      "h": 56,
+      "count": 31,
+      "spacing": 1.0,
+      "squash": 0.75,
+      "style": "pixel",
+      "strip": "out/ct-cau-can-tho.png",
+      "baked": "out/ct-cau-can-tho.16.png",
+      "frameW": 79,
+      "frameH": 97,
+      "tile": 11
+    },
+    {
       "id": "dn-cau-rong-paper",
       "w": 18,
       "h": 50,
@@ -24,7 +38,8 @@
       "strip": "out/dn-cau-rong-pixel.png",
       "baked": "out/dn-cau-rong-pixel.16.png",
       "frameW": 81,
-      "frameH": 92
+      "frameH": 92,
+      "tile": 27
     },
     {
       "id": "hcm-cho-ben-thanh-paper",
@@ -50,7 +65,8 @@
       "strip": "out/hcm-cho-ben-thanh-pixel.png",
       "baked": "out/hcm-cho-ben-thanh-pixel.16.png",
       "frameW": 74,
-      "frameH": 89
+      "frameH": 89,
+      "tile": 32
     },
     {
       "id": "hn-ho-hoan-kiem-paper",
@@ -76,7 +92,78 @@
       "strip": "out/hn-ho-hoan-kiem-pixel.png",
       "baked": "out/hn-ho-hoan-kiem-pixel.16.png",
       "frameW": 71,
-      "frameH": 92
+      "frameH": 92,
+      "tile": 39
+    },
+    {
+      "id": "hy-lang-nom",
+      "w": 32,
+      "h": 44,
+      "count": 21,
+      "spacing": 1.0,
+      "squash": 0.75,
+      "style": "pixel",
+      "strip": "out/hy-lang-nom.png",
+      "baked": "out/hy-lang-nom.16.png",
+      "frameW": 75,
+      "frameH": 84,
+      "tile": 1
+    },
+    {
+      "id": "hy-pho-hien-chua-chuong",
+      "w": 36,
+      "h": 32,
+      "count": 26,
+      "spacing": 1.0,
+      "squash": 0.75,
+      "style": "pixel",
+      "strip": "out/hy-pho-hien-chua-chuong.png",
+      "baked": "out/hy-pho-hien-chua-chuong.16.png",
+      "frameW": 69,
+      "frameH": 84,
+      "tile": 3
+    },
+    {
+      "id": "th-cau-ham-rong",
+      "w": 18,
+      "h": 52,
+      "count": 23,
+      "spacing": 1.0,
+      "squash": 0.75,
+      "style": "pixel",
+      "strip": "out/th-cau-ham-rong.png",
+      "baked": "out/th-cau-ham-rong.16.png",
+      "frameW": 76,
+      "frameH": 86,
+      "tile": 6
+    },
+    {
+      "id": "th-sam-son-hon-trong-mai",
+      "w": 36,
+      "h": 38,
+      "count": 26,
+      "spacing": 1.0,
+      "squash": 0.75,
+      "style": "pixel",
+      "strip": "out/th-sam-son-hon-trong-mai.png",
+      "baked": "out/th-sam-son-hon-trong-mai.16.png",
+      "frameW": 73,
+      "frameH": 87,
+      "tile": 8
+    },
+    {
+      "id": "th-thanh-nha-ho",
+      "w": 44,
+      "h": 28,
+      "count": 25,
+      "spacing": 1.0,
+      "squash": 0.75,
+      "style": "pixel",
+      "strip": "out/th-thanh-nha-ho.png",
+      "baked": "out/th-thanh-nha-ho.16.png",
+      "frameW": 73,
+      "frameH": 86,
+      "tile": 9
     }
   ]
 }
